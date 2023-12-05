@@ -5,7 +5,12 @@
       "@/*": ["*"],
       "@pages/*": ["src/pages/*"],
       "@hooks/*": ["src/hooks/*"],
-      "@store/*": ["src/store/*"]
+      "@store/*": ["src/store/*"],
+      "@api/*": ["src/api/*"],
+      "@utils/*": ["src/utils/*"],
+      "@components/*": ["src/stocomponentsre/*"],
+      "@assets/*": ["src/assets/*"],
+      "@layout/*": ["src/layout/*"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
