@@ -18,13 +18,17 @@ const Detail: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
 const NotFound: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/NotFound')
 )
+const SearchPage: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
+  () => import('./src/pages/SearchPage')
+)
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
-      <Route path="detail/:id" element={<Detail />} />
       <Route path="*" element={<NotFound />} />
+      <Route path="detail/:id" element={<Detail />} />
+      <Route path="search" element={<SearchPage />} />
     </Route>
   )
 )
