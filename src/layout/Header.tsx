@@ -3,14 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import styled from 'styled-components'
 
-const ArrowDiv = styled.div`
-  width: 100vw;
-  display: flex;
-  justify-content: start;
-  border-bottom: 2px solid black;
-  padding-bottom: 10px;
-`
-
 function Header() {
   return (
     <ArrowDiv>
@@ -20,3 +12,11 @@ function Header() {
 }
 
 export default Header
+
+const ArrowDiv = styled.div`
+  width: 100vw;
+  display: flex;
+  justify-content: start;
+  border-bottom: 2px solid black;
+  padding-bottom: 10px;
+`

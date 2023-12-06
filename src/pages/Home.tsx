@@ -3,18 +3,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 function Home() {
-  const HomeDivWrapper = styled.div`
-    width: 390px;
-    margin: auto;
-  `
-
-  const ButtonDivWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  `
-
   return (
     <HomeDivWrapper>
       <h1>로고</h1>
@@ -27,3 +15,15 @@ function Home() {
 }
 
 export default Home
+
+const HomeDivWrapper = styled.div`
+  width: 390px;
+  margin: auto;
+`
+
+const ButtonDivWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
