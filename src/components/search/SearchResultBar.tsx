@@ -6,9 +6,8 @@ const ResultBarContain = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  /* border: 1px solid black; */
   width: 100%;
+  max-width: 390px;
 `
 
 const Image = styled.span`

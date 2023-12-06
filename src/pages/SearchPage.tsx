@@ -7,27 +7,27 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 10px;
 `
 
 const SearchBarWrapper = styled.div`
   display: flex;
-  width: 100%;
 `
 
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  width: 335px;
+  width: 100%;
   height: 20px;
   padding: 10px;
   background-color: #e8e8e8;
   border-radius: 8px;
+  max-width: 390px;
 `
 
 const Icon = styled.span`
   width: 12px;
   height: 12px;
-  margin-right: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,8 +68,8 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 15px;
   margin-bottom: 15px;
+  max-width: 390px;
 `
 
 const RecentSearch = styled.h4`
@@ -84,6 +84,13 @@ const SeeAllBtn = styled.button`
   width: 55px;
   border: none;
   color: #0282d1;
+`
+
+const ResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 `
 
 function SearchPage() {
@@ -104,10 +111,12 @@ function SearchPage() {
         <RecentSearch>최근 검색</RecentSearch>
         <SeeAllBtn>모두 보기</SeeAllBtn>
       </Wrapper>
-      <SearchResultBar />
-      <SearchResultBar />
-      <SearchResultBar />
-      <SearchResultBar />
+      <ResultWrapper>
+        <SearchResultBar />
+        <SearchResultBar />
+        <SearchResultBar />
+        <SearchResultBar />
+      </ResultWrapper>
     </Box>
   )
 }
