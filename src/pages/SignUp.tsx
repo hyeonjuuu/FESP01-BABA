@@ -1,16 +1,15 @@
+import Logo from '@/components/Logo'
+import Input from '@/components/Input'
+import styled from 'styled-components'
 import Button from '@/components/Button'
 import CheckAccount from '@/components/CheckAccount'
-import Input from '@/components/Input'
-import Logo from '@/components/Logo'
-import React from 'react'
-import styled from 'styled-components'
 
 function SignUp() {
   return (
     <SignUpWrapperDiv>
       <SrOnlyH2>회원가입</SrOnlyH2>
       <Logo />
-      <Button bgColor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
+      <Button $bgcolor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
       <FormWrapper>
         <label htmlFor="email"></label>
         <Input id="emaiil" type="input" placeholder="이메일" />
@@ -49,6 +48,9 @@ export default SignUp
 export const SignUpWrapperDiv = styled.div`
   width: 390px;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 export const SrOnlyH2 = styled.h2`
@@ -65,6 +67,9 @@ export const FormWrapper = styled.form`
   padding: 30px 0 20px 0;
   border-top: 1px solid #bcbcbc;
   border-bottom: 1px solid #bcbcbc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const AgreeDiv = styled.div`

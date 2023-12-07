@@ -1,4 +1,4 @@
-// import Nav from '@/layout/Nav'
+import Nav from '@/layout/Nav'
 import Header from '@/layout/Header'
 import { Outlet } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
@@ -17,7 +17,7 @@ export default function RootLayout() {
       <main>
         <Header />
         <Outlet />
-        {/* <Nav /> */}
+        <Nav />
       </main>
     </>
   )
