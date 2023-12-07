@@ -24,7 +24,8 @@ const CheckAccountButton = styled.button`
   gap: 5px;
   justify-content: center;
   align-items: center;
-  width: 260px;
+  width: 100%;
+  max-width: 300px;
   padding-left: 10px;
   margin: auto;
   margin-top: 40px;
@@ -32,6 +33,8 @@ const CheckAccountButton = styled.button`
   border: 1px solid #bcbcbc;
   border-radius: 5px;
   color: #bcbcbc;
+  font-family: 'GmarketSans';
+  font-size: 16px;
 `
 
 const TextSpan = styled.span`

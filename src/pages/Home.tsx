@@ -29,8 +29,9 @@ const SrOnlyH1 = styled.h1`
 `
 
 const HomeDivWrapper = styled.div`
-  width: 390px;
-  margin: auto;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
 `
 
 const ButtonDivWrapper = styled.div`
