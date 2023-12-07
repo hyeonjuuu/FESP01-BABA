@@ -2,14 +2,20 @@ import React from 'react'
 import styled from 'styled-components'
 
 interface ButtonProps {
+  type?: string
   bgColor?: string
   color?: string
   text?: string
 }
 
-function Button({ bgColor = '#303032', color = '#46F3F3', text }: ButtonProps) {
+function Button({
+  type = 'button',
+  bgColor = '#303032',
+  color = '#46F3F3',
+  text
+}: ButtonProps) {
   return (
-    <BtnButton bgColor={bgColor} color={color}>
+    <BtnButton type={type} bgColor={bgColor} color={color}>
       {text}
     </BtnButton>
   )
