@@ -17,8 +17,10 @@ function Login() {
       </LogoWrapper>
       <LoginFormWrapper>
         <InputWrapper>
-          <Input type="input" placeholder="이메일" />
-          <Input type="password" placeholder="패스워드" />
+          <label htmlFor="email"></label>
+          <Input id="email" type="input" placeholder="이메일" />
+          <label htmlFor="=password"></label>
+          <Input id="password" type="password" placeholder="패스워드" />
           <EyeDiv>
             <FontAwesomeIcon icon={faEye} />
           </EyeDiv>

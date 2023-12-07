@@ -12,21 +12,29 @@ function SignUp() {
       <Logo />
       <Button bgColor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
       <FormWrapper>
-        <Input type="input" placeholder="이메일" />
-        <Input type="input" placeholder="사용자 이름" />
-        <Input type="input" placeholder="닉네임" maxlength={5} />
-        <Input type="password" placeholder="패스워드" />
-        <Input type="password" placeholder="패스워드 확인" />
+        <label htmlFor="email"></label>
+        <Input id="emaiil" type="input" placeholder="이메일" />
+        <label htmlFor="userName"></label>
+        <Input id="userName" type="input" placeholder="사용자 이름" />
+        <label htmlFor="nickName"></label>
+        <Input id="nickName" type="input" placeholder="닉네임" maxlength={5} />
+        <label htmlFor="password"></label>
+        <Input id="password" type="password" placeholder="패스워드" />
+        <label htmlFor="checkPassword"></label>
+        <Input type="checkPassword" placeholder="패스워드 확인" />
         <AllAgreeDiv>
-          <input type="checkbox" />
+          <label htmlFor="allAgree"></label>
+          <input id="allAgree" type="checkbox" />
           전체 약관 동의
         </AllAgreeDiv>
         <AgreeDiv>
-          <input type="checkbox" />
+          <label htmlFor="useAgree"></label>
+          <input id="useAgree" type="checkbox" />
           이용 약관 동의
         </AgreeDiv>
         <AgreeDiv>
-          <input type="checkbox" />
+          <label htmlFor="personalAgree"></label>
+          <input id="personalAgree" type="checkbox" />
           개인정보 수집 및 이용 동의
         </AgreeDiv>
         <Button type="submit" text="가입하기" />

@@ -5,12 +5,14 @@ interface InputProps {
   type: string
   placeholder?: string
   maxlength?: number
+  id?: string
 }
 
-function Input({ type, placeholder, maxlength }: InputProps) {
+function Input({ type, placeholder, maxlength, id }: InputProps) {
   return (
     <>
       <StyledInput
+        id={id}
         type={type}
         placeholder={placeholder}
         maxLength={maxlength}
