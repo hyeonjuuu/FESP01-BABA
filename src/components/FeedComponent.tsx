@@ -1,7 +1,6 @@
-import React from 'react'
+import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
-import styled from 'styled-components'
 import { FontProps } from './CategoryComponent'
 
 interface PaddingProps {
@@ -58,7 +57,7 @@ const CommonDivWrapper = styled.div<PaddingProps>`
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  padding-bottom: ${({ $padding }) => $padding && `padding: ${$padding};`};
+  padding-bottom: ${({ $padding }) => $padding};
   margin: auto 0 auto 0;
 `
 

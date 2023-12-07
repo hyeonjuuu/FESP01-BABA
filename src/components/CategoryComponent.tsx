@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 
 export interface FontProps {
@@ -20,7 +19,6 @@ function CategoryComponent() {
     { color: '#FFE100', text: '어드벤쳐', fontSize: '12px' },
     { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
     { color: '#FF99AF', text: '코미디' },
-    { color: '#DF461F', text: '범죄' },
     { color: '#DF461F', text: '범죄' },
     { color: '#496BF2', text: '다큐' },
     { color: '#77B1B9', text: '드라마' },
