@@ -73,6 +73,7 @@ const DetailDivWrapper = styled.div`
 const DetailH2 = styled.h2`
   font-size: 22px;
   color: #303032;
+  text-align: start;
 `
 
 const StarDiv = styled.div`
