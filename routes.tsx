@@ -12,6 +12,11 @@ const RootLayout: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
 const Home: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/Home')
 )
+
+const Main: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
+  () => import('./src/pages/Main')
+)
+
 const Login: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/Login')
 )
@@ -29,6 +34,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
+      <Route path="main" element={<Main />} />
       <Route path="login" element={<Login />} />
       <Route path="signUp" element={<SignUp />} />
       {/* <Route path="detail/:id" element={<Detail />} /> */}

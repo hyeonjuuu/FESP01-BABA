@@ -6,19 +6,21 @@ import Detail from './pages/Detail'
 import NotFound from './pages/NotFound'
 import RootLayout from './pages/RootLayout'
 import { RouterProvider } from 'react-router-dom'
+import GlobalStyle from './style/GlobalStyle'
 
 function App() {
   return (
     <>
       {/* <Router>
         <Routes>
-          <Route path="/" element={<RootLayout />}>
-            <Route index element={<Home />} />
-            <Route path="detail/:id" element={<Detail />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
+        <Route path="/" element={<RootLayout />}>
+        <Route index element={<Home />} />
+        <Route path="detail/:id" element={<Detail />} />
+        <Route path="*" element={<NotFound />} />
+        </Route>
         </Routes>
       </Router> */}
+      <GlobalStyle />
       <RouterProvider router={router} />
     </>
   )
