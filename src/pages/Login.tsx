@@ -1,12 +1,11 @@
-import React from 'react'
+import Logo from '@/components/Logo'
 import styled from 'styled-components'
-import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import CheckAccount from '@/components/CheckAccount'
-import Logo from '@/components/Logo'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
 
 function Login() {
   return (
@@ -27,7 +26,7 @@ function Login() {
         </InputWrapper>
 
         <Button type="submit" text="로그인" />
-        <Button bgColor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
+        <Button $bgcolor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
       </LoginFormWrapper>
       <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
     </SignUpWrapperDiv>
@@ -42,11 +41,17 @@ const LogoWrapper = styled.div`
 
 const LoginFormWrapper = styled(FormWrapper)`
   border-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const InputWrapper = styled.div`
   position: relative;
   padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const EyeDiv = styled.div`

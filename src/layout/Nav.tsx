@@ -41,6 +41,7 @@ const NavContain = styled.div`
   bottom: 0;
   max-width: 370px;
   margin: 0 auto; /* 수정된 부분 */
+  background-color: white;
 `
 
 const Wrapper = styled.div`

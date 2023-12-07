@@ -1,8 +1,7 @@
-import React from 'react'
 import styled from 'styled-components'
+import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from './../components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
-import FeedComponent from '@/components/FeedComponent'
 
 function Main() {
   return (

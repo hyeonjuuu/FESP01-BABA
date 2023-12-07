@@ -11,9 +11,6 @@ body, #root {
     margin-left : auto;
     margin-right: auto;
   }
-
-
-
 `
 
 export default GlobalStyle

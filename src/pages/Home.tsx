@@ -1,7 +1,6 @@
-import Button from '@/components/Button'
 import Logo from '@/components/Logo'
-import React from 'react'
 import styled from 'styled-components'
+import Button from '@/components/Button'
 
 function Home() {
   return (
@@ -10,7 +9,7 @@ function Home() {
       <Logo />
       <ButtonDivWrapper>
         <Button text="로그인" />
-        <Button bgColor="#F8F8F8" color="#303032" text="회원가입" />
+        <Button $bgcolor="#F8F8F8" color="#303032" text="회원가입" />
       </ButtonDivWrapper>
     </HomeDivWrapper>
   )
