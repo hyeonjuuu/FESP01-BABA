@@ -11,7 +11,6 @@ function Home() {
       <CategoryComponent />
       <RecommendContentsSection />
       <FeedComponent />
-      <FeedComponent />
     </>
   )
 }

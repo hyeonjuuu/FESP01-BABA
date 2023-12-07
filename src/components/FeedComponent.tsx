@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { FontProps } from './CategoryComponent'
 
 interface PaddingProps {
-  padding?: string
+  $padding?: string
 }
 
 // #Icon 버튼 태그로 바꿔야함!
@@ -14,7 +14,7 @@ function FeedComponent() {
     <FeedSection>
       <FeedContent>
         <ContentWrapper>
-          <CommonDivWrapper padding="10px">
+          <CommonDivWrapper $padding="10px">
             <UserImage src="" alt="" />
             <TextColor>UserName</TextColor>
           </CommonDivWrapper>
@@ -58,7 +58,7 @@ const CommonDivWrapper = styled.div<PaddingProps>`
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  padding-bottom: ${({ padding }) => padding};
+  padding-bottom: ${({ $padding }) => $padding && `padding: ${$padding};`};
   margin: auto 0 auto 0;
 `
 
