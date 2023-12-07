@@ -21,6 +21,12 @@ const NotFound: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
 const SearchPage: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/SearchPage')
 )
+const Writing: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
+  () => import('./src/pages/Writing')
+)
+const MyPage: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
+  () => import('./src/pages/MyPage')
+)
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +35,8 @@ const router = createBrowserRouter(
       <Route path="*" element={<NotFound />} />
       <Route path="detail/:id" element={<Detail />} />
       <Route path="search" element={<SearchPage />} />
+      <Route path="writing" element={<Writing />} />
+      <Route path="mypage" element={<MyPage />} />
     </Route>
   )
 )

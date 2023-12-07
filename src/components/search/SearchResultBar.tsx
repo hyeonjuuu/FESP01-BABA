@@ -2,6 +2,26 @@ import styled from 'styled-components'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+function SearchResultBar() {
+  return (
+    <ResultBarContain>
+      <Contain>
+        <Image>사진</Image>
+        <Warppaer>
+          <ResultBar>#고양이</ResultBar>
+          <ResultBarInfo>게시물 100개 미만개</ResultBarInfo>
+        </Warppaer>
+      </Contain>
+
+      <ClearBtn>
+        <FontAwesomeIcon icon={faX} />
+      </ClearBtn>
+    </ResultBarContain>
+  )
+}
+
+export default SearchResultBar
+
 const ResultBarContain = styled.div`
   display: flex;
   align-items: center;
@@ -46,23 +66,3 @@ const Warppaer = styled.div`
   flex-direction: column;
   gap: 3px;
 `
-
-function SearchResultBar() {
-  return (
-    <ResultBarContain>
-      <Contain>
-        <Image>사진</Image>
-        <Warppaer>
-          <ResultBar>#고양이</ResultBar>
-          <ResultBarInfo>게시물 100개 미만개</ResultBarInfo>
-        </Warppaer>
-      </Contain>
-
-      <ClearBtn>
-        <FontAwesomeIcon icon={faX} />
-      </ClearBtn>
-    </ResultBarContain>
-  )
-}
-
-export default SearchResultBar

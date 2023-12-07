@@ -3,6 +3,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SearchResultBar from '@/components/search/SearchResultBar'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
+function SearchPage() {
+  return (
+    <Box>
+      <h3 hidden>검색창</h3>
+      <SearchBarWrapper>
+        <SearchBar>
+          <Icon>
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+          </Icon>
+          <Input type="text" placeholder="Search" />
+        </SearchBar>
+        <ClearBtn>취소</ClearBtn>
+      </SearchBarWrapper>
+      <HorizontalLine />
+      <Wrapper>
+        <RecentSearch>최근 검색</RecentSearch>
+        <SeeAllBtn>모두 보기</SeeAllBtn>
+      </Wrapper>
+      <ResultWrapper>
+        <SearchResultBar />
+        <SearchResultBar />
+        <SearchResultBar />
+        <SearchResultBar />
+      </ResultWrapper>
+    </Box>
+  )
+}
+
+export default SearchPage
+
 const Box = styled.div`
   display: flex;
   flex-direction: column;
@@ -92,33 +122,3 @@ const ResultWrapper = styled.div`
   align-items: center;
   width: 100%;
 `
-
-function SearchPage() {
-  return (
-    <Box>
-      <h3 hidden>검색창</h3>
-      <SearchBarWrapper>
-        <SearchBar>
-          <Icon>
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-          </Icon>
-          <Input type="text" placeholder="Search" />
-        </SearchBar>
-        <ClearBtn>취소</ClearBtn>
-      </SearchBarWrapper>
-      <HorizontalLine />
-      <Wrapper>
-        <RecentSearch>최근 검색</RecentSearch>
-        <SeeAllBtn>모두 보기</SeeAllBtn>
-      </Wrapper>
-      <ResultWrapper>
-        <SearchResultBar />
-        <SearchResultBar />
-        <SearchResultBar />
-        <SearchResultBar />
-      </ResultWrapper>
-    </Box>
-  )
-}
-
-export default SearchPage
