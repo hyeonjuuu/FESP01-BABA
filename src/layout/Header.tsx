@@ -4,36 +4,46 @@ import DarkModeToggle from '@/components/DarkModeToggle'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-interface ArrowDivProps {
+interface HeaderDivProps {
   darkMode: boolean
 }
 
-function Header() {
+interface ArrowDivProps {
+  isHome: boolean
+}
+
+function Header({ isHome }: { isHome: boolean }) {
   const { darkMode } = useThemeStore()
 
   return (
-    <HeaderDiv>
-      <ArrowDiv darkMode={darkMode}>
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </ArrowDiv>
-      <DarkModeToggle />
-    </HeaderDiv>
+    <HeaderWrappderDiv>
+      <HeaderDiv darkMode={darkMode}>
+        <ArrowDiv isHome={isHome}>
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </ArrowDiv>
+        <DarkModeToggle />
+      </HeaderDiv>
+    </HeaderWrappderDiv>
   )
 }
 
 export default Header
 
-const HeaderDiv = styled.div`
+const HeaderWrappderDiv = styled.div`
   width: 100%;
   max-width: 370px;
 `
 
-const ArrowDiv = styled.div<ArrowDivProps>`
+const HeaderDiv = styled.div<HeaderDivProps>`
   width: 100%;
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
   padding: 10px;
   border-bottom: 2px solid black;
   border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : 'black')};
+`
+
+const ArrowDiv = styled.div<ArrowDivProps>`
+  visibility: ${({ isHome }) => (isHome ? 'hidden' : 'visible')};
 `

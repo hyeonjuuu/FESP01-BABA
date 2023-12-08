@@ -2,13 +2,15 @@ import Nav from '@/layout/Nav'
 import Fake from '@/layout/Fake'
 import Header from '@/layout/Header'
 import styled from 'styled-components'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 
 export default function RootLayout() {
+  const location = useLocation()
+  const isHome = location.pathname === '/'
   return (
     <>
       <MainWrapper>
-        <Header />
+        <Header isHome={isHome} />
         <Outlet />
         <Fake />
         <Nav />

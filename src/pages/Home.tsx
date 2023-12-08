@@ -7,7 +7,9 @@ function Home() {
   return (
     <HomeDivWrapper>
       <SrOnlyH1>홈</SrOnlyH1>
-      <Logo />
+      <Link to="/">
+        <Logo />
+      </Link>
       <ButtonDivWrapper>
         <StyledLink to="/login">
           <Button text="로그인" />
