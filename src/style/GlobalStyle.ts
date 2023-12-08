@@ -16,10 +16,9 @@ body, #root {
   button {
   cursor: pointer;
       
+  font-family: GmarketSans;
   }
-  button {
-    font-family: GmarketSans;
-  }
+
 `
 
 export default GlobalStyle
