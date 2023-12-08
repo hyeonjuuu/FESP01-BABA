@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 
 interface InputProps {
@@ -24,7 +23,8 @@ function Input({ type, placeholder, maxlength, id }: InputProps) {
 export default Input
 
 const StyledInput = styled.input`
-  width: 260px;
+  width: 100%;
+  max-width: 300px;
   height: 32px;
   border: 1px solid #bcbcbc;
   border-radius: 5px;
@@ -33,5 +33,6 @@ const StyledInput = styled.input`
 
   &::placeholder {
     color: #bcbcbc;
+    font-family: 'GmarketSans';
   }
 `

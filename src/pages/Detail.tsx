@@ -1,7 +1,6 @@
 import DetailReview from '@/components/DetailReview'
 import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
 import styled from 'styled-components'
 
 function Detail() {

@@ -46,8 +46,7 @@ function SignUp() {
 export default SignUp
 
 export const SignUpWrapperDiv = styled.div`
-  width: 390px;
-  margin: auto;
+  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,6 +63,7 @@ export const SrOnlyH2 = styled.h2`
   border: 0;
 `
 export const FormWrapper = styled.form`
+  width: 90%;
   padding: 30px 0 20px 0;
   border-top: 1px solid #bcbcbc;
   border-bottom: 1px solid #bcbcbc;
@@ -73,14 +73,15 @@ export const FormWrapper = styled.form`
 `
 
 const AgreeDiv = styled.div`
+  width: 100%;
+  max-width: 300px;
   display: flex;
   gap: 10px;
   justify-content: start;
   align-items: center;
-  width: 260px;
-  padding-left: 10px;
-  margin: auto;
   margin-bottom: 10px;
+  padding-right: 10px;
+  color: #777777;
 `
 
 const AllAgreeDiv = styled(AgreeDiv)`

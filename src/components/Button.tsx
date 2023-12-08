@@ -23,9 +23,14 @@ function Button({
 export default Button
 
 const BtnButton = styled.button<ButtonProps>`
-  width: 310px;
+  width: 100%;
+  max-width: 310px;
   height: 48px;
   margin-bottom: 20px;
   background-color: ${props => props.$bgcolor};
   color: ${props => props.color};
+  border: 0.5px solid black;
+  border-radius: 5px;
+  font-family: 'GmarketSans';
+  font-size: 16px;
 `

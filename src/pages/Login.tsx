@@ -37,6 +37,7 @@ export default Login
 
 const LogoWrapper = styled.div`
   margin-bottom: -40px;
+  width: 100%;
 `
 
 const LoginFormWrapper = styled(FormWrapper)`
@@ -47,6 +48,7 @@ const LoginFormWrapper = styled(FormWrapper)`
 `
 
 const InputWrapper = styled.div`
+  width: 100%;
   position: relative;
   padding: 10px 0;
   display: flex;
@@ -56,8 +58,8 @@ const InputWrapper = styled.div`
 
 const EyeDiv = styled.div`
   position: absolute;
-  right: 60px;
-  top: 60px;
+  right: 0px;
+  top: 65px;
   width: 30px;
   height: 30px;
 `

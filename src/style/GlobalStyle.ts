@@ -7,10 +7,15 @@ body, #root {
     color: #303032;
     margin: 0;
     padding: 0;
-    width: 390px;
     margin-left : auto;
     margin-right: auto;
+  background: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.color};
+  border-color: ${({ theme }) => theme.borderColor};
   }
+  button {
+  cursor: pointer;
+    }
 `
 
 export default GlobalStyle
