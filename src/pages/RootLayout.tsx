@@ -4,17 +4,17 @@ import { Outlet } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
 import Fake from '@/layout/Fake'
 
-const GlobalStyle = createGlobalStyle`
-  body, #root {
-    margin: 0;
-    padding: 0;
-  }
-`
+// const GlobalStyle = createGlobalStyle`
+//   body, #root {
+//     margin: 0;
+//     padding: 0;
+//   }
+// `
 
 export default function RootLayout() {
   return (
     <>
-      <GlobalStyle />
+      {/* <GlobalStyle /> */}
       <MainWrapper>
         <Header />
         <Outlet />

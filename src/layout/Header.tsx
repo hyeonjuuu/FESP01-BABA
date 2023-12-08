@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import DarkModeToggle from '@/components/DarkModeToggle'
 
 function Header() {
   return (
@@ -8,6 +9,7 @@ function Header() {
       <ArrowDiv>
         <FontAwesomeIcon icon={faAngleLeft} />
       </ArrowDiv>
+      <DarkModeToggle />
     </HeaderDiv>
   )
 }

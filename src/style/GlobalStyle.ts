@@ -9,6 +9,9 @@ body, #root {
     padding: 0;
     margin-left : auto;
     margin-right: auto;
+  background: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.color};
+  border-color: ${({ theme }) => theme.borderColor};
   }
 `
 
