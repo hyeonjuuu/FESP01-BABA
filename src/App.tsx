@@ -1,7 +1,7 @@
-import { ThemeProvider } from 'styled-components'
 import router from '../routes'
-import useThemeStore from './store/useThemeStore'
 import GlobalStyle from './style/GlobalStyle'
+import { ThemeProvider } from 'styled-components'
+import useThemeStore from './store/useThemeStore'
 import { RouterProvider } from 'react-router-dom'
 
 function App() {
@@ -9,8 +9,7 @@ function App() {
 
   const theme = {
     bgColor: darkMode ? '#1E1E1E' : '#FFFFFF',
-    color: darkMode ? '#FFFFFF' : '#1E1E1E',
-    borderColor: darkMode ? '#ffffff' : '##C6C6C6'
+    color: darkMode ? '#FFFFFF' : '#303032'
   }
 
   return (

@@ -1,15 +1,20 @@
-import React from 'react'
 import styled from 'styled-components'
+import useThemeStore from '../store/useThemeStore'
 import defaultImage from '@/assets/defaultImage.webp'
 
 interface SectionHeaderWidth {
   width?: string
+  darkMode: boolean
 }
 
 function RecommendContentsSection() {
+  const { darkMode } = useThemeStore()
+
   return (
     <section>
-      <SectionHeader width="32px">추천</SectionHeader>
+      <SectionHeader width="32px" darkMode={darkMode}>
+        추천
+      </SectionHeader>
       <RecommendSectionWrapper>
         <RecommendImage src={defaultImage} alt="" />
         <RecommendImage src={defaultImage} alt="" />
@@ -24,7 +29,6 @@ function RecommendContentsSection() {
 export default RecommendContentsSection
 
 const SectionHeader = styled.h2<SectionHeaderWidth>`
-  color: #303032;
   font-size: 16px;
   margin: 0;
   padding: 0;
@@ -36,6 +40,7 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
     display: block;
     width: ${({ width }) => width};
     border-bottom: 5px solid #303032;
+    border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : '#303032')};
   }
 `
 

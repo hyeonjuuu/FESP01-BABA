@@ -1,12 +1,15 @@
 import styled from 'styled-components'
+import useThemeStore from '../store/useThemeStore'
 
 export interface FontProps {
   fontSize?: string
   fontWeight?: string
+  darkMode?: boolean
 }
 
 interface SectionHeaderWidth {
   width?: string
+  darkMode: boolean
 }
 
 /* -------------------------------------------------------------------------- */
@@ -14,6 +17,8 @@ interface SectionHeaderWidth {
 /* -------------------------------------------------------------------------- */
 
 function CategoryComponent() {
+  const { darkMode } = useThemeStore()
+
   const categories = [
     { color: '#F56A1E', text: '액션' },
     { color: '#FFE100', text: '어드벤쳐', fontSize: '12px' },
@@ -37,7 +42,9 @@ function CategoryComponent() {
   return (
     <section>
       <CategoryTitle>
-        <SectionHeader width="62px">카테고리</SectionHeader>
+        <SectionHeader width="62px" darkMode={darkMode}>
+          카테고리
+        </SectionHeader>
         <form action="#">
           <label htmlFor="영화/드라마" aria-label="선택하세요"></label>
           <SelectLabel name="languages" id="영화/드라마">
@@ -50,7 +57,9 @@ function CategoryComponent() {
         {categories.map(({ color, text, fontSize }, index) => (
           <CategoryBox key={index}>
             <CategoryCircle color={color}></CategoryCircle>
-            <CategroyList fontSize={fontSize}>{text}</CategroyList>
+            <CategroyList fontSize={fontSize} darkMode={darkMode}>
+              {text}
+            </CategroyList>
           </CategoryBox>
         ))}
       </Category>
@@ -61,7 +70,6 @@ function CategoryComponent() {
 export default CategoryComponent
 
 const SectionHeader = styled.h2<SectionHeaderWidth>`
-  color: #303032;
   font-size: 16px;
   margin: 0;
   padding: 0;
@@ -74,6 +82,7 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
     display: block;
     width: ${({ width }) => width};
     border-bottom: 5px solid #303032;
+    border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : '#303032')};
   }
 `
 
@@ -108,7 +117,7 @@ const Category = styled.ul`
 const CategroyList = styled.li<FontProps>`
   box-sizing: border-box;
   display: inline;
-  color: #444444;
+  color: ${({ darkMode }) => (darkMode ? '#E0E0E0' : '#444444')};
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
 `
