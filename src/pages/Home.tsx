@@ -1,6 +1,7 @@
 import Logo from '@/components/Logo'
 import styled from 'styled-components'
 import Button from '@/components/Button'
+import { Link } from 'react-router-dom'
 
 function Home() {
   return (
@@ -8,8 +9,12 @@ function Home() {
       <SrOnlyH1>홈</SrOnlyH1>
       <Logo />
       <ButtonDivWrapper>
-        <Button text="로그인" />
-        <Button $bgcolor="#F8F8F8" color="#303032" text="회원가입" />
+        <StyledLink to="/login">
+          <Button text="로그인" />
+        </StyledLink>
+        <StyledLink to="/signUp">
+          <Button $bgcolor="#F8F8F8" color="#303032" text="회원가입" />
+        </StyledLink>
       </ButtonDivWrapper>
     </HomeDivWrapper>
   )
@@ -39,4 +44,12 @@ const ButtonDivWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`
+
+export const StyledLink = styled(Link)`
+  width: 100%;
+  max-width: 310px;
+  height: 48px;
+  margin-bottom: 20px;
+  text-decoration: none;
 `
