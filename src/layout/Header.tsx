@@ -6,10 +6,12 @@ import DarkModeToggle from '@/components/DarkModeToggle'
 function Header() {
   return (
     <HeaderDiv>
-      <ArrowDiv>
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </ArrowDiv>
-      <DarkModeToggle />
+      <HeaderDiv>
+        <ArrowDiv>
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </ArrowDiv>
+        <DarkModeToggle />
+      </HeaderDiv>
     </HeaderDiv>
   )
 }
