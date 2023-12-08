@@ -13,6 +13,9 @@ body, #root {
   color: ${({ theme }) => theme.color};
   border-color: ${({ theme }) => theme.borderColor};
   }
+  button {
+  cursor: pointer;
+    }
 `
 
 export default GlobalStyle

@@ -6,8 +6,14 @@ interface themeStore {
 }
 
 const useThemeStore = create<themeStore>(set => ({
-  darkMode: false,
-  toggleDarkMode: () => set(state => ({ darkMode: !state.darkMode }))
+  darkMode: localStorage.getItem('darkMode') === 'true',
+  toggleDarkMode: () => {
+    set(state => {
+      const newDarkMode = !state.darkMode
+      localStorage.setItem('darkMode', newDarkMode.toString())
+      return { darkMode: newDarkMode }
+    })
+  }
 }))
 
 export default useThemeStore
