@@ -3,6 +3,7 @@ import useThemeStore from '../store/useThemeStore'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useNavigate } from 'react-router-dom'
 
 interface HeaderDivProps {
   darkMode: boolean
@@ -14,11 +15,16 @@ interface ArrowDivProps {
 
 function Header({ isHome }: { isHome: boolean }) {
   const { darkMode } = useThemeStore()
+  const navigate = useNavigate()
+
+  const handleGoBack = () => {
+    navigate(-1)
+  }
 
   return (
     <HeaderWrappderDiv>
       <HeaderDiv darkMode={darkMode}>
-        <ArrowDiv isHome={isHome}>
+        <ArrowDiv isHome={isHome} onClick={handleGoBack}>
           <FontAwesomeIcon icon={faAngleLeft} />
         </ArrowDiv>
         <DarkModeToggle />
@@ -46,4 +52,5 @@ const HeaderDiv = styled.div<HeaderDivProps>`
 
 const ArrowDiv = styled.div<ArrowDivProps>`
   visibility: ${({ isHome }) => (isHome ? 'hidden' : 'visible')};
+  cursor: pointer;
 `
