@@ -9,7 +9,7 @@ function FavRing() {
         </StoryRing>
       </Wrapper>
 
-      <Title>Text here</Title>
+      <Title>Text hereher</Title>
     </Contain>
   )
 }
@@ -22,7 +22,7 @@ const Contain = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px 0;
+  margin: 40px 0;
 `
 
 const Wrapper = styled.div`
@@ -53,5 +53,6 @@ const Img = styled.div`
 
 const Title = styled.p`
   font-size: 12px;
-  line-height: 14px;
+  /* line-height: 14px; */
+  text-align: center;
 `

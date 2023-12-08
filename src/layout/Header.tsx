@@ -12,10 +12,14 @@ function Header() {
 
 export default Header
 
-const ArrowDiv = styled.div`
+const ArrowDiv = styled.header`
   width: 100vw;
   display: flex;
   justify-content: start;
   border-bottom: 2px solid black;
   padding-bottom: 10px;
+  background-color: teal;
+  @media (min-width: 391px) {
+    display: none;
+  }
 `

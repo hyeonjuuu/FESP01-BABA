@@ -8,7 +8,7 @@ interface SectionHeaderWidth {
 
 function RecommendContentsSection() {
   return (
-    <section>
+    <Wrapper>
       <SectionHeader width="32px">추천</SectionHeader>
       <RecommendSectionWrapper>
         <RecommendImage src={defaultImage} alt="" />
@@ -17,7 +17,7 @@ function RecommendContentsSection() {
         <RecommendImage src={defaultImage} alt="" />
         <RecommendImage src={defaultImage} alt="" />
       </RecommendSectionWrapper>
-    </section>
+    </Wrapper>
   )
 }
 
@@ -52,4 +52,13 @@ const RecommendImage = styled.img`
   border-radius: 5px;
   margin-left: 4px;
   margin-right: 4px;
+`
+
+const Wrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @media (min-width: 391px) {
+    display: none;
+  }
 `

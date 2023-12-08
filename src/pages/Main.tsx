@@ -10,7 +10,6 @@ function Main() {
       <CategoryComponent />
       <RecommendContentsSection />
       <FeedComponent />
-      <FeedComponent />
     </>
   )
 }

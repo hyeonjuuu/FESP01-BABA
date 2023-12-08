@@ -89,7 +89,7 @@ const SelectLabel = styled.select`
   font-family: GmarketSans;
   color: #28c7c7;
 `
-const CategoryBox = styled.div`
+const CategoryBox = styled.li`
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -105,10 +105,11 @@ const Category = styled.ul`
   margin-top: 14px;
   margin-bottom: 22px;
 `
-const CategroyList = styled.li<FontProps>`
+const CategroyList = styled.div<FontProps>`
   box-sizing: border-box;
   display: inline;
   color: #444444;
+  text-align: center;
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
 `

@@ -46,6 +46,12 @@ function MyPage() {
         <Post></Post>
         <Post></Post>
         <Post></Post>
+        <Post></Post>
+        <Post></Post>
+        <Post></Post>
+        <Post></Post>
+        <Post></Post>
+        <Post></Post>
       </PostsContain>
     </Box>
   )
@@ -53,9 +59,12 @@ function MyPage() {
 
 export default MyPage
 
-const Box = styled.main`
+const Box = styled.section`
   width: 390px;
-  margin: 0 auto;
+  margin: 40px auto;
+  @media (min-width: 391px) {
+    margin-left: 40px;
+  }
 `
 
 const ProfileContain = styled.div`

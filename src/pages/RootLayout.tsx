@@ -1,24 +1,27 @@
 import Nav from '@/layout/Nav'
 import Header from '@/layout/Header'
+import styled from 'styled-components'
 import { Outlet } from 'react-router-dom'
-import { createGlobalStyle } from 'styled-components'
-
-const GlobalStyle = createGlobalStyle`
-  body, #root {
-    margin: 0;
-    padding: 0;
-  }
-`
+import GlobalStyle from '@/style/GlobalStyle'
 
 export default function RootLayout() {
   return (
     <>
       <GlobalStyle />
-      <main>
+      <MainContainer>
         <Header />
-        <Outlet />
         <Nav />
-      </main>
+        <Outlet />
+      </MainContainer>
     </>
   )
 }
+
+const MainContainer = styled.main`
+  @media (min-width: 391px) {
+    display: grid;
+    grid-template-columns: 1fr 4fr 1.5fr;
+    /* grid-template-rows: 1fr; */
+    height: 100vh;
+  }
+`
