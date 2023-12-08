@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import darkmode from '@/assets/icon/Darkmode.svg'
 import lightmode from '@/assets/icon/Lightmode.svg'
 
@@ -10,11 +11,14 @@ interface SizeProps {
 function Header() {
   return (
     <HeaderDiv>
-      <ArrowDiv>
-        <FontAwesomeIcon icon={faAngleLeft} />
-        <ScreenMode src={darkmode} alt="" size="18px" />
-        <ScreenMode src={lightmode} alt="" size="20px" />
-      </ArrowDiv>
+      <HeaderDiv>
+        <ArrowDiv>
+          <FontAwesomeIcon icon={faAngleLeft} />
+          <ScreenMode src={darkmode} alt="" size="18px" />
+          <ScreenMode src={lightmode} alt="" size="20px" />
+        </ArrowDiv>
+        <DarkModeToggle />
+      </HeaderDiv>
     </HeaderDiv>
   )
 }
