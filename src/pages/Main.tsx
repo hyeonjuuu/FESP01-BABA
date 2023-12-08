@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from './../components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
+import SideBar from '@/components/SideBar'
 
 function Main() {
   return (
@@ -11,6 +12,7 @@ function Main() {
       <RecommendContentsSection />
       <FeedComponent />
       <FeedComponent />
+      <SideBar />
     </>
   )
 }

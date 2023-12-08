@@ -7,14 +7,10 @@ export interface FontProps {
   darkMode?: boolean
 }
 
-interface SectionHeaderWidth {
-  width?: string
+interface SizeProps {
+  size?: string
   darkMode: boolean
 }
-
-/* -------------------------------------------------------------------------- */
-// !컴포넌트 분리!
-/* -------------------------------------------------------------------------- */
 
 function CategoryComponent() {
   const { darkMode } = useThemeStore()
@@ -40,9 +36,9 @@ function CategoryComponent() {
     { color: '#015097', text: '전쟁' }
   ]
   return (
-    <section>
+    <CategorySection>
       <CategoryTitle>
-        <SectionHeader width="62px" darkMode={darkMode}>
+        <SectionHeader size="62px" darkMode={darkMode}>
           카테고리
         </SectionHeader>
         <form action="#">
@@ -63,13 +59,18 @@ function CategoryComponent() {
           </CategoryBox>
         ))}
       </Category>
-    </section>
+    </CategorySection>
   )
 }
 
 export default CategoryComponent
 
-const SectionHeader = styled.h2<SectionHeaderWidth>`
+const CategorySection = styled.section`
+  margin: 36px 0 0 0;
+`
+
+const SectionHeader = styled.h2<SizeProps>`
+  color: #303032;
   font-size: 16px;
   margin: 0;
   padding: 0;
@@ -80,7 +81,7 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
   &:after {
     content: '';
     display: block;
-    width: ${({ width }) => width};
+    width: ${({ size }) => size};
     border-bottom: 5px solid #303032;
     border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : '#303032')};
   }
@@ -98,7 +99,7 @@ const SelectLabel = styled.select`
   font-family: GmarketSans;
   color: #28c7c7;
 `
-const CategoryBox = styled.div`
+const CategoryBox = styled.li`
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -114,9 +115,10 @@ const Category = styled.ul`
   margin-top: 14px;
   margin-bottom: 22px;
 `
-const CategroyList = styled.li<FontProps>`
+const CategroyList = styled.div<FontProps>`
   box-sizing: border-box;
   display: inline;
+  text-align: center;
   color: ${({ darkMode }) => (darkMode ? '#E0E0E0' : '#444444')};
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
