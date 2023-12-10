@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 
 function Logo() {
@@ -8,9 +7,9 @@ function Logo() {
 export default Logo
 
 const LogoDiv = styled.div`
-  width: 310px;
+  width: 100%;
+  max-width: 310px;
   height: 80px;
   border: 1px solid black;
   border-radius: 5px;
-  margin: 30px auto;
 `

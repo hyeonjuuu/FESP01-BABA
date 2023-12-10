@@ -1,20 +1,18 @@
+import styled from 'styled-components'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
-import styled from 'styled-components'
 
 function DetailReview() {
   return (
     <DetailReviewDivWrapper>
-      <ImgDiv>
-        <img
-          src="https://picsum.photos/id/237/200/300"
-          alt="피드 이미지"
-          width="100%"
-          height="100%"
-          object-fit="cover"
-        ></img>
-      </ImgDiv>
+      <Img
+        src="https://picsum.photos/id/237/200/300"
+        alt="피드 이미지"
+        width="100%"
+        height="100%"
+        object-fit="cover"
+      ></Img>
+
       <DetailReviewDiv>
         <NameStartDiv>
           <div>UserName</div>
@@ -40,15 +38,16 @@ const DetailReviewDivWrapper = styled.div`
   display: flex;
   width: 370px;
   height: 130px;
-  margin: auto;
+  margin: 0 auto;
   border: solid 1px black;
   border-radius: 5px;
-  margin-bottom: 20px;
 `
 
-const ImgDiv = styled.div`
+const Img = styled.img`
   width: 120px;
   height: 100%;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 `
 
 const DetailReviewDiv = styled.div`
@@ -72,7 +71,6 @@ const StarDiv = styled.div`
 `
 
 const ReviewContent = styled.div`
-  color: #777777;
   text-align: start;
   width: 100%;
   overflow: hidden;

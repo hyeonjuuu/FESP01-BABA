@@ -1,58 +1,57 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import FavRing from '@/components/mypage/FavRing'
-import MypageHeader from '@/components/mypage/MypageHeader'
 
 function MyPage() {
   return (
     <Box>
-      <MypageHeader />
+      <ContentBox>
+        <ProfileContain>
+          <Image src={userImage} alt="사용자 이미지" />
 
-      <ProfileContain>
-        <Image src={userImage} alt="사용자 이미지" />
+          <ProfileInfo>
+            <p>bomlang4211@gmail.com</p>
+            <ProfileBtn>프로필 편집</ProfileBtn>
+          </ProfileInfo>
+        </ProfileContain>
 
-        <ProfileInfo>
-          <p>bomlang4211@gmail.com</p>
-          <ProfileBtn>프로필 편집</ProfileBtn>
-        </ProfileInfo>
-      </ProfileContain>
+        <Container>
+          <FavRing />
+          <FavRing />
+          <FavRing />
+          <FavRing />
+        </Container>
 
-      <Container>
-        <FavRing />
-        <FavRing />
-        <FavRing />
-        <FavRing />
-      </Container>
+        <MarginContainer>
+          <Wrapper>
+            <p>게시물</p>
+            <span>10</span>
+          </Wrapper>
 
-      <MarginContainer>
-        <Wrapper>
-          <p>게시물</p>
-          <span>10</span>
-        </Wrapper>
+          <Wrapper>
+            <p>좋아요</p>
+            <span>5</span>
+          </Wrapper>
+        </MarginContainer>
 
-        <Wrapper>
-          <p>좋아요</p>
-          <span>5</span>
-        </Wrapper>
-      </MarginContainer>
-
-      <PostsContain>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-        <Post></Post>
-      </PostsContain>
+        <PostsContain>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+          <Post></Post>
+        </PostsContain>
+      </ContentBox>
     </Box>
   )
 }
@@ -60,11 +59,23 @@ function MyPage() {
 export default MyPage
 
 const Box = styled.section`
-  width: 390px;
-  margin: 40px auto;
-  @media (min-width: 391px) {
-    margin-left: 40px;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 70px;
+
+  @media (min-width: 1031px) {
+    display: flex;
+    align-items: center;
   }
+  @media (min-width: 701px) and(max-width: 1030px) {
+    display: flex;
+    align-items: center;
+  }
+`
+
+const ContentBox = styled.div`
+  width: 390px;
 `
 
 const ProfileContain = styled.div`
@@ -100,7 +111,6 @@ const MarginContainer = styled(Container)`
 const Wrapper = styled.button`
   width: 50%;
   border: none;
-  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;

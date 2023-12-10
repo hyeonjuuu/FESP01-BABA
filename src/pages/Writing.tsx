@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 import ottIcons from '@/utils/ottIconImage'
+import Button from '@/components/Button'
 
 function Writing() {
   const [text, setText] = useState('')
@@ -18,8 +19,8 @@ function Writing() {
   }
 
   return (
-    <>
-      <Container>
+    <Container>
+      <Wrapper>
         {ottIcons.map((icon, index) => (
           <OttWrapper key={index}>
             <input type="checkbox" />
@@ -28,32 +29,47 @@ function Writing() {
             </IconBox>
           </OttWrapper>
         ))}
-      </Container>
-      <ImgSelectBtn color="#3797EF" hasBorder>
-        기본 이미지
-      </ImgSelectBtn>
-      <ImgSelectBtn>사용자 이미지</ImgSelectBtn>
+      </Wrapper>
+
+      <BtnWrapper>
+        <ImgSelectBtn color="#3797EF" hasBorder>
+          기본 이미지
+        </ImgSelectBtn>
+        <ImgSelectBtn>사용자 이미지</ImgSelectBtn>
+      </BtnWrapper>
       <OriginalImage></OriginalImage>
       {/* 사용자의 이미지 영역 추가 */}
       <FeedText
         onFocus={handleFocus}
         onBlur={handleBlur}
-        placeholder="이 컨텐츠에 대한 생각을 자유롭게 공유해보세요. 🎬✨"
+        placeholder="이 컨텐츠에 대한 생각을 자유롭게 공유해보세요!🎬✨"
       ></FeedText>
-      {/* 공통컴포넌트 버튼 오면됨 */}
-    </>
+      <Button
+        $bgcolor={'#3797EF'}
+        text={'작성하기'}
+        type={'submit'}
+        color={'white'}
+        width={'390px'}
+      />
+    </Container>
   )
 }
 
 export default Writing
 
-const Container = styled.div`
+const Container = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+`
+
+const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: 50px;
   max-width: 390px;
   overflow-y: scroll;
-  border-top: 2px solid #303032;
 `
 
 const OttWrapper = styled.div`
@@ -70,6 +86,10 @@ const IconBox = styled.div`
 const OttIcon = styled.img`
   width: 100%;
   height: 100%;
+`
+
+const BtnWrapper = styled.div`
+  display: flex;
 `
 
 const ImgSelectBtn = styled.button<{ hasBorder?: boolean; color?: string }>`
@@ -94,4 +114,9 @@ const FeedText = styled.textarea`
   width: 390px;
   height: 200px;
   border: none;
+  box-sizing: border-box;
+  border-radius: 5px;
+  font-size: 16px;
+  resize: none;
+  padding: 10px;
 `

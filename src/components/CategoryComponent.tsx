@@ -5,13 +5,9 @@ export interface FontProps {
   fontWeight?: string
 }
 
-interface SectionHeaderWidth {
-  width?: string
+interface SizeProps {
+  size?: string
 }
-
-/* -------------------------------------------------------------------------- */
-// !컴포넌트 분리!
-/* -------------------------------------------------------------------------- */
 
 function CategoryComponent() {
   const categories = [
@@ -35,9 +31,9 @@ function CategoryComponent() {
     { color: '#015097', text: '전쟁' }
   ]
   return (
-    <section>
+    <CategorySection>
       <CategoryTitle>
-        <SectionHeader width="62px">카테고리</SectionHeader>
+        <SectionHeader size="62px">카테고리</SectionHeader>
         <form action="#">
           <label htmlFor="영화/드라마" aria-label="선택하세요"></label>
           <SelectLabel name="languages" id="영화/드라마">
@@ -54,13 +50,17 @@ function CategoryComponent() {
           </CategoryBox>
         ))}
       </Category>
-    </section>
+    </CategorySection>
   )
 }
 
 export default CategoryComponent
 
-const SectionHeader = styled.h2<SectionHeaderWidth>`
+const CategorySection = styled.section`
+  margin: 36px 0 0 0;
+`
+
+const SectionHeader = styled.h2<SizeProps>`
   color: #303032;
   font-size: 16px;
   margin: 0;
@@ -72,7 +72,7 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
   &:after {
     content: '';
     display: block;
-    width: ${({ width }) => width};
+    width: ${({ size }) => size};
     border-bottom: 5px solid #303032;
   }
 `
@@ -108,6 +108,7 @@ const Category = styled.ul`
 const CategroyList = styled.div<FontProps>`
   box-sizing: border-box;
   display: inline;
+  text-align: center;
   color: #444444;
   text-align: center;
   font-weight: 300;
