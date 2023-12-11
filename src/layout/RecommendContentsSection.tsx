@@ -39,6 +39,7 @@ function RecommendContentsSection() {
               alt={`${item.title} 포스터`}
               onMouseOver={handleMouseHoverImage}
             />
+            <RecommendTitle>{item.title}</RecommendTitle>
           </RecommendSection>
         ))}
       </RecommendSectionWrapper>
@@ -79,18 +80,38 @@ const RecommendSectionWrapper = styled.ul`
 const RecommendSection = styled.li`
   margin: 0;
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
   margin-top: 14px;
   margin-bottom: 22px;
+  position: relative;
 `
+
+const RecommendTitle = styled.span`
+  visibility: hidden;
+  font-size: 12px;
+  position: absolute;
+  text-align: center;
+  color: white;
+  padding: 4px;
+  background-color: green;
+  margin: 4px;
+`
+
 const RecommendImage = styled.img`
   width: 80px;
   height: 120px;
   border-radius: 5px;
   margin-left: 4px;
   margin-right: 4px;
+
   &:hover {
     filter: saturate(0%) brightness(50%);
     transition: 0.5s;
+    display: flex;
+
+    ~ ${RecommendTitle} {
+      visibility: visible;
+    }
   }
 `
