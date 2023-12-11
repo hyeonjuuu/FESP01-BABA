@@ -34,6 +34,9 @@ const Box = styled.article`
   justify-content: space-between;
   padding: 0 15px;
   margin-bottom: 8px;
+  @media (min-width: 391px) {
+    display: none;
+  }
 `
 
 const Wrapper = styled.div`

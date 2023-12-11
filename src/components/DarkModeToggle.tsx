@@ -1,7 +1,7 @@
-import useThemeStore from '@/store/useThemeStore'
 import styled from 'styled-components'
 import darkModeIcon from '@/assets/icon/darkMode.svg'
 import lightModeIcon from '@/assets/icon/Lightmode.svg'
+import useThemeStore from '@/store/useThemeStore'
 
 interface ButtonProps {
   size?: string
@@ -31,7 +31,6 @@ const ModeButton = styled.button`
   outline: none;
   background-color: inherit;
   cursor: pointer;
-
   align-self: flex-start;
   display: flex;
   padding: 0;

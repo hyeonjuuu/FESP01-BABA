@@ -115,3 +115,12 @@ const RecommendImage = styled.img`
     }
   }
 `
+
+const Wrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @media (min-width: 391px) {
+    display: none;
+  }
+`

@@ -119,7 +119,8 @@ const CategroyList = styled.div<FontProps>`
   box-sizing: border-box;
   display: inline;
   text-align: center;
-  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#444444')};
+  color: #444444;
+  text-align: center;
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
 `

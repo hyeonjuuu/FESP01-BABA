@@ -12,7 +12,6 @@ function SearchResultBar() {
           <ResultBarInfo>게시물 100개 미만개</ResultBarInfo>
         </Warppaer>
       </Contain>
-
       <ClearBtn>
         <FontAwesomeIcon icon={faX} />
       </ClearBtn>
@@ -27,7 +26,9 @@ const ResultBarContain = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 390px;
+  @media (min-width: 701px) {
+    max-width: 69%;
+  }
 `
 
 const Image = styled.span`
@@ -52,7 +53,6 @@ const ResultBarInfo = styled.span`
 `
 
 const ClearBtn = styled.button`
-  background-color: white;
   border-style: none;
 `
 
