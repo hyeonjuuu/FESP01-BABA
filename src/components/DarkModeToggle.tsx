@@ -1,31 +1,43 @@
 import styled from 'styled-components'
-import useThemeStore from '@/store/useThemeStore'
-import darkModeIcon from '@/assets/icon/Darkmode.svg'
+import darkModeIcon from '@/assets/icon/darkMode.svg'
 import lightModeIcon from '@/assets/icon/Lightmode.svg'
+import useThemeStore from '@/store/useThemeStore'
 
-interface SizeProps {
+interface ButtonProps {
   size?: string
+  darkMode?: boolean
 }
 
-function DarkModeToggle() {
-  const { darkMode, toggleDarkMode } = useThemeStore()
+function darkModeToggle() {
+  const { $darkMode, toggleDarkMode } = useThemeStore()
 
   return (
-    <Btn onClick={toggleDarkMode}>
-      <ScreenMode src={darkMode ? lightModeIcon : darkModeIcon} size="22px" />
-    </Btn>
+    <ButtonStyle onClick={toggleDarkMode}>
+      <ScreenMode src={$darkMode ? lightModeIcon : darkModeIcon} size="22px" />
+    </ButtonStyle>
   )
 }
 
-export default DarkModeToggle
+export default darkModeToggle
 
-const Btn = styled.button`
+const ButtonStyle = styled.button`
   border-radius: 50%;
-  width: 45px;
-  height: 45px;
+  padding: 5px;
 `
 
-const ScreenMode = styled.img<SizeProps>`
+const ModeButton = styled.button`
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  cursor: pointer;
+  align-self: flex-start;
+  display: flex;
+  padding: 0;
+`
+
+const ScreenMode = styled.img<ButtonProps>`
   width: 22px;
   height: 22px;
+  /* color: ${({ darkMode }) => (darkMode === true ? '#777777' : '#FFFFFF')}; */
 `

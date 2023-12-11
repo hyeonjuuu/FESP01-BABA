@@ -6,23 +6,21 @@ import { ThemeProvider } from 'styled-components'
 import { RouterProvider } from 'react-router-dom'
 
 function App() {
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
 
   const theme = {
-    bgColor: darkMode ? '#1E1E1E' : '#FFFFFF',
-    color: darkMode ? '#FFFFFF' : '#1E1E1E',
-    borderColor: darkMode ? '#ffffff' : '##C6C6C6'
+    bgColor: $darkMode ? '#1E1E1E' : '#FFFFFF',
+    color: $darkMode ? '#FFFFFF' : '#303032'
   }
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        {/* 로딩화면 추현해야함 */}
-        <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
           <RouterProvider router={router} />
-        </Suspense>
-      </ThemeProvider>
+        </ThemeProvider>
+      </Suspense>
     </>
   )
 }

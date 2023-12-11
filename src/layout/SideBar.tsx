@@ -4,12 +4,12 @@ import useThemeStore from '@/store/useThemeStore'
 
 function SideBar() {
   const test = [1, 2, 3, 4, 5]
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
   return (
     <ThemeProvider
       theme={{
-        bgColor: darkMode ? '#1E1E1E' : '#FFF',
-        color: darkMode ? '#fff' : '#1E1E1E'
+        bgColor: $darkMode ? '#1E1E1E' : '#FFF',
+        color: $darkMode ? '#fff' : '#1E1E1E'
       }}
     >
       <SideBarWrapper>

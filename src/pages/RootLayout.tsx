@@ -2,15 +2,20 @@ import Nav from '@/layout/Nav'
 import Header from '@/layout/Header'
 import styled from 'styled-components'
 import SideBar from '@/layout/SideBar'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useMatch } from 'react-router-dom'
 import GlobalStyle from '@/style/GlobalStyle'
 
 export default function RootLayout() {
+  // const location = useLocation()
+  // const isHome = location.pathname === '/'
+  const match = useMatch('/')
+  const isHome = match !== null
+
   return (
     <>
       <GlobalStyle />
       <MainContainer>
-        <Header />
+        <Header isHome={isHome} />
         <Nav />
         <Outlet />
         <SideBar />

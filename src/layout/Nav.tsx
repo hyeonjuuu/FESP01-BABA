@@ -12,13 +12,13 @@ import styled, { ThemeProvider } from 'styled-components'
 import DarkModeToggleIcon from '@/components/DarkModeIcon'
 
 function Nav() {
-  const { darkMode, toggleDarkMode } = useThemeStore()
+  const { $darkMode, toggleDarkMode } = useThemeStore()
 
   return (
     <ThemeProvider
       theme={{
-        bgColor: darkMode ? '#1E1E1E' : '#FFF',
-        color: darkMode ? '#fff' : '#1E1E1E'
+        bgColor: $darkMode ? '#1E1E1E' : '#FFF',
+        color: $darkMode ? '#fff' : '#1E1E1E'
       }}
     >
       <NavContain>
@@ -94,7 +94,7 @@ function Nav() {
         <Wrapper>
           {/* <DarkModeToggle /> */}
           <DarkModeToggleIcon
-            isDarkMode={darkMode}
+            isDarkMode={$darkMode}
             toggleDarkModeAni={toggleDarkMode}
           />
         </Wrapper>

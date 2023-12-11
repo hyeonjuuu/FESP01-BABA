@@ -18,8 +18,8 @@ body, #root {
     color: ${({ theme }) => theme.color};
     border-color: ${({ theme }) => theme.borderColor};
   cursor: pointer;
-      
   font-family: GmarketSans;
+  
   }
   a {
   text-decoration: none;

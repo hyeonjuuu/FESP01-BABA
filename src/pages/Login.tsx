@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { StyledLink } from './Home'
 import Logo from '@/components/Logo'
 import styled from 'styled-components'
 import Input from '@/components/Input'
@@ -25,7 +26,9 @@ function Login() {
     <SignUpWrapperDiv>
       <SrOnlyH2>로그인</SrOnlyH2>
       <LogoWrapper>
-        <Logo />
+        <StyledLink to="/">
+          <Logo />
+        </StyledLink>
       </LogoWrapper>
       <LoginFormWrapper>
         <InputWrapper>
@@ -45,8 +48,10 @@ function Login() {
             </HideBtn>
           </PasswordInputWrapper>
         </InputWrapper>
+        <StyledLink to="/main">
+          <Button type="submit" text="로그인" width="360px" />
+        </StyledLink>
 
-        <Button type="button" text="로그인" width="360px" />
         <Button
           $bgcolor="#FFDC00"
           color="#1E1E1E"
