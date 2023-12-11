@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import defaultImage from '@/assets/defaultImage.webp'
 import { useEffect, useState } from 'react'
 import getPopularData from '@/api/getPopularData'
 

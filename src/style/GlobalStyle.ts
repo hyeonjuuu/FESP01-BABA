@@ -16,14 +16,7 @@ body, #root {
   button {
   cursor: pointer;
   font-family: GmarketSans;
-  box-sizing: border-box;
-  border: none;
-  outline: none;
-  background-color: inherit;
-  cursor: pointer;
-  align-self: flex-start;
-  display: flex;
-  padding: 0;
+  
   }
 
 `

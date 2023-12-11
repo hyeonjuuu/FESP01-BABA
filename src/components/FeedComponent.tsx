@@ -12,7 +12,6 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-// #Icon 버튼 태그로 바꿔야함!
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
 
@@ -60,6 +59,15 @@ const StarIcon = styled.button`
   height: 22px;
   background-image: url(${star});
   background-repeat: no-repeat;
+  cursor: pointer;
+  font-family: GmarketSans;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  align-self: flex-start;
+  display: flex;
+  padding: 0;
 `
 const LikeIcon = styled(StarIcon)`
   background-image: url(${like});
