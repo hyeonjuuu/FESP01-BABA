@@ -4,15 +4,15 @@ import defaultImage from '@/assets/defaultImage.webp'
 
 interface SectionHeaderWidth {
   width?: string
-  darkMode: boolean
+  $darkMode: boolean
 }
 
 function RecommendContentsSection() {
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
 
   return (
     <section>
-      <SectionHeader width="32px" darkMode={darkMode}>
+      <SectionHeader width="32px" $darkMode={$darkMode}>
         추천
       </SectionHeader>
       <RecommendSectionWrapper>
@@ -40,7 +40,7 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
     display: block;
     width: ${({ width }) => width};
     border-bottom: 5px solid #303032;
-    border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : '#303032')};
+    border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   }
 `
 

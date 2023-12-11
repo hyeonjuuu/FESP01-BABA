@@ -4,11 +4,11 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface ReviewContentProps {
-  darkMode: boolean
+  $darkMode: boolean
 }
 
 function DetailReview() {
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
 
   return (
     <DetailReviewDivWrapper>
@@ -30,7 +30,7 @@ function DetailReview() {
           </StarDiv>
         </NameStartDiv>
 
-        <ReviewContent darkMode={darkMode}>
+        <ReviewContent $darkMode={$darkMode}>
           리뷰 내용입니다.리뷰 내용입니다.리뷰 내용입니다. 리뷰 내용입니다. 리뷰
           내용입니다. 리뷰 내용입니다.리뷰 내용입니다. 리뷰 내용입니다. 리뷰
           내용입니다. 리뷰 내용입니다. 리뷰 내용입니다. 리뷰 내용입니다.
@@ -78,7 +78,7 @@ const StarDiv = styled.div`
 `
 
 const ReviewContent = styled.div<ReviewContentProps>`
-  color: ${({ darkMode }) => (darkMode ? '#E0E0E0' : '#777777')};
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777777')};
   text-align: start;
   width: 100%;
   overflow: hidden;

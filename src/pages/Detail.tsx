@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 
 interface DirectorDivProps {
-  darkMode: boolean
+  $darkMode: boolean
 }
 
 function Detail() {
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
 
   return (
     <>
@@ -46,7 +46,7 @@ function Detail() {
           2시간 44분
         </MovieInfoDiv>
         <DirectorInfoDiv>
-          <DirectorDiv darkMode={darkMode}>
+          <DirectorDiv $darkMode={$darkMode}>
             감독
             <span>|</span>
           </DirectorDiv>
@@ -119,5 +119,5 @@ const DirectorDiv = styled.div<DirectorDivProps>`
   justify-content: start;
   align-items: center;
   gap: 5px;
-  color: ${({ darkMode }) => (darkMode ? '#E0E0E0' : '#777')};
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777')};
 `

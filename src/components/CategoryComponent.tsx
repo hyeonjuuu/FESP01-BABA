@@ -4,16 +4,16 @@ import useThemeStore from '../store/useThemeStore'
 export interface FontProps {
   fontSize?: string
   fontWeight?: string
-  darkMode?: boolean
+  $darkMode?: boolean
 }
 
 interface SizeProps {
   size?: string
-  darkMode: boolean
+  $darkMode: boolean
 }
 
 function CategoryComponent() {
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
 
   const categories = [
     { color: '#F56A1E', text: '액션' },
@@ -38,7 +38,7 @@ function CategoryComponent() {
   return (
     <CategorySection>
       <CategoryTitle>
-        <SectionHeader size="62px" darkMode={darkMode}>
+        <SectionHeader size="62px" $darkMode={$darkMode}>
           카테고리
         </SectionHeader>
         <form action="#">
@@ -53,7 +53,7 @@ function CategoryComponent() {
         {categories.map(({ color, text, fontSize }, index) => (
           <CategoryBox key={index}>
             <CategoryCircle color={color}></CategoryCircle>
-            <CategroyList fontSize={fontSize} darkMode={darkMode}>
+            <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
               {text}
             </CategroyList>
           </CategoryBox>
@@ -83,7 +83,7 @@ const SectionHeader = styled.h2<SizeProps>`
     display: block;
     width: ${({ size }) => size};
     border-bottom: 5px solid #303032;
-    border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : '#303032')};
+    border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   }
 `
 
@@ -119,7 +119,7 @@ const CategroyList = styled.div<FontProps>`
   box-sizing: border-box;
   display: inline;
   text-align: center;
-  color: ${({ darkMode }) => (darkMode ? '#E0E0E0' : '#444444')};
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#444444')};
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
 `

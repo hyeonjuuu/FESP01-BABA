@@ -6,15 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate } from 'react-router-dom'
 
 interface HeaderDivProps {
-  darkMode: boolean
+  $darkMode: boolean
 }
 
 interface ArrowDivProps {
-  isHome: boolean
+  $isHome: boolean
 }
 
 function Header({ isHome }: { isHome: boolean }) {
-  const { darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
   const navigate = useNavigate()
 
   const handleGoBack = () => {
@@ -23,8 +23,8 @@ function Header({ isHome }: { isHome: boolean }) {
 
   return (
     <HeaderWrappderDiv>
-      <HeaderDiv darkMode={darkMode}>
-        <ArrowDiv isHome={isHome} onClick={handleGoBack}>
+      <HeaderDiv $darkMode={$darkMode}>
+        <ArrowDiv $isHome={isHome} onClick={handleGoBack}>
           <FontAwesomeIcon icon={faAngleLeft} />
         </ArrowDiv>
         <DarkModeToggle />
@@ -47,10 +47,10 @@ const HeaderDiv = styled.div<HeaderDivProps>`
   align-items: center;
   padding: 10px;
   border-bottom: 2px solid black;
-  border-color: ${({ darkMode }) => (darkMode ? '#FFFFFF' : 'black')};
+  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : 'black')};
 `
 
 const ArrowDiv = styled.div<ArrowDivProps>`
-  visibility: ${({ isHome }) => (isHome ? 'hidden' : 'visible')};
+  visibility: ${({ $isHome }) => ($isHome ? 'hidden' : 'visible')};
   cursor: pointer;
 `
