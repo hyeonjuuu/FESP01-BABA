@@ -7,7 +7,7 @@ function SideBar() {
   return (
     <SideBarWrapper>
       {test.map(index => (
-        <SideContentWrapper href="">
+        <SideContentWrapper key={index} href="">
           <RecommendImage src={defaultImage} alt="" />
           <span>엘리멘탈</span>
         </SideContentWrapper>
