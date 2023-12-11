@@ -1,10 +1,11 @@
-import useThemeStore from '@/store/useThemeStore'
 import styled from 'styled-components'
 import darkModeIcon from '@/assets/icon/darkMode.svg'
 import lightModeIcon from '@/assets/icon/Lightmode.svg'
+import useThemeStore from '@/store/useThemeStore'
 
-interface SizeProps {
+interface ButtonProps {
   size?: string
+  darkMode?: boolean
 }
 
 function darkModeToggle() {
@@ -24,7 +25,19 @@ const ButtonStyle = styled.button`
   padding: 5px;
 `
 
-const ScreenMode = styled.img<SizeProps>`
-  width: 18px;
-  height: 18px;
+const ModeButton = styled.button`
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  cursor: pointer;
+  align-self: flex-start;
+  display: flex;
+  padding: 0;
+`
+
+const ScreenMode = styled.img<ButtonProps>`
+  width: 22px;
+  height: 22px;
+  /* color: ${({ darkMode }) => (darkMode === true ? '#777777' : '#FFFFFF')}; */
 `

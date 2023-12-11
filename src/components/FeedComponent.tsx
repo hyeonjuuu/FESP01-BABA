@@ -12,7 +12,6 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-// #Icon 버튼 태그로 바꿔야함!
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
 
@@ -28,9 +27,9 @@ function FeedComponent() {
           <ContentTitleWrapper>
             <ContentTitle>미션 임파서블</ContentTitle>
             <CommonDivWrapper>
-              <Icon src={star} width="22px" height="22px" alt="별점" />
+              <StarIcon />
               <span>4.5점</span>
-              <Icon src={like} width="22px" height="22px" alt="좋아요" />
+              <LikeIcon />
             </CommonDivWrapper>
           </ContentTitleWrapper>
           <ContentText $darkMode={$darkMode}>
@@ -55,9 +54,23 @@ const FeedSection = styled.section`
   margin-top: 26px;
 `
 
-const Icon = styled.img`
-  width: ${({ width }) => width};
-  height: ${({ height }) => height};
+const StarIcon = styled.button`
+  width: 22px;
+  height: 22px;
+  background-image: url(${star});
+  background-repeat: no-repeat;
+  cursor: pointer;
+  font-family: GmarketSans;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  align-self: flex-start;
+  display: flex;
+  padding: 0;
+`
+const LikeIcon = styled(StarIcon)`
+  background-image: url(${like});
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;

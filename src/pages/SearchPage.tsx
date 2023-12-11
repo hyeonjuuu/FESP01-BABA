@@ -47,21 +47,36 @@ const Box = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0 10px;
+  margin-top: 30px;
 `
 
 const SearchBarWrapper = styled.div`
   display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  max-width: 500px;
+
+  @media (min-width: 701px) {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
 `
 
 const SearchBar = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  height: 20px;
+  height: 30px;
   padding: 10px;
   background-color: #e8e8e8;
   border-radius: 8px;
-  max-width: 390px;
+  max-width: 500px;
+  width: 80%;
+  @media (min-width: 701px) {
+    width: 98%;
+    max-width: none;
+  }
 `
 
 const Icon = styled.span`
@@ -77,29 +92,41 @@ const Input = styled.input`
   background-color: #e8e8e8;
   border: none;
   outline: none;
-  width: 280px;
+  height: 100%;
+  width: 370px;
+
   &::placeholder {
     color: #c0c0c0;
     font-size: 14px;
     font-weight: 500;
   }
+
+  @media (min-width: 701px) {
+    width: 600px;
+  }
 `
 
 const ClearBtn = styled.button`
-  background-color: white;
   margin-left: 10px;
   font-size: 14px;
   padding: 0;
-  width: 30px;
+  width: 10%;
+  min-width: 30px;
   border: none;
 `
 
 const HorizontalLine = styled.div`
-  width: 100%;
   height: 1px;
   background-color: #ccc;
   margin-top: 10px;
   margin-bottom: 15px;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+  @media (min-width: 701px) {
+    width: 69%;
+  }
 `
 
 const Wrapper = styled.div`
@@ -108,7 +135,7 @@ const Wrapper = styled.div`
   align-items: center;
   width: 100%;
   margin-bottom: 15px;
-  max-width: 390px;
+  max-width: 550px;
 `
 
 const RecentSearch = styled.h4`
@@ -116,11 +143,10 @@ const RecentSearch = styled.h4`
 `
 
 const SeeAllBtn = styled.button`
-  background-color: white;
   margin-left: 10px;
   font-size: 14px;
   padding: 0;
-  width: 55px;
+  width: 70px;
   border: none;
   color: #0282d1;
 `
@@ -130,6 +156,11 @@ const ResultWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+
+  @media (min-width: 701px) {
+    width: 800px;
+    max-width: none;
+  }
 `
 
 const StyledLink = styled(Link)`
