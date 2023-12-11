@@ -21,7 +21,6 @@ function RecommendContentsSection() {
 
   const handleMouseHoverImage: React.MouseEventHandler<HTMLElement> = e => {
     const target = e.target
-    console.log(target)
   }
 
   const { $darkMode } = useThemeStore()

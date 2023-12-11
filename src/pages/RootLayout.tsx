@@ -7,7 +7,6 @@ import GlobalStyle from '@/style/GlobalStyle'
 
 export default function RootLayout() {
   const location = useLocation()
-  console.log(location)
 
   // const isHome = location.pathname === '/'
   const match = useMatch('/')
