@@ -1,36 +1,63 @@
-import React from 'react'
 import styled from 'styled-components'
 import defaultImage from '@/assets/defaultImage.webp'
+import { useEffect, useState } from 'react'
+import getPopularData from '@/api/getPopularData'
 
 interface SectionHeaderWidth {
   width?: string
 }
 
 function RecommendContentsSection() {
+  const [populardata, setPopularData] = useState<PopularData>()
+
+  useEffect(() => {
+    const popularDataFetching = async () => {
+      const response = await getPopularData()
+      setPopularData(response)
+    }
+    popularDataFetching()
+  }, [])
+
+  const handleMouseHoverImage: React.MouseEventHandler<HTMLElement> = e => {
+    const target = e.target
+    console.log(target)
+  }
+
   return (
-    <section>
+    <SectionWrapper>
       <SectionHeader width="32px">추천</SectionHeader>
       <RecommendSectionWrapper>
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
+        {populardata?.results.map(item => (
+          <RecommendSection key={item.id}>
+            <RecommendImage
+              src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
+              alt={`${item.title} 포스터`}
+              onMouseOver={handleMouseHoverImage}
+            />
+          </RecommendSection>
+        ))}
       </RecommendSectionWrapper>
-    </section>
+    </SectionWrapper>
   )
 }
 
 export default RecommendContentsSection
 
+const SectionWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
 const SectionHeader = styled.h2<SectionHeaderWidth>`
   color: #303032;
   font-size: 16px;
   margin: 0;
-  padding: 0;
+  height: 30px;
   display: flex;
   flex-flow: column;
   align-items: flex-start;
+
   &:after {
     content: '';
     display: block;
@@ -38,8 +65,13 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
     border-bottom: 5px solid #303032;
   }
 `
+const RecommendSectionWrapper = styled.ul`
+  display: flex;
+  justify-content: center;
+  margin: 0;
+`
 
-const RecommendSectionWrapper = styled.div`
+const RecommendSection = styled.li`
   margin: 0;
   display: flex;
   justify-content: flex-start;
@@ -52,4 +84,8 @@ const RecommendImage = styled.img`
   border-radius: 5px;
   margin-left: 4px;
   margin-right: 4px;
+  &:hover {
+    filter: saturate(0%) brightness(50%);
+    transition: 0.5s;
+  }
 `
