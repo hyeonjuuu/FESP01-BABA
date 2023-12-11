@@ -94,7 +94,7 @@ function Nav() {
         <Wrapper>
           {/* <DarkModeToggle /> */}
           <DarkModeToggleIcon
-            isDarkMode={$darkMode}
+            $isdarkmode={$darkMode}
             toggleDarkModeAni={toggleDarkMode}
           />
         </Wrapper>

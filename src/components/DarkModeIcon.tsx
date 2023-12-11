@@ -4,25 +4,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 
 interface DarkModeToggleIconProps {
-  isDarkMode: boolean
+  $isdarkmode: boolean
   toggleDarkModeAni: () => void
 }
 
 const DarkModeToggleIcon = ({
-  isDarkMode,
+  $isdarkmode,
   toggleDarkModeAni
 }: DarkModeToggleIconProps) => {
   const iconSpring = useSpring({
-    opacity: isDarkMode ? 0.5 : 1,
-    transform: isDarkMode ? 'scale(1.2)' : 'scale(1)',
-    borderColor: isDarkMode ? 'tomato' : 'rgba(0, 0, 0, 0.8)',
-    borderWidth: isDarkMode ? '2px' : '1px'
+    opacity: $isdarkmode ? 0.5 : 1,
+    transform: $isdarkmode ? 'scale(1.2)' : 'scale(1)',
+    borderColor: $isdarkmode ? 'tomato' : 'rgba(0, 0, 0, 0.8)',
+    borderWidth: $isdarkmode ? '2px' : '1px'
   })
 
   return (
-    <Wrapper onClick={toggleDarkModeAni} isDarkMode={isDarkMode}>
+    <Wrapper onClick={toggleDarkModeAni} $isdarkmode={$isdarkmode}>
       <animated.div style={{ ...iconSpring }}>
-        <FontAwesomeIcon icon={isDarkMode ? faMoon : faSun} />
+        <FontAwesomeIcon icon={$isdarkmode ? faMoon : faSun} />
       </animated.div>
     </Wrapper>
   )
@@ -30,7 +30,7 @@ const DarkModeToggleIcon = ({
 
 export default DarkModeToggleIcon
 
-const Wrapper = styled.div<{ isDarkMode: boolean }>`
+const Wrapper = styled.div<{ $isdarkmode: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,5 +40,5 @@ const Wrapper = styled.div<{ isDarkMode: boolean }>`
   border-style: solid;
   cursor: pointer;
   font-size: 20px;
-  color: ${props => (props.isDarkMode ? 'white' : 'black')};
+  color: ${props => (props.$isdarkmode ? 'white' : 'black')};
 `

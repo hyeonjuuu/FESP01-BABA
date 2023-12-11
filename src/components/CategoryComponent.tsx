@@ -1,5 +1,10 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { FreeMode, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/free-mode'
+import 'swiper/css/pagination'
 
 export interface FontProps {
   fontSize?: string
@@ -50,14 +55,24 @@ function CategoryComponent() {
         </form>
       </CategoryTitle>
       <Category>
-        {categories.map(({ color, text, fontSize }, index) => (
-          <CategoryBox key={index}>
-            <CategoryCircle color={color}></CategoryCircle>
-            <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
-              {text}
-            </CategroyList>
-          </CategoryBox>
-        ))}
+        <SwiperWrapper
+          slidesPerView={14}
+          spaceBetween={8}
+          freeMode={true}
+          modules={[FreeMode, Pagination]}
+          className="mySwiper"
+        >
+          {categories.map(({ color, text, fontSize }, index) => (
+            <SwiperSlideWrapper>
+              <CategoryBox key={index}>
+                <CategoryCircle color={color}></CategoryCircle>
+                <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
+                  {text}
+                </CategroyList>
+              </CategoryBox>
+            </SwiperSlideWrapper>
+          ))}
+        </SwiperWrapper>
       </Category>
     </CategorySection>
   )
@@ -103,8 +118,10 @@ const CategoryBox = styled.li`
   display: flex;
   flex-direction: column;
   align-content: center;
-  justify-content: center;
   padding: 4px;
+  width: 60px;
+  height: 86px;
+  margin: 0 auto 0 auto;
 `
 
 const Category = styled.ul`
@@ -131,4 +148,13 @@ const CategoryCircle = styled.div`
   background-color: ${({ color }) => color};
   align-self: center;
   margin-bottom: 4px;
+`
+
+const SwiperWrapper = styled(Swiper)`
+  width: 1020px;
+`
+
+const SwiperSlideWrapper = styled(SwiperSlide)`
+  width: 100%;
+  height: 86px;
 `
