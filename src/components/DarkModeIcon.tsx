@@ -22,7 +22,7 @@ const DarkModeToggleIcon = ({
   return (
     <Wrapper onClick={toggleDarkModeAni} isDarkMode={isDarkMode}>
       <animated.div style={{ ...iconSpring }}>
-        <FontAwesomeIcon icon={isDarkMode ? faMoon : faSun} />
+        <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
       </animated.div>
     </Wrapper>
   )
