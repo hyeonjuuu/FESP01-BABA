@@ -4,17 +4,28 @@ import HomeImage from '@/assets/icon/Home.png'
 import LikeImage from '@/assets/icon/Like.png'
 import UserImage from '@/assets/icon/User.png'
 import searchImage from '@/assets/icon/Search.png'
+import { Link } from 'react-router-dom'
 
 function Nav() {
   return (
     <>
       <NavContain>
         <Wrapper>
-          <StyledImage src={HomeImage} alt="메인 페이지" />
-          <StyledImage src={searchImage} alt="검색 페이지" />
-          <StyledImage src={AddImage} alt="글쓰기 페이지" />
-          <StyledImage src={LikeImage} alt="좋아요 페이지" />
-          <StyledImage src={UserImage} alt="마이 페이지" />
+          <Link to="/main">
+            <StyledImage src={HomeImage} alt="메인 페이지" />
+          </Link>
+          <Link to="/search">
+            <StyledImage src={searchImage} alt="검색 페이지" />
+          </Link>
+          <Link to="/writing">
+            <StyledImage src={AddImage} alt="글쓰기 페이지" />
+          </Link>
+          <Link to="/mypage">
+            <StyledImage src={LikeImage} alt="좋아요 페이지" />
+          </Link>
+          <Link to="/mypage">
+            <StyledImage src={UserImage} alt="마이 페이지" />
+          </Link>
         </Wrapper>
         <WhiteSpace></WhiteSpace>
       </NavContain>

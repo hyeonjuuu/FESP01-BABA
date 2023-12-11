@@ -1,3 +1,4 @@
+import { StyledLink } from './Home'
 import Logo from '@/components/Logo'
 import styled from 'styled-components'
 import Input from '@/components/Input'
@@ -12,7 +13,9 @@ function Login() {
     <SignUpWrapperDiv>
       <SrOnlyH2>로그인</SrOnlyH2>
       <LogoWrapper>
-        <Logo />
+        <StyledLink to="/">
+          <Logo />
+        </StyledLink>
       </LogoWrapper>
       <LoginFormWrapper>
         <InputWrapper>
@@ -24,11 +27,15 @@ function Login() {
             <FontAwesomeIcon icon={faEye} />
           </EyeDiv>
         </InputWrapper>
+        <StyledLink to="/main">
+          <Button type="submit" text="로그인" />
+        </StyledLink>
 
-        <Button type="submit" text="로그인" />
         <Button $bgcolor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
       </LoginFormWrapper>
-      <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
+      <StyledLink to="/signUp">
+        <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
+      </StyledLink>
     </SignUpWrapperDiv>
   )
 }

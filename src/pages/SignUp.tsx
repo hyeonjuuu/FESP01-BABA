@@ -3,12 +3,17 @@ import Input from '@/components/Input'
 import styled from 'styled-components'
 import Button from '@/components/Button'
 import CheckAccount from '@/components/CheckAccount'
+import { Link } from 'react-router-dom'
+import { StyledLink } from './Home'
 
 function SignUp() {
   return (
     <SignUpWrapperDiv>
       <SrOnlyH2>회원가입</SrOnlyH2>
-      <Logo />
+      <Link to="/">
+        <Logo />
+      </Link>
+
       <Button $bgcolor="#FFDC00" color="#1E1E1E" text="KaKao 로그인" />
       <FormWrapper>
         <label htmlFor="email"></label>
@@ -36,9 +41,13 @@ function SignUp() {
           <input id="personalAgree" type="checkbox" />
           개인정보 수집 및 이용 동의
         </AgreeDiv>
-        <Button type="submit" text="가입하기" />
+        <StyledLink to="/main">
+          <Button type="submit" text="가입하기" />
+        </StyledLink>
       </FormWrapper>
-      <CheckAccount text1="이미 계정이 있으신가요?" text2="로그인" />
+      <StyledLink to="/login">
+        <CheckAccount text1="이미 계정이 있으신가요?" text2="로그인" />
+      </StyledLink>
     </SignUpWrapperDiv>
   )
 }

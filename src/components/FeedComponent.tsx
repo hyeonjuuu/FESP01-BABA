@@ -2,20 +2,27 @@ import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
 import { FontProps } from './CategoryComponent'
+import useThemeStore from '../store/useThemeStore'
 
 interface PaddingProps {
   $padding?: string
 }
 
+interface TextColorProps {
+  $darkMode: boolean
+}
+
 // #Icon 버튼 태그로 바꿔야함!
 function FeedComponent() {
+  const { $darkMode } = useThemeStore()
+
   return (
     <FeedSection>
       <FeedContent>
         <ContentWrapper>
           <CommonDivWrapper $padding="10px">
             <UserImage src="" alt="" />
-            <TextColor>UserName</TextColor>
+            <TextColor $darkMode={$darkMode}>UserName</TextColor>
           </CommonDivWrapper>
           <FeedImage src="" alt="" />
           <ContentTitleWrapper>
@@ -26,14 +33,14 @@ function FeedComponent() {
               <Icon src={like} width="22px" height="22px" alt="좋아요" />
             </CommonDivWrapper>
           </ContentTitleWrapper>
-          <ContentText>
+          <ContentText $darkMode={$darkMode}>
             어쩌구 저쩌구 어쩌구 저쩌구 어쩌구 저쩌구 어쩌구 저쩌구
           </ContentText>
 
-          <Button fontSize="12px" fontWeight="300">
+          <Button fontSize="12px" fontWeight="300" $darkMode={$darkMode}>
             더보기
           </Button>
-          <Button>댓글보기</Button>
+          <Button $darkMode={$darkMode}>댓글보기</Button>
         </ContentWrapper>
       </FeedContent>
     </FeedSection>
@@ -67,8 +74,8 @@ const UserImage = styled.img`
   border-radius: 50%;
   border: 1px solid black;
 `
-const TextColor = styled.span`
-  color: #444444;
+const TextColor = styled.span<TextColorProps>`
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#444444')};
 `
 const FeedImage = styled.img`
   height: 310px;
@@ -89,11 +96,10 @@ const ContentWrapper = styled.div`
 const ContentTitle = styled.span`
   font-weight: bold;
   font-size: 20px;
-  color: #303032;
 `
-const ContentText = styled.p`
+const ContentText = styled.p<TextColorProps>`
   text-align: left;
-  color: #444444;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#444444')};
   margin: 0;
 `
 const ContentTitleWrapper = styled(CommonDivWrapper)`
@@ -112,7 +118,8 @@ const Button = styled.button<FontProps>`
   cursor: pointer;
   font-size: ${({ fontSize }) => fontSize};
   font-weight: ${({ fontWeight }) => fontWeight};
-  color: #777777;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777777')};
+
   align-self: flex-start;
   display: flex;
   padding: 0;
