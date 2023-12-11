@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SearchResultBar from '@/components/search/SearchResultBar'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
 
 function SearchPage() {
   return (
@@ -22,10 +23,18 @@ function SearchPage() {
         <SeeAllBtn>모두 보기</SeeAllBtn>
       </Wrapper>
       <ResultWrapper>
-        <SearchResultBar />
-        <SearchResultBar />
-        <SearchResultBar />
-        <SearchResultBar />
+        <StyledLink to="/detail">
+          <SearchResultBar />
+        </StyledLink>
+        <StyledLink to="/detail">
+          <SearchResultBar />
+        </StyledLink>
+        <StyledLink to="/detail">
+          <SearchResultBar />
+        </StyledLink>
+        <StyledLink to="/detail">
+          <SearchResultBar />
+        </StyledLink>
       </ResultWrapper>
     </Box>
   )
@@ -120,5 +129,9 @@ const ResultWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+`
+
+const StyledLink = styled(Link)`
   width: 100%;
 `

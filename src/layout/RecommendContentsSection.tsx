@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
 import defaultImage from '@/assets/defaultImage.webp'
+import { Link } from 'react-router-dom'
 
 interface SectionHeaderWidth {
   width?: string
@@ -16,11 +17,21 @@ function RecommendContentsSection() {
         추천
       </SectionHeader>
       <RecommendSectionWrapper>
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
-        <RecommendImage src={defaultImage} alt="" />
+        <Link to="/detail">
+          <RecommendImage src={defaultImage} alt="" />
+        </Link>
+        <Link to="/detail">
+          <RecommendImage src={defaultImage} alt="" />
+        </Link>
+        <Link to="/detail">
+          <RecommendImage src={defaultImage} alt="" />
+        </Link>
+        <Link to="/detail">
+          <RecommendImage src={defaultImage} alt="" />
+        </Link>
+        <Link to="/detail">
+          <RecommendImage src={defaultImage} alt="" />
+        </Link>
       </RecommendSectionWrapper>
     </section>
   )

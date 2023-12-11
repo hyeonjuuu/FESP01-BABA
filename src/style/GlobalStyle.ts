@@ -15,8 +15,11 @@ body, #root {
   }
   button {
   cursor: pointer;
-      
   font-family: GmarketSans;
+  }
+  a{
+  text-decoration: none;
+  color: inherit;
   }
 
 `
