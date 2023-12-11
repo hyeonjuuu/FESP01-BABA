@@ -223,6 +223,11 @@ const Btn = styled.button`
   border: none;
   background-color: ${props => props.theme.bgColor};
 
+  & > img {
+    filter: ${props =>
+      props.theme.bgColor === '#1E1E1E' ? 'invert(1)' : 'none'};
+  }
+
   @media (min-width: 701px) {
     gap: 16px;
     width: 100%;
