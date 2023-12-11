@@ -1,10 +1,12 @@
 import styled from 'styled-components'
+import useThemeStore from '../store/useThemeStore'
 import defaultImage from '@/assets/defaultImage.webp'
 import { useEffect, useState } from 'react'
 import getPopularData from '@/api/getPopularData'
 
 interface SectionHeaderWidth {
   width?: string
+  $darkMode: boolean
 }
 
 function RecommendContentsSection() {
@@ -23,9 +25,13 @@ function RecommendContentsSection() {
     console.log(target)
   }
 
+  const { $darkMode } = useThemeStore()
+
   return (
     <SectionWrapper>
-      <SectionHeader width="32px">추천</SectionHeader>
+      <SectionHeader width="32px" $darkMode={$darkMode}>
+        추천
+      </SectionHeader>
       <RecommendSectionWrapper>
         {populardata?.results.map(item => (
           <RecommendSection key={item.id}>
@@ -50,7 +56,6 @@ const SectionWrapper = styled.section`
 `
 
 const SectionHeader = styled.h2<SectionHeaderWidth>`
-  color: #303032;
   font-size: 16px;
   margin: 0;
   height: 30px;
@@ -63,6 +68,7 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
     display: block;
     width: ${({ width }) => width};
     border-bottom: 5px solid #303032;
+    border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   }
 `
 const RecommendSectionWrapper = styled.ul`

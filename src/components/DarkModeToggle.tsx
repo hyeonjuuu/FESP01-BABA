@@ -1,6 +1,6 @@
 import useThemeStore from '@/store/useThemeStore'
 import styled from 'styled-components'
-import darkModeIcon from '@/assets/icon/Darkmode.svg'
+import darkModeIcon from '@/assets/icon/darkMode.svg'
 import lightModeIcon from '@/assets/icon/Lightmode.svg'
 
 interface ButtonProps {
@@ -8,17 +8,22 @@ interface ButtonProps {
   darkMode?: boolean
 }
 
-function DarkModeToggle() {
-  const { darkMode, toggleDarkMode } = useThemeStore()
+function darkModeToggle() {
+  const { $darkMode, toggleDarkMode } = useThemeStore()
 
   return (
-    <ModeButton onClick={toggleDarkMode}>
-      <ScreenMode src={darkMode ? lightModeIcon : darkModeIcon} size="22px" />
-    </ModeButton>
+    <ButtonStyle onClick={toggleDarkMode}>
+      <ScreenMode src={$darkMode ? lightModeIcon : darkModeIcon} size="22px" />
+    </ButtonStyle>
   )
 }
 
-export default DarkModeToggle
+export default darkModeToggle
+
+const ButtonStyle = styled.button`
+  border-radius: 50%;
+  padding: 5px;
+`
 
 const ModeButton = styled.button`
   box-sizing: border-box;

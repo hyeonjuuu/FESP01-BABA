@@ -1,9 +1,16 @@
-import DetailReview from '@/components/DetailReview'
-import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styled from 'styled-components'
+import useThemeStore from '../store/useThemeStore'
+import DetailReview from '@/components/DetailReview'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
+
+interface DirectorDivProps {
+  $darkMode: boolean
+}
 
 function Detail() {
+  const { $darkMode } = useThemeStore()
+
   return (
     <>
       <DetailDivWrapper>
@@ -39,7 +46,7 @@ function Detail() {
           2시간 44분
         </MovieInfoDiv>
         <DirectorInfoDiv>
-          <DirectorDiv>
+          <DirectorDiv $darkMode={$darkMode}>
             감독
             <span>|</span>
           </DirectorDiv>
@@ -71,7 +78,6 @@ const DetailDivWrapper = styled.div`
 
 const DetailH2 = styled.h2`
   font-size: 22px;
-  color: #303032;
   text-align: start;
 `
 
@@ -108,10 +114,10 @@ const DirectorInfoDiv = styled.div`
   gap: 5px;
 `
 
-const DirectorDiv = styled.div`
+const DirectorDiv = styled.div<DirectorDivProps>`
   display: flex;
   justify-content: start;
   align-items: center;
   gap: 5px;
-  color: #777;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777')};
 `

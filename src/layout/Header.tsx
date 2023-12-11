@@ -1,33 +1,60 @@
 import styled from 'styled-components'
+import useThemeStore from '../store/useThemeStore'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import DarkModeToggle from '@/components/DarkModeToggle'
+import { useNavigate } from 'react-router-dom'
 
-function Header() {
+interface HeaderDivProps {
+  $darkMode: boolean
+}
+
+interface ArrowDivProps {
+  $isHome: boolean
+}
+
+function Header({ isHome }: { isHome: boolean }) {
+  const { $darkMode } = useThemeStore()
+  const navigate = useNavigate()
+
+  const handleGoBack = () => {
+    navigate(-1)
+  }
+
   return (
-    <HeaderDiv>
-      <HeaderDiv>
-        <ArrowDiv>
-          <FontAwesomeIcon icon={faAngleLeft} />
+    <HeaderWrappderDiv>
+      <HeaderDiv $darkMode={$darkMode}>
+        <ArrowDiv $isHome={isHome} onClick={handleGoBack}>
+          <StyledFontAwesomeIcon icon={faAngleLeft} />
         </ArrowDiv>
         <DarkModeToggle />
       </HeaderDiv>
-    </HeaderDiv>
+    </HeaderWrappderDiv>
   )
 }
 
 export default Header
 
-const HeaderDiv = styled.div`
+const HeaderWrappderDiv = styled.div`
   width: 100%;
   max-width: 370px;
 `
 
-const ArrowDiv = styled.div`
+const HeaderDiv = styled.div<HeaderDivProps>`
   width: 100%;
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
   padding: 10px;
   border-bottom: 2px solid black;
+  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : 'black')};
+`
+
+const ArrowDiv = styled.div<ArrowDivProps>`
+  visibility: ${({ $isHome }) => ($isHome ? 'hidden' : 'visible')};
+  cursor: pointer;
+`
+
+const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
+  font-size: 24px;
 `
