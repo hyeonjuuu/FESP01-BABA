@@ -1,18 +1,11 @@
 import styled from 'styled-components'
-import useThemeStore from '../store/useThemeStore'
 import DetailReview from '@/components/DetailReview'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 
-interface DirectorDivProps {
-  $darkMode: boolean
-}
-
 function Detail() {
-  const { $darkMode } = useThemeStore()
-
   return (
-    <>
+    <Container>
       <DetailDivWrapper>
         <DetailH2>미션 임파서블 : 데드 레코닝 PART ONE</DetailH2>
         <StarDiv>
@@ -26,77 +19,103 @@ function Detail() {
           />
           <span>4.5</span>
         </StarDiv>
-        <ImgDiv>
-          <img
-            src="https://picsum.photos/seed/picsum/200/300"
-            alt="영화 이미지"
-            width="100%"
-            height="100%"
-            object-fit="cover"
-          ></img>
-        </ImgDiv>
 
-        <MovieInfoDiv>
-          <CertificationDiv>15</CertificationDiv>
-          <span>|</span>
-          2023
-          <span>|</span>
-          액션 &middot; 스릴러
-          <span>|</span>
-          2시간 44분
-        </MovieInfoDiv>
-        <DirectorInfoDiv>
-          <DirectorDiv $darkMode={$darkMode}>
-            감독
+        <Img
+          src="https://picsum.photos/seed/picsum/200/300"
+          alt="영화 이미지"
+          width="100%"
+          height="100%"
+          object-fit="cover"
+        ></Img>
+
+        <Wrapper>
+          <MovieInfoDiv>
+            <CertificationDiv>15</CertificationDiv>
             <span>|</span>
-          </DirectorDiv>
-          크리스토퍼 맥쿼리
-        </DirectorInfoDiv>
+            2023
+            <span>|</span>
+            액션 &middot; 스릴러
+            <span>|</span>
+            2시간 44분
+          </MovieInfoDiv>
+          <DirectorInfoDiv>
+            <DirectorDiv>
+              감독
+              <span>|</span>
+            </DirectorDiv>
+            크리스토퍼 맥쿼리
+          </DirectorInfoDiv>
+        </Wrapper>
       </DetailDivWrapper>
 
-      <DetailReview />
-      <DetailReview />
-      <DetailReview />
-      <DetailReview />
-      <DetailReview />
-    </>
+      <Wrapper>
+        <DetailReview />
+        <DetailReview />
+        <DetailReview />
+        <DetailReview />
+        <DetailReview />
+      </Wrapper>
+    </Container>
   )
 }
 
 export default Detail
 
+const Container = styled.section`
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  @media (max-width: 700px) {
+    margin-bottom: 90px;
+  }
+`
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+  padding-bottom: 10px;
+`
+
 const DetailDivWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 370px;
   height: auto;
-  margin: auto;
-  padding-bottom: 10px;
+  margin: 0 auto;
   margin-bottom: 20px;
   border-bottom: 1px solid black;
 `
 
 const DetailH2 = styled.h2`
-  font-size: 22px;
+  font-size: 26px;
+
   text-align: start;
 `
 
 const StarDiv = styled.div`
   display: flex;
-  justify-content: start;
+  width: 100%;
   align-items: center;
+  justify-self: start;
+  margin: 9px;
   gap: 5px;
 `
 
-const ImgDiv = styled.div`
+const Img = styled.img`
   width: 100%;
   height: 320px;
+  margin: 10px;
+  border-radius: 5px;
 `
 
 const MovieInfoDiv = styled.div`
   display: flex;
-  justify-content: start;
+  justify-self: start;
   align-items: center;
+  width: 100%;
   gap: 5px;
   padding: 10px 10px 0 0;
 `
@@ -109,15 +128,16 @@ const CertificationDiv = styled.div`
 
 const DirectorInfoDiv = styled.div`
   display: flex;
-  justify-content: start;
+  justify-self: start;
   align-items: center;
   gap: 5px;
+  width: 100%;
 `
 
-const DirectorDiv = styled.div<DirectorDivProps>`
+const DirectorDiv = styled.div`
   display: flex;
   justify-content: start;
   align-items: center;
   gap: 5px;
-  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777')};
+  color: #777;
 `

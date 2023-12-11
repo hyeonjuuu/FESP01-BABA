@@ -38,6 +38,9 @@ export default Header
 const HeaderWrappderDiv = styled.div`
   width: 100%;
   max-width: 370px;
+  @media (min-width: 701px) {
+    display: none;
+  }
 `
 
 const HeaderDiv = styled.div<HeaderDivProps>`

@@ -1,23 +1,26 @@
 import styled from 'styled-components'
 import FeedComponent from '@/components/FeedComponent'
-import CategoryComponent from './../components/CategoryComponent'
-import RecommendContentsSection from '@/layout/RecommendContentsSection'
-import SideBar from '@/components/SideBar'
+import CategoryComponent from '@/components/CategoryComponent'
 
 function Main() {
   return (
     <>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
-      <CategoryComponent />
-      <RecommendContentsSection />
-      <FeedComponent />
-      <FeedComponent />
-      <SideBar />
+      <Wrapper>
+        <CategoryComponent />
+        <FeedComponent />
+        <FeedComponent />
+      </Wrapper>
     </>
   )
 }
 
 export default Main
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 const MainPageTitle = styled.h1`
   position: absolute;

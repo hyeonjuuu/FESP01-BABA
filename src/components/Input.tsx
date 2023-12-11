@@ -5,9 +5,18 @@ interface InputProps {
   placeholder?: string
   maxlength?: number
   id?: string
+  width: string
+  noBorder?: boolean // 새로운 prop 추가
 }
 
-function Input({ type, placeholder, maxlength, id }: InputProps) {
+function Input({
+  type,
+  placeholder,
+  maxlength,
+  id,
+  width = '100%',
+  noBorder = false // 기본값은 false
+}: InputProps) {
   return (
     <>
       <StyledInput
@@ -15,6 +24,8 @@ function Input({ type, placeholder, maxlength, id }: InputProps) {
         type={type}
         placeholder={placeholder}
         maxLength={maxlength}
+        width={width}
+        noBorder={noBorder}
       />
     </>
   )
@@ -22,17 +33,20 @@ function Input({ type, placeholder, maxlength, id }: InputProps) {
 
 export default Input
 
-const StyledInput = styled.input`
-  width: 100%;
-  max-width: 300px;
-  height: 32px;
-  border: 1px solid #bcbcbc;
+const StyledInput = styled.input<InputProps>`
+  width: ${props => props.width || '100%'};
+  height: 44px;
+  border: ${props =>
+    props.noBorder ? 'none' : '1.5px solid #bcbcbc'}; // 조건부로 border 설정
   border-radius: 5px;
   padding-left: 10px;
-  margin-bottom: 10px;
 
   &::placeholder {
     color: #bcbcbc;
     font-family: 'GmarketSans';
+  }
+  &:focus {
+    outline: none;
+    border-color: #3797ef;
   }
 `

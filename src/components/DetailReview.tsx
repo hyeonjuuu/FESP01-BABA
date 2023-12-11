@@ -12,15 +12,14 @@ function DetailReview() {
 
   return (
     <DetailReviewDivWrapper>
-      <ImgDiv>
-        <img
-          src="https://picsum.photos/id/237/200/300"
-          alt="피드 이미지"
-          width="100%"
-          height="100%"
-          object-fit="cover"
-        ></img>
-      </ImgDiv>
+      <Img
+        src="https://picsum.photos/id/237/200/300"
+        alt="피드 이미지"
+        width="100%"
+        height="100%"
+        object-fit="cover"
+      ></Img>
+
       <DetailReviewDiv>
         <NameStartDiv>
           <div>UserName</div>
@@ -46,15 +45,16 @@ const DetailReviewDivWrapper = styled.div`
   display: flex;
   width: 370px;
   height: 130px;
-  margin: auto;
-  border: solid 1px black;
+  margin: 0 auto;
+  border: solid 1.5px;
   border-radius: 5px;
-  margin-bottom: 20px;
 `
 
-const ImgDiv = styled.div`
+const Img = styled.img`
   width: 120px;
   height: 100%;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 `
 
 const DetailReviewDiv = styled.div`

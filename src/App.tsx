@@ -1,8 +1,8 @@
 import router from '../routes'
 import { Suspense } from 'react'
 import GlobalStyle from './style/GlobalStyle'
-import { ThemeProvider } from 'styled-components'
 import useThemeStore from './store/useThemeStore'
+import { ThemeProvider } from 'styled-components'
 import { RouterProvider } from 'react-router-dom'
 
 function App() {

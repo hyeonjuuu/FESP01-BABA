@@ -5,16 +5,18 @@ interface ButtonProps {
   $bgcolor?: string
   color?: string
   text?: string
+  width?: string
 }
 
 function Button({
   type = 'button',
   $bgcolor = '#303032',
   color = '#46F3F3',
-  text
+  text,
+  width = '100%'
 }: ButtonProps) {
   return (
-    <BtnButton type={type} $bgcolor={$bgcolor} color={color}>
+    <BtnButton type={type} $bgcolor={$bgcolor} color={color} width={width}>
       {text}
     </BtnButton>
   )
@@ -23,10 +25,9 @@ function Button({
 export default Button
 
 const BtnButton = styled.button<ButtonProps>`
-  width: 100%;
-  max-width: 310px;
+  width: ${props => props.width || '100%'};
   height: 48px;
-  margin-bottom: 20px;
+  margin: 20px 0;
   background-color: ${props => props.$bgcolor};
   color: ${props => props.color};
   border: 0.5px solid black;

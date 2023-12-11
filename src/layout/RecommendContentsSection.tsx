@@ -94,3 +94,12 @@ const RecommendImage = styled.img`
     transition: 0.5s;
   }
 `
+
+const Wrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @media (min-width: 391px) {
+    display: none;
+  }
+`
