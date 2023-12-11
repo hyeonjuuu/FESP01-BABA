@@ -25,7 +25,7 @@ function Header({ isHome }: { isHome: boolean }) {
     <HeaderWrappderDiv>
       <HeaderDiv $darkMode={$darkMode}>
         <ArrowDiv $isHome={isHome} onClick={handleGoBack}>
-          <FontAwesomeIcon icon={faAngleLeft} />
+          <StyledFontAwesomeIcon icon={faAngleLeft} />
         </ArrowDiv>
         <DarkModeToggle />
       </HeaderDiv>
@@ -53,4 +53,8 @@ const HeaderDiv = styled.div<HeaderDivProps>`
 const ArrowDiv = styled.div<ArrowDivProps>`
   visibility: ${({ $isHome }) => ($isHome ? 'hidden' : 'visible')};
   cursor: pointer;
+`
+
+const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
+  font-size: 24px;
 `

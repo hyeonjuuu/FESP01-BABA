@@ -11,15 +11,20 @@ function darkModeToggle() {
   const { $darkMode, toggleDarkMode } = useThemeStore()
 
   return (
-    <button onClick={toggleDarkMode}>
+    <ButtonStyle onClick={toggleDarkMode}>
       <ScreenMode src={$darkMode ? lightModeIcon : darkModeIcon} size="22px" />
-    </button>
+    </ButtonStyle>
   )
 }
 
 export default darkModeToggle
 
+const ButtonStyle = styled.button`
+  border-radius: 50%;
+  padding: 5px;
+`
+
 const ScreenMode = styled.img<SizeProps>`
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 `
