@@ -27,7 +27,8 @@ const ResultBarContain = styled.div`
   justify-content: space-between;
   width: 100%;
   @media (min-width: 701px) {
-    max-width: 69%;
+    /* max-width: 69%; */
+    max-width: 100%;
   }
 `
 

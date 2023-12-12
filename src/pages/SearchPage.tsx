@@ -165,4 +165,7 @@ const ResultWrapper = styled.div`
 
 const StyledLink = styled(Link)`
   width: 100%;
+  @media (min-width: 701px) {
+    width: 70%;
+  }
 `
