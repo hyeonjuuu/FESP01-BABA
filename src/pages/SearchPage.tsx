@@ -1,10 +1,61 @@
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import SearchResultBar from '@/components/search/SearchResultBar'
+import SearchResultBar, {
+  Contain,
+  ResultBar,
+  ResultBarContain,
+  ResultBarInfo,
+  Warppaer
+} from '@/components/search/SearchResultBar'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import getSearchMovies from '@/api/getSearchMovies'
+import debounce from '@/utils/debounce'
+
+interface SearchListProps {
+  id: number
+  title: string
+  poster_path: string | null
+}
+
+interface SearchResultProps {
+  id: number
+  title: string
+  poster_path: string | null
+}
 
 function SearchPage() {
+  const [searchInput, setSearchInput] = useState<string>('')
+
+  const [searchList, setSearchList] = useState<SearchListProps[]>([])
+
+  const handleSearchInput = debounce(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchInput(e.target.value.toLowerCase())
+    },
+    300
+  )
+
+  const handleSearchBtn = async (e: React.MouseEvent) => {
+    e.preventDefault()
+
+    try {
+      const searchData = await getSearchMovies(searchInput)
+      const searchResults = searchData.results.map(
+        (result: SearchResultProps) => ({
+          id: result.id,
+          title: result.title,
+          poster_path: result.poster_path
+        })
+      )
+      setSearchList(searchResults)
+    } catch (error) {
+      console.error(error)
+    }
+    setSearchInput('')
+  }
+
   return (
     <Box>
       <h3 hidden>검색창</h3>
@@ -13,11 +64,38 @@ function SearchPage() {
           <Icon>
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </Icon>
-          <Input type="text" placeholder="Search" />
+          <Input
+            type="text"
+            placeholder="Search"
+            onChange={handleSearchInput}
+          />
         </SearchBar>
-        <ClearBtn>취소</ClearBtn>
+        <ClearBtn onClick={handleSearchBtn} disabled={searchInput.length === 0}>
+          검색
+        </ClearBtn>
       </SearchBarWrapper>
       <HorizontalLine />
+      <Wrapper>
+        <RecentSearch>검색 결과</RecentSearch>
+      </Wrapper>
+      <ResultWrapper>
+        {searchList.map(result => (
+          <StyledLink key={result.id} to={`/detail/${result.id}`}>
+            <ResultBarContain>
+              <Contain>
+                <Image
+                  src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                  alt={`${result.title} 이미지`}
+                />
+                <Warppaer>
+                  <ResultBar>{result.title}</ResultBar>
+                  <ResultBarInfo>{`게시물 100개 미만개`}</ResultBarInfo>
+                </Warppaer>
+              </Contain>
+            </ResultBarContain>
+          </StyledLink>
+        ))}
+      </ResultWrapper>
       <Wrapper>
         <RecentSearch>최근 검색</RecentSearch>
         <SeeAllBtn>모두 보기</SeeAllBtn>
@@ -168,4 +246,16 @@ const StyledLink = styled(Link)`
   @media (min-width: 701px) {
     width: 70%;
   }
+`
+
+const Image = styled.img`
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: tomato;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px;
+  margin-left: 0;
 `
