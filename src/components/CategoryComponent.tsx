@@ -5,7 +5,7 @@ import { FreeMode, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export interface FontProps {
   fontSize?: string
@@ -20,13 +20,12 @@ interface SizeProps {
 
 function CategoryComponent() {
   const { $darkMode } = useThemeStore()
-  const [selectCategory, setSelectCategory] = useState('')
+  const [selectCategory, setSelectCategory] = useState('영화')
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     // const select = document.getElementById('영화드라마')
     const select = e.currentTarget.value
     setSelectCategory(select)
   }
-  console.log(selectCategory)
 
   const movieCategories = [
     { color: '#F56A1E', text: '액션' },
@@ -49,8 +48,8 @@ function CategoryComponent() {
     { color: '#015097', text: '전쟁' }
   ]
   const dramaCategories = [
-    { color: '#F56A1E', text: '액션&어드벤쳐' },
-    { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
+    { color: '#F56A1E', text: '액션&어드벤쳐', fontSize: '12px' },
+    { color: '#3FD6A6', text: '애니메이션', fontSize: '12px' },
     { color: '#FF99AF', text: '코미디' },
     { color: '#DF461F', text: '범죄' },
     { color: '#496BF2', text: '다큐' },
@@ -65,7 +64,6 @@ function CategoryComponent() {
     { color: '#015097', text: '토크' },
     { color: '#015097', text: '전쟁&정치' }
   ]
-
   return (
     <CategorySection>
       <CategoryTitle>
@@ -73,44 +71,47 @@ function CategoryComponent() {
           카테고리
         </SectionHeader>
         <form action="#">
-          <label htmlFor="영화드라마" aria-label="선택하세요"></label>
-          <SelectLabel name="languages" id="영화드라마" onChange={handleChange}>
+          <label htmlFor="영화/드라마" aria-label="선택하세요"></label>
+          <SelectLabel
+            name="languages"
+            id="영화/드라마"
+            onChange={handleChange}
+          >
             <option value="영화">영화</option>
             <option value="드라마">드라마</option>
           </SelectLabel>
         </form>
       </CategoryTitle>
-      <Category>
-        <SwiperWrapper
-          slidesPerView={14}
-          spaceBetween={8}
-          freeMode={true}
-          modules={[FreeMode, Pagination]}
-          className="mySwiper"
-        >
-          {selectCategory === '영화'
-            ? movieCategories.map(({ color, text, fontSize }, index) => (
-                <SwiperSlideWrapper>
-                  <CategoryBox key={index}>
-                    <CategoryCircle color={color}></CategoryCircle>
-                    <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
-                      {text}
-                    </CategroyList>
-                  </CategoryBox>
-                </SwiperSlideWrapper>
-              ))
-            : dramaCategories.map(({ color, text, fontSize }, index) => (
-                <SwiperSlideWrapper>
-                  <CategoryBox key={index}>
-                    <CategoryCircle color={color}></CategoryCircle>
-                    <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
-                      {text}
-                    </CategroyList>
-                  </CategoryBox>
-                </SwiperSlideWrapper>
-              ))}
-        </SwiperWrapper>
-      </Category>
+      <SwiperWrapper
+        slidesPerView={6}
+        spaceBetween={2}
+        modules={[Pagination]}
+        className="mySwiper"
+        breakpoints={{
+          520: {
+            slidesPerView: 8,
+            spaceBetween: 0
+          }
+        }}
+      >
+        {selectCategory === '영화'
+          ? movieCategories.map(({ color, text, fontSize }, index) => (
+              <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
+                <CategoryCircle color={color}></CategoryCircle>
+                <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
+                  {text}
+                </CategroyList>
+              </SwiperSlideWrapper>
+            ))
+          : dramaCategories.map(({ color, text, fontSize }, index) => (
+              <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
+                <CategoryCircle color={color}></CategoryCircle>
+                <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
+                  {text}
+                </CategroyList>
+              </SwiperSlideWrapper>
+            ))}
+      </SwiperWrapper>
     </CategorySection>
   )
 }
@@ -118,7 +119,8 @@ function CategoryComponent() {
 export default CategoryComponent
 
 const CategorySection = styled.section`
-  margin: 36px 0 0 0;
+  margin: 36px auto 0 auto;
+  max-width: 1020px;
 `
 
 const SectionHeader = styled.h2<SizeProps>`
@@ -151,30 +153,10 @@ const SelectLabel = styled.select`
   font-family: GmarketSans;
   color: #28c7c7;
 `
-const CategoryBox = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  padding: 4px;
-  width: 60px;
-  height: 86px;
-  margin: 0 auto 0 auto;
-`
 
-const Category = styled.ul`
-  list-style: none;
-  display: flex;
-  flex-direction: row;
-  padding: 0;
-  margin-top: 14px;
-  margin-bottom: 22px;
-`
 const CategroyList = styled.div<FontProps>`
-  box-sizing: border-box;
-  display: inline;
   text-align: center;
   color: #444444;
-  text-align: center;
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
 `
@@ -185,13 +167,43 @@ const CategoryCircle = styled.div`
   background-color: ${({ color }) => color};
   align-self: center;
   margin-bottom: 4px;
+  margin: 4px auto;
 `
-
 const SwiperWrapper = styled(Swiper)`
-  width: 1020px;
+  display: flex;
+  flex-direction: column;
+  z-index: -999;
+  margin: 0 6px;
+  @media (min-width: 1280px) and (max-width: 1920px) {
+    max-width: 720px;
+    min-width: 610px;
+    width: 100%;
+    flex-shrink: 2;
+  }
+  @media (min-width: 1025px) and (max-width: 1279px) {
+    max-width: 610px;
+    min-width: 580px;
+    width: 100%;
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    max-width: 680px;
+    width: 100%;
+    min-width: 620px;
+  }
+  @media (min-width: 520px) and (max-width: 767px) {
+    max-width: 520px;
+    width: 100%;
+  }
+  @media (min-width: 320px) and (max-width: 519px) {
+    max-width: 320px;
+    width: 100%;
+  }
 `
 
 const SwiperSlideWrapper = styled(SwiperSlide)`
-  width: 100%;
-  height: 86px;
+  z-index: -999;
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  margin-top: 10px;
 `
