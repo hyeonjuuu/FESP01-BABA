@@ -14,7 +14,8 @@ export const addReview = async (
   movie_id: string,
   user_id: string,
   text: string,
-  ott: string[]
+  ott: string[],
+  rating: number
 ) => {
   try {
     const { data, error } = await supabaseAdmin.from('reviews').insert([
@@ -22,7 +23,8 @@ export const addReview = async (
         movie_id,
         user_id,
         text,
-        ott
+        ott,
+        rating
       }
     ])
 

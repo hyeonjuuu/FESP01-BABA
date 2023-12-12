@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import ottIcons from '@/utils/ottIconImage'
-import { ottIconNames } from '@/utils/ottIconImage'
 import Button from '@/components/Button'
+import { useEffect, useState } from 'react'
+import ottIcons from '@/utils/ottIconImage'
 import { addReview } from '@/api/reviewApi'
-import getMovieImage from '@/api/getMovieImage'
 import { useNavigate } from 'react-router-dom'
+import getMovieImage from '@/api/getMovieImage'
+import StarRating from '@/components/StarRating'
+import { ottIconNames } from '@/utils/ottIconImage'
 
 function Writing() {
   const naviagte = useNavigate()
 
-  const [text, setText] = useState('')
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [movieImage, setMovieImage] = useState()
+  const [rating, setRating] = useState(0)
+  const [text, setText] = useState('')
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
@@ -35,7 +37,6 @@ function Writing() {
       const firstPosterPath = movieImageData.posters[0].file_path
 
       setMovieImage(firstPosterPath)
-      // console.log(movieImageData)
     } catch (error) {
       console.error(error)
     }
@@ -44,6 +45,11 @@ function Writing() {
   useEffect(() => {
     handleMovieImage()
   }, [])
+
+  //# 별점
+  const handleRatingChange = (newRating: number) => {
+    setRating(newRating)
+  }
 
   const handleFocus = () => {
     if (text === 'Enter your text here...') {
@@ -87,8 +93,10 @@ function Writing() {
         'movie_id',
         '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', //user_id
         text,
-        selectedOtt
+        selectedOtt,
+        rating
       )
+      alert('리뷰가 등록되었습니다!')
       naviagte('/main')
     } catch (error) {
       console.error(error)
@@ -141,6 +149,10 @@ function Writing() {
             />
           )}
         </OriginalImage>
+
+        <StarContainer>
+          평점을 선택해주세요 <StarRating onRatingChange={handleRatingChange} />
+        </StarContainer>
 
         <FeedText
           onFocus={handleFocus}
@@ -230,6 +242,15 @@ const MoviePoster = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`
+
+const StarContainer = styled.div`
+  width: 370px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
 `
 
 const FeedText = styled.textarea`
