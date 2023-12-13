@@ -9,21 +9,9 @@ import StarRating from '@/components/StarRating'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import {
-  ClearBtn,
-  Icon,
-  Image,
-  Input,
-  RecentSearch,
-  SearchBar,
-  SearchBarWrapper
-} from './SearchPage'
+import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import getSearchMovies from '@/api/getSearchMovies'
-import {
-  ResultBar,
-  ResultBarContain,
-  Warppaer
-} from '@/components/search/SearchResultBar'
+import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 
 function Writing() {
   const naviagte = useNavigate()
@@ -272,33 +260,57 @@ const FormStyle = styled.form`
   gap: 5px;
 `
 
+const SearchBarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  max-width: 390px;
+  @media (min-width: 701px) {
+    width: 100%;
+  }
+`
+
+const ResultBarContain = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`
+
+const SearchBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  padding: 10px;
+  background-color: #e8e8e8;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 80%;
+`
+
+const ResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  @media (min-width: 701px) {
+    max-width: 400px;
+  }
+`
+
+const Contain = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`
+
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: 60px;
   max-width: 390px;
   overflow-x: scroll;
-`
-
-const ResultWrapper = styled.div`
-  background-color: pink;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 500px;
-
-  @media (min-width: 701px) {
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-  }
-`
-
-const Contain = styled.div`
-  display: flex;
-  /* flex-direction: column; */
-  align-items: center;
-  cursor: pointer;
 `
 
 const OttWrapper = styled.div`

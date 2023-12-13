@@ -26,11 +26,6 @@ export const ResultBarContain = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-
-  @media (min-width: 701px) {
-    /* max-width: 69%; */
-    max-width: 100%;
-  }
 `
 
 const Image = styled.span`
