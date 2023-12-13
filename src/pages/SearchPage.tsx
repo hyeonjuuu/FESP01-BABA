@@ -1,5 +1,9 @@
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import getSearchMovies from '@/api/getSearchMovies'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import SearchResultBar, {
   Contain,
   ResultBar,
@@ -7,11 +11,6 @@ import SearchResultBar, {
   ResultBarInfo,
   Warppaer
 } from '@/components/search/SearchResultBar'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import getSearchMovies from '@/api/getSearchMovies'
-import debounce from '@/utils/debounce'
 
 interface SearchListProps {
   id: number
@@ -26,37 +25,20 @@ interface SearchResultProps {
 }
 
 function SearchPage() {
-  const inputRef = useRef<string | null>(null)
-
-  const [searchInput, setSearchInput] = useState<string>('')
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
-  const [isState, setIsState] = useState<boolean>(false)
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
 
-  const handleSearchInput = debounce(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      // setSearchInput(e.target.value.toLowerCase())
-      e.target.value = e.target.value.toLowerCase()
-      setIsSearchBtnDisabled(e.target.value.length === 0) // input value가 변경될 때마다 검색 버튼의 활성화 상태 갱신
-    },
-    500
-  )
-
-  // useEffect(() => {
-  //   if (isState) {
-  //     // setSearchInput('')
-  //     setIsState(false)
-  //   }
-  // }, [isState])
-
-  console.log('searchInput: ', searchInput)
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = e.target.value.toLowerCase()
+    setIsSearchBtnDisabled(e.target.value.length === 0) // input value가 변경될 때마다 검색 버튼의 활성화 상태 갱신
+  }
 
   const handleSearchBtn = async (e: React.MouseEvent) => {
     e.preventDefault()
 
     try {
-      // const searchData = await getSearchMovies(searchInput)
-      const searchData = await getSearchMovies(inputRef?.current?.value)
+      const searchData = await getSearchMovies(inputRef.current?.value || '')
 
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
@@ -69,9 +51,7 @@ function SearchPage() {
     } catch (error) {
       console.error(error)
     } finally {
-      // setIsState(true)
-      // setSearchInput('')
-      inputRef.current.value = ''
+      inputRef.current!.value = ''
       setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
@@ -91,13 +71,7 @@ function SearchPage() {
             ref={inputRef}
           />
         </SearchBar>
-        <ClearBtn
-          // type="reset"
-          onClick={handleSearchBtn}
-          disabled={isSearchBtnDisabled}
-
-          // disabled={inputRef.current && inputRef.current.value.length === 0}
-        >
+        <ClearBtn onClick={handleSearchBtn} disabled={isSearchBtnDisabled}>
           검색
         </ClearBtn>
       </SearchBarWrapper>
