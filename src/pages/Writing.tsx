@@ -45,7 +45,9 @@ function Writing() {
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
           id: result.id,
+          media_type: result.media_type,
           title: result.title,
+          name: result.name,
           poster_path: result.poster_path
         })
       )
@@ -178,7 +180,11 @@ function Writing() {
                   alt={`${result.title} 이미지`}
                 />
                 <Warppaer>
-                  <ResultBar>{result.title}</ResultBar>
+                  <ResultBar>
+                    {' '}
+                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                    {result.media_type === 'movie' ? result.title : result.name}
+                  </ResultBar>
                 </Warppaer>
               </Contain>
             </ResultBarContain>

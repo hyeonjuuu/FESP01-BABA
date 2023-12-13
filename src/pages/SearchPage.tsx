@@ -34,7 +34,9 @@ function SearchPage() {
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
           id: result.id,
+          media_type: result.media_type,
           title: result.title,
+          name: result.name,
           poster_path: result.poster_path
         })
       )
@@ -77,10 +79,15 @@ function SearchPage() {
               <Contain>
                 <Image
                   src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                  alt={`${result.title} 이미지`}
+                  alt={
+                    result.media_type === 'movie' ? result.title : result.name
+                  }
                 />
                 <Warppaer>
-                  <ResultBar>{result.title}</ResultBar>
+                  <ResultBar>
+                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                    {result.media_type === 'movie' ? result.title : result.name}
+                  </ResultBar>
                   <ResultBarInfo>{`게시물 100개 미만개`}</ResultBarInfo>
                 </Warppaer>
               </Contain>
