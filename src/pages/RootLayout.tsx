@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import SideBar from '@/layout/SideBar'
 import GlobalStyle from '@/style/GlobalStyle'
 import { Outlet, useMatch } from 'react-router-dom'
-import GlobalStyle from '@/style/GlobalStyle'
 import Fake from '@/layout/Fake'
 
 export default function RootLayout() {
