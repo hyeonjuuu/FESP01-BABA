@@ -217,8 +217,21 @@ export const SwiperWrapper = styled(Swiper)`
     width: 100%;
     min-width: 320px;
   }
-  & > .swiper-pagination-progressbar-fill {
-    --swiper-theme-color: black;
+
+  .swiper-horizontal > .swiper-pagination-progressbar,
+  .swiper-pagination-progressbar.swiper-pagination-horizontal,
+  .swiper-vertical
+    > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite,
+  .swiper-pagination-progressbar.swiper-pagination-vertical.swiper-pagination-progressbar-opposite {
+    height: var(--swiper-pagination-progressbar-size, 2px);
+  }
+
+  .swiper-pagination-progressbar {
+    background-color: #303032;
+  }
+
+  .swiper-pagination-progressbar-fill {
+    --swiper-theme-color: #46f3f3;
   }
 `
 

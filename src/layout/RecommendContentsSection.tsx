@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import getPopularData from '@/api/getPopularData'
 import {
   SwiperSlideWrapper,
@@ -10,6 +10,7 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
+import 'swiper/css/scrollbar'
 
 interface SectionHeaderWidth {
   width?: string
