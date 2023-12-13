@@ -6,7 +6,7 @@ interface ButtonProps {
   color?: string
   text?: string
   width?: string
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  onClick?: (e: React.MouseEvent) => void
 }
 
 function Button({
