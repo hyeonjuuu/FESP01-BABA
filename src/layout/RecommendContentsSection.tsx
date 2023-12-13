@@ -1,7 +1,5 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import { useEffect, useRef, useState } from 'react'
-import getPopularData from '@/api/getPopularData'
 import {
   SwiperSlideWrapper,
   SwiperWrapper
@@ -11,6 +9,8 @@ import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
+import starIcon from '@/assets/StarIcon.svg'
+import { usePopularDataStore } from '@/store/usePopularDataStore'
 
 interface SectionHeaderWidth {
   width?: string
@@ -18,19 +18,7 @@ interface SectionHeaderWidth {
 }
 
 function RecommendContentsSection() {
-  const [populardata, setPopularData] = useState<PopularData>()
-
-  useEffect(() => {
-    const popularDataFetching = async () => {
-      const response = await getPopularData()
-      setPopularData(response)
-    }
-    popularDataFetching()
-  }, [])
-
-  const handleMouseHoverImage: React.MouseEventHandler<HTMLElement> = e => {
-    const target = e.target
-  }
+  const { populardata } = usePopularDataStore()
 
   const { $darkMode } = useThemeStore()
 
@@ -52,6 +40,7 @@ function RecommendContentsSection() {
         navigation={true}
         modules={[Autoplay, Pagination, Navigation]}
         className="mySwiper"
+        loop={true}
         breakpoints={{
           320: {
             slidesPerView: 3.5,
@@ -73,12 +62,19 @@ function RecommendContentsSection() {
       >
         {populardata?.results.map(item => (
           <SwiperSlideWrapper key={item.id}>
-            <RecommendImage
-              src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
-              alt={`${item.title} 포스터`}
-              onMouseOver={handleMouseHoverImage}
-            />
-            <RecommendTitle>{item.title}</RecommendTitle>
+            <HoverWrapper href="">
+              <RecommendImage
+                src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
+                alt={`${item.title} 포스터`}
+              />
+              <RecommendContent>
+                <RecommendItem>{item.title}</RecommendItem>
+                <RecommendItem color="#FFC61A">
+                  <StarIcon src={starIcon} alt="평점" />
+                  {item.vote_average / 2}
+                </RecommendItem>
+              </RecommendContent>
+            </HoverWrapper>
           </SwiperSlideWrapper>
         ))}
       </SwiperWrapper>
@@ -135,30 +131,52 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
   }
 `
 
-const RecommendTitle = styled.span`
-  visibility: hidden;
+const RecommendItem = styled.span`
   font-size: 12px;
   text-align: center;
-  color: white;
-  padding: 4px;
-  background-color: green;
-  margin: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  color: ${({ color }) => (color ? color : '#FFFFFF')};
 `
 
-const RecommendImage = styled.img`
+const RecommendContent = styled.div`
+  width: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  word-break: keep-all;
+  text-align: center;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+`
+const HoverWrapper = styled.a`
+  display: flex;
+  justify-content: center;
+  &:hover {
+    > img {
+      filter: saturate(0%) brightness(40%);
+      transition: 0.5s;
+    }
+    > div {
+      color: white;
+      visibility: visible;
+    }
+  }
+`
+
+export const RecommendImage = styled.img`
   width: 80px;
   height: 120px;
   border-radius: 5px;
   margin-left: 4px;
   margin-right: 4px;
-
-  &:hover {
-    filter: saturate(0%) brightness(50%);
-    transition: 0.5s;
-    display: flex;
-
-    ~ ${RecommendTitle} {
-      visibility: visible;
-    }
-  }
+  position: relative;
+`
+const StarIcon = styled.img`
+  width: 16px;
+  height: 16px;
 `

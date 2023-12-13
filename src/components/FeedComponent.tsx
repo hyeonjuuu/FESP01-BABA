@@ -54,7 +54,7 @@ const FeedSection = styled.section`
   margin-top: 26px;
 `
 
-const StarIcon = styled.button`
+export const StarIcon = styled.button`
   width: 22px;
   height: 22px;
   background-image: url(${star});

@@ -29,7 +29,7 @@ function CategoryComponent() {
 
   const movieCategories = [
     { color: '#F56A1E', text: '액션' },
-    { color: '#FFE100', text: '어드벤쳐', fontSize: '12px' },
+    { color: '#FFE100', text: '모험', fontSize: '12px' },
     { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
     { color: '#FF99AF', text: '코미디' },
     { color: '#DF461F', text: '범죄' },
@@ -38,14 +38,15 @@ function CategoryComponent() {
     { color: '#CEE319', text: '가족' },
     { color: '#69A7E7', text: '판타지' },
     { color: '#7B5F48', text: '역사' },
-    { color: '#AD2625', text: '호러' },
+    { color: '#AD2625', text: '공포' },
     { color: '#A28CB7', text: '음악' },
-    { color: '#177649', text: '미스테리' },
+    { color: '#177649', text: '미스터리' },
     { color: '#F4D6D4', text: '로맨스' },
     { color: '#513582', text: 'SF' },
-    { color: '#F5E2A7', text: 'TV Movie', fontSize: '11px' },
+    { color: '#F5E2A7', text: 'TV 영화', fontSize: '11px' },
     { color: '#F03F36', text: '스릴러' },
-    { color: '#015097', text: '전쟁' }
+    { color: '#015097', text: '전쟁' },
+    { color: '#857b15', text: '서부' }
   ]
   const dramaCategories = [
     { color: '#F56A1E', text: '액션&어드벤쳐', fontSize: '12px' },
@@ -56,13 +57,14 @@ function CategoryComponent() {
     { color: '#77B1B9', text: '드라마' },
     { color: '#CEE319', text: '가족' },
     { color: '#69A7E7', text: '키즈' },
-    { color: '#177649', text: '미스테리' },
+    { color: '#177649', text: '미스터리' },
     { color: '#F4D6D4', text: '뉴스' },
     { color: '#513582', text: '리얼리티' },
     { color: '#F5E2A7', text: '판타지' },
     { color: '#F03F36', text: '오페라' },
     { color: '#015097', text: '토크' },
-    { color: '#015097', text: '전쟁&정치' }
+    { color: '#015097', text: '전쟁&정치' },
+    { color: '#857b15', text: '서부' }
   ]
   return (
     <CategorySection>
@@ -185,6 +187,7 @@ export const SwiperWrapper = styled(Swiper)`
   display: flex;
   flex-direction: column;
   margin: 0 6px;
+  position: absolute;
 
   @media (min-width: 1921px) {
     max-width: 720px;
@@ -227,7 +230,7 @@ export const SwiperWrapper = styled(Swiper)`
   }
 
   .swiper-pagination-progressbar {
-    background-color: #303032;
+    background-color: #bcbcbc;
   }
 
   .swiper-pagination-progressbar-fill {
@@ -241,4 +244,5 @@ export const SwiperSlideWrapper = styled(SwiperSlide)`
   flex-direction: row;
   width: 80%;
   margin-top: 10px;
+  position: relative;
 `
