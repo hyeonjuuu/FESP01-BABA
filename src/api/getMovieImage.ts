@@ -6,8 +6,7 @@ const getMovieImage = async () => {
       'https://api.themoviedb.org/3/movie/100/images',
       {
         headers: {
-          Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjOGI5OTA2MjRiNGQ0YWYwYWY1MTQxM2VjN2NhZGZhYyIsInN1YiI6IjY1NmVhY2I2MDg1OWI0MDBmZjc2ZDg5MSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rztiGVGc8hGW9JewLp_1rWQqRmocY_2m9QQc31aHWqo',
+          Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
           accept: 'application/json'
         }
       }
