@@ -1,18 +1,18 @@
 import styled from 'styled-components'
+import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
-import { useEffect, useRef, useState } from 'react'
 import ottIcons from '@/utils/ottIconImage'
 import { addReview } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
+import useThemeStore from '@/store/useThemeStore'
 import { ottIconNames } from '@/utils/ottIconImage'
+import { useEffect, useRef, useState } from 'react'
+import getSearchMovies from '@/api/getSearchMovies'
+import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { ClearBtn, Icon, Image, Input } from './SearchPage'
-import getSearchMovies from '@/api/getSearchMovies'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import debounce from '@/utils/debounce'
-import useThemeStore from '@/store/useThemeStore'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -119,8 +119,13 @@ function Writing() {
 
     const textValue = text === 'Enter your text here...' ? '' : text
 
-    if (ottValue.length === 0 || textValue === '') {
-      alert('ott를 선택, 내용을 작성해주세요')
+    if (
+      !selectMovie ||
+      ottValue.length === 0 ||
+      rating === 0 ||
+      textValue === ''
+    ) {
+      alert('영화 또는 TV 프로그램, ott, 평점, 내용을 작성해주세요')
       return
     }
 
@@ -132,13 +137,15 @@ function Writing() {
     // formData.append('text', textValue || '')
 
     try {
-      await addReview(
-        'movie_id',
-        '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', //user_id
-        text,
-        selectedOtt,
-        rating
-      )
+      if (selectMovie) {
+        await addReview(
+          selectMovie.id,
+          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          text,
+          selectedOtt,
+          rating
+        )
+      }
       alert('리뷰가 등록되었습니다!')
       naviagte('/main')
     } catch (error) {
@@ -181,7 +188,6 @@ function Writing() {
                 />
                 <Warppaer>
                   <ResultBar>
-                    {' '}
                     {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
                     {result.media_type === 'movie' ? result.title : result.name}
                   </ResultBar>
@@ -226,12 +232,6 @@ function Writing() {
             // multiple
             // onChange={handleUpload}
           ></input> */}
-          {/* {movieImage && (
-            <MoviePoster
-              src={`https://image.tmdb.org/t/p/original${movieImage}`}
-              alt="Movie Poster"
-            />
-          )} */}
           {selectMovie && (
             <MoviePoster
               src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}

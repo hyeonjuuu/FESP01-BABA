@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseAdmin = createClient(
-  'https://ufinqahbxsrpjbqmrvti.supabase.co',
-  import.meta.env.VITE_SUPABASE_URL as string
+  import.meta.env.VITE_SUPABASE_URL as string,
+  import.meta.env.VITE_SUPABASE_KEY as string
 )
 
 // 리뷰 등록
 export const addReview = async (
-  movie_id: string,
+  movie_id: number,
   user_id: string,
   text: string,
   ott: string[],
