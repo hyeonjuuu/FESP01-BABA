@@ -6,6 +6,7 @@ interface ButtonProps {
   color?: string
   text?: string
   width?: string
+  onClick?: (e: React.MouseEvent) => void
 }
 
 function Button({
@@ -13,10 +14,17 @@ function Button({
   $bgcolor = '#303032',
   color = '#46F3F3',
   text,
-  width = '100%'
+  width = '100%',
+  onClick
 }: ButtonProps) {
   return (
-    <BtnButton type={type} $bgcolor={$bgcolor} color={color} width={width}>
+    <BtnButton
+      type={type}
+      $bgcolor={$bgcolor}
+      color={color}
+      width={width}
+      onClick={onClick}
+    >
       {text}
     </BtnButton>
   )

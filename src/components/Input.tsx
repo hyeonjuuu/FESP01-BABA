@@ -7,6 +7,10 @@ interface InputProps {
   id?: string
   width: string
   noBorder?: boolean // 새로운 prop 추가
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  name?: string
+  inputRef?: React.Ref<HTMLInputElement>
+  onBlur?: React.FocusEventHandler<HTMLInputElement>
 }
 
 function Input({
@@ -15,7 +19,11 @@ function Input({
   maxlength,
   id,
   width = '100%',
-  noBorder = false // 기본값은 false
+  noBorder = false,
+  name,
+  onChange,
+  inputRef,
+  onBlur
 }: InputProps) {
   return (
     <>
@@ -26,6 +34,10 @@ function Input({
         maxLength={maxlength}
         width={width}
         noBorder={noBorder}
+        onChange={onChange}
+        name={name}
+        ref={inputRef}
+        onBlur={onBlur}
       />
     </>
   )
