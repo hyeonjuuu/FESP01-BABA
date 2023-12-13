@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 import Button from '@/components/Button'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import ottIcons from '@/utils/ottIconImage'
 import { addReview } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
-import getMovieImage from '@/api/getMovieImage'
 import StarRating from '@/components/StarRating'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,9 +17,8 @@ function Writing() {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
-
+  const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
-  const [movieImage, setMovieImage] = useState()
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
 
@@ -52,6 +50,12 @@ function Writing() {
     }
   }
 
+  //# 기본 이미지 선택
+  const handleSelect = (selectedResult: SearchListProps) => {
+    setSelectMovie(selectedResult)
+    setSearchList([])
+  }
+
   //# OTT 선택
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
@@ -64,23 +68,6 @@ function Writing() {
       }
     })
   }
-
-  //# 영화 기본 이미지
-  // search 에서 props로 넘겨주면 해당 이미지가 뜨도록
-  const handleMovieImage = async () => {
-    try {
-      const movieImageData = await getMovieImage()
-      const firstPosterPath = movieImageData.posters[0].file_path
-
-      setMovieImage(firstPosterPath)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
-    handleMovieImage()
-  }, [])
 
   //# 별점
   const handleRatingChange = (newRating: number) => {
@@ -162,7 +149,10 @@ function Writing() {
 
         <ResultWrapper>
           {searchList.map(result => (
-            <ResultBarContain key={result.id}>
+            <ResultBarContain
+              key={result.id}
+              onClick={() => handleSelect(result)}
+            >
               <Contain>
                 <Image
                   src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
@@ -211,10 +201,16 @@ function Writing() {
             // multiple
             // onChange={handleUpload}
           ></input> */}
-          {movieImage && (
+          {/* {movieImage && (
             <MoviePoster
               src={`https://image.tmdb.org/t/p/original${movieImage}`}
               alt="Movie Poster"
+            />
+          )} */}
+          {selectMovie && (
+            <MoviePoster
+              src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
+              alt={`${selectMovie.title} 포스터`}
             />
           )}
         </OriginalImage>
@@ -347,7 +343,7 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
 
 const OriginalImage = styled.div`
   width: 390px;
-  height: 390px;
+  height: 500px;
   background-color: #d9d9d9;
   position: relative;
 `
