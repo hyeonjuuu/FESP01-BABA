@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { FreeMode, Pagination } from 'swiper/modules'
+import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
@@ -83,13 +83,25 @@ function CategoryComponent() {
         </form>
       </CategoryTitle>
       <SwiperWrapper
-        slidesPerView={6}
+        slidesPerView={5}
         spaceBetween={2}
         modules={[Pagination]}
         className="mySwiper"
         breakpoints={{
           520: {
+            slidesPerView: 6,
+            spaceBetween: 0
+          },
+          768: {
             slidesPerView: 8,
+            spaceBetween: 0
+          },
+          1020: {
+            slidesPerView: 7,
+            spaceBetween: 0
+          },
+          1280: {
+            slidesPerView: 10,
             spaceBetween: 0
           }
         }}
@@ -169,11 +181,17 @@ const CategoryCircle = styled.div`
   margin-bottom: 4px;
   margin: 4px auto;
 `
-const SwiperWrapper = styled(Swiper)`
+export const SwiperWrapper = styled(Swiper)`
   display: flex;
   flex-direction: column;
-  z-index: -999;
   margin: 0 6px;
+
+  @media (min-width: 1921px) {
+    max-width: 720px;
+    min-width: 610px;
+    width: 100%;
+    flex-shrink: 2;
+  }
   @media (min-width: 1280px) and (max-width: 1920px) {
     max-width: 720px;
     min-width: 610px;
@@ -197,10 +215,14 @@ const SwiperWrapper = styled(Swiper)`
   @media (min-width: 320px) and (max-width: 519px) {
     max-width: 320px;
     width: 100%;
+    min-width: 320px;
+  }
+  & > .swiper-pagination-progressbar-fill {
+    --swiper-theme-color: black;
   }
 `
 
-const SwiperSlideWrapper = styled(SwiperSlide)`
+export const SwiperSlideWrapper = styled(SwiperSlide)`
   z-index: -999;
   display: flex;
   flex-direction: row;

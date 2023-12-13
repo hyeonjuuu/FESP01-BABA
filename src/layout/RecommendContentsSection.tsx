@@ -2,6 +2,14 @@ import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
 import { useEffect, useState } from 'react'
 import getPopularData from '@/api/getPopularData'
+import {
+  SwiperSlideWrapper,
+  SwiperWrapper
+} from '@/components/CategoryComponent'
+import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/free-mode'
+import 'swiper/css/pagination'
 
 interface SectionHeaderWidth {
   width?: string
@@ -30,18 +38,49 @@ function RecommendContentsSection() {
       <SectionHeader width="32px" $darkMode={$darkMode}>
         추천
       </SectionHeader>
-      <RecommendSectionWrapper>
+      <SwiperWrapper
+        slidesPerView={5}
+        spaceBetween={2}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false
+        }}
+        pagination={{
+          type: 'progressbar'
+        }}
+        navigation={true}
+        modules={[Autoplay, Pagination, Navigation]}
+        className="mySwiper"
+        breakpoints={{
+          320: {
+            slidesPerView: 3.5,
+            spaceBetween: 0
+          },
+          520: {
+            slidesPerView: 6
+          },
+          768: {
+            slidesPerView: 8
+          },
+          1020: {
+            slidesPerView: 7
+          },
+          1280: {
+            slidesPerView: 10
+          }
+        }}
+      >
         {populardata?.results.map(item => (
-          <RecommendSection key={item.id}>
+          <SwiperSlideWrapper key={item.id}>
             <RecommendImage
               src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
               alt={`${item.title} 포스터`}
               onMouseOver={handleMouseHoverImage}
             />
             <RecommendTitle>{item.title}</RecommendTitle>
-          </RecommendSection>
+          </SwiperSlideWrapper>
         ))}
-      </RecommendSectionWrapper>
+      </SwiperWrapper>
     </SectionWrapper>
   )
 }
@@ -52,6 +91,30 @@ const SectionWrapper = styled.section`
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin: 0 auto;
+  @media (min-width: 1280px) and (max-width: 1920px) {
+    max-width: 720px;
+    min-width: 610px;
+    width: 100%;
+  }
+  @media (min-width: 1025px) and (max-width: 1279px) {
+    max-width: 610px;
+    min-width: 580px;
+    width: 100%;
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    max-width: 680px;
+    width: 100%;
+    min-width: 620px;
+  }
+  @media (min-width: 520px) and (max-width: 767px) {
+    max-width: 520px;
+    width: 100%;
+  }
+  @media (min-width: 320px) and (max-width: 519px) {
+    max-width: 320px;
+    width: 100%;
+  }
 `
 
 const SectionHeader = styled.h2<SectionHeaderWidth>`
@@ -70,26 +133,10 @@ const SectionHeader = styled.h2<SectionHeaderWidth>`
     border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   }
 `
-const RecommendSectionWrapper = styled.ul`
-  display: flex;
-  justify-content: center;
-  margin: 0;
-`
-
-const RecommendSection = styled.li`
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin-top: 14px;
-  margin-bottom: 22px;
-  position: relative;
-`
 
 const RecommendTitle = styled.span`
   visibility: hidden;
   font-size: 12px;
-  position: absolute;
   text-align: center;
   color: white;
   padding: 4px;
@@ -112,14 +159,5 @@ const RecommendImage = styled.img`
     ~ ${RecommendTitle} {
       visibility: visible;
     }
-  }
-`
-
-const Wrapper = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  @media (min-width: 391px) {
-    display: none;
   }
 `

@@ -19,6 +19,7 @@ export default function RootLayout() {
         <Header isHome={isHome} />
         <Nav />
         <Outlet />
+
         {location.pathname === '/main' ? <SideBar /> : ''}
       </MainContainer>
     </>

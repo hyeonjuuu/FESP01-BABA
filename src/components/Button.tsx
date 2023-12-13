@@ -27,7 +27,7 @@ export default Button
 const BtnButton = styled.button<ButtonProps>`
   width: ${props => props.width || '100%'};
   height: 48px;
-  margin: 20px 0;
+  /* margin: 20px 0; */
   background-color: ${props => props.$bgcolor};
   color: ${props => props.color};
   border: 0.5px solid black;
