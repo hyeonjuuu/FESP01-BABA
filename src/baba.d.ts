@@ -7,3 +7,15 @@ interface PopularDataItem {
   id: number
   title: string
 }
+
+interface SearchListProps {
+  id: number
+  title: string
+  poster_path: string | null
+}
+
+interface SearchResultProps {
+  id: number
+  title: string
+  poster_path: string | null
+}

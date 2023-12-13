@@ -1,20 +1,68 @@
 import styled from 'styled-components'
 import Button from '@/components/Button'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ottIcons from '@/utils/ottIconImage'
 import { addReview } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import getMovieImage from '@/api/getMovieImage'
 import StarRating from '@/components/StarRating'
 import { ottIconNames } from '@/utils/ottIconImage'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import {
+  ClearBtn,
+  Icon,
+  Image,
+  Input,
+  RecentSearch,
+  SearchBar,
+  SearchBarWrapper
+} from './SearchPage'
+import getSearchMovies from '@/api/getSearchMovies'
+import {
+  ResultBar,
+  ResultBarContain,
+  Warppaer
+} from '@/components/search/SearchResultBar'
 
 function Writing() {
   const naviagte = useNavigate()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [searchList, setSearchList] = useState<SearchListProps[]>([])
+  const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
 
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [movieImage, setMovieImage] = useState()
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
+
+  //# 검색
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = e.target.value.toLowerCase()
+    setIsSearchBtnDisabled(e.target.value.length === 0) // input value가 변경될 때마다 검색 버튼의 활성화 상태 갱신
+  }
+
+  const handleSearchBtn = async (e: React.MouseEvent) => {
+    e.preventDefault()
+
+    try {
+      const searchData = await getSearchMovies(inputRef.current?.value || '')
+
+      const searchResults = searchData.results.map(
+        (result: SearchResultProps) => ({
+          id: result.id,
+          title: result.title,
+          poster_path: result.poster_path
+        })
+      )
+      setSearchList(searchResults)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      inputRef.current!.value = ''
+      setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
+    }
+  }
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
@@ -107,6 +155,39 @@ function Writing() {
     <Container>
       {/* <FormStyle encType="multipart/form-data"> */}
       <FormStyle>
+        <SearchBarWrapper>
+          <SearchBar>
+            <Icon>
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
+            </Icon>
+            <Input
+              type="text"
+              placeholder="Search"
+              onChange={handleSearchInput}
+              ref={inputRef}
+            />
+          </SearchBar>
+          <ClearBtn onClick={handleSearchBtn} disabled={isSearchBtnDisabled}>
+            검색
+          </ClearBtn>
+        </SearchBarWrapper>
+
+        <ResultWrapper>
+          {searchList.map(result => (
+            <ResultBarContain key={result.id}>
+              <Contain>
+                <Image
+                  src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                  alt={`${result.title} 이미지`}
+                />
+                <Warppaer>
+                  <ResultBar>{result.title}</ResultBar>
+                </Warppaer>
+              </Contain>
+            </ResultBarContain>
+          ))}
+        </ResultWrapper>
+
         <Wrapper>
           {ottIcons.map((icon, index) => (
             <OttWrapper key={index}>
@@ -197,6 +278,27 @@ const Wrapper = styled.div`
   height: 60px;
   max-width: 390px;
   overflow-x: scroll;
+`
+
+const ResultWrapper = styled.div`
+  background-color: pink;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+
+  @media (min-width: 701px) {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+`
+
+const Contain = styled.div`
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  cursor: pointer;
 `
 
 const OttWrapper = styled.div`

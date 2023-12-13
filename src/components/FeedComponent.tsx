@@ -39,7 +39,7 @@ function FeedComponent() {
           <Button fontSize="12px" fontWeight="300" $darkMode={$darkMode}>
             더보기
           </Button>
-          <Button $darkMode={$darkMode}>댓글보기</Button>
+          {/* <Button $darkMode={$darkMode}>댓글보기</Button> */}
         </ContentWrapper>
       </FeedContent>
     </FeedSection>

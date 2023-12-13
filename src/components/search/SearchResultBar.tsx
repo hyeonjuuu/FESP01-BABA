@@ -26,6 +26,7 @@ export const ResultBarContain = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
   @media (min-width: 701px) {
     /* max-width: 69%; */
     max-width: 100%;
@@ -60,6 +61,7 @@ const ClearBtn = styled.button`
 export const Contain = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `
 
 export const Warppaer = styled.div`
