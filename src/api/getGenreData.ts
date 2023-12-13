@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const getPopularData = async () => {
+const getGenreData = async () => {
   try {
     const response = await axios.get(
-      'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=1&sort_by=popularity.desc',
+      'https://api.themoviedb.org/3/genre/movie/list?language=ko',
       {
         headers: {
           Authorization: `Bearer ${import.meta.env.REACT_APP_TMDB_API_KEY}`,
@@ -17,4 +17,4 @@ const getPopularData = async () => {
   }
 }
 
-export default getPopularData
+export default getGenreData

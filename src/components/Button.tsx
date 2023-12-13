@@ -6,6 +6,7 @@ interface ButtonProps {
   color?: string
   text?: string
   width?: string
+  onClick?: (e: React.MouseEvent) => void
 }
 
 function Button({
@@ -13,10 +14,17 @@ function Button({
   $bgcolor = '#303032',
   color = '#46F3F3',
   text,
-  width = '100%'
+  width = '100%',
+  onClick
 }: ButtonProps) {
   return (
-    <BtnButton type={type} $bgcolor={$bgcolor} color={color} width={width}>
+    <BtnButton
+      type={type}
+      $bgcolor={$bgcolor}
+      color={color}
+      width={width}
+      onClick={onClick}
+    >
       {text}
     </BtnButton>
   )
@@ -27,7 +35,7 @@ export default Button
 const BtnButton = styled.button<ButtonProps>`
   width: ${props => props.width || '100%'};
   height: 48px;
-  margin: 20px 0;
+  /* margin: 20px 0; */
   background-color: ${props => props.$bgcolor};
   color: ${props => props.color};
   border: 0.5px solid black;

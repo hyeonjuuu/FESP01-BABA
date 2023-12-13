@@ -2,8 +2,9 @@ import Nav from '@/layout/Nav'
 import Header from '@/layout/Header'
 import styled from 'styled-components'
 import SideBar from '@/layout/SideBar'
-import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import GlobalStyle from '@/style/GlobalStyle'
+import { Outlet, useLocation, useMatch } from 'react-router-dom'
+import Fake from '@/layout/Fake'
 
 export default function RootLayout() {
   const location = useLocation()
@@ -19,7 +20,9 @@ export default function RootLayout() {
         <Header isHome={isHome} />
         <Nav />
         <Outlet />
+
         {location.pathname === '/main' ? <SideBar /> : ''}
+        <ResponsiveFake />
       </MainContainer>
     </>
   )
@@ -31,6 +34,7 @@ const MainContainer = styled.main`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 400px;
   @media (min-width: 1031px) {
     align-items: normal;
     display: grid;
@@ -40,5 +44,13 @@ const MainContainer = styled.main`
     align-items: normal;
     display: grid;
     grid-template-columns: 1fr 7fr;
+  }
+`
+
+const ResponsiveFake = styled(Fake)`
+  display: none;
+
+  @media (max-width: 700px) {
+    display: block;
   }
 `

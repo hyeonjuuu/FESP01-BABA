@@ -18,4 +18,15 @@ const ottIcons = [
   coupangPlayIcon
 ]
 
+export const ottIconNames = [
+  '웨이브',
+  '티빙',
+  '디즈니플러스',
+  '왓챠',
+  '넷플릭스',
+  '애플티비',
+  '프라임티비',
+  '쿠팡플레이'
+]
+
 export default ottIcons
