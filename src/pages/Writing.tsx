@@ -12,8 +12,14 @@ import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import getSearchMovies from '@/api/getSearchMovies'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import debounce from '@/utils/debounce'
+import useThemeStore from '@/store/useThemeStore'
+
+interface ResultBarContainProps {
+  $darkMode: boolean
+}
 
 function Writing() {
+  const { $darkMode } = useThemeStore()
   const naviagte = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -164,6 +170,7 @@ function Writing() {
             <ResultBarContain
               key={result.id}
               onClick={() => handleSelect(result)}
+              $darkMode={$darkMode}
             >
               <Contain>
                 <Image
@@ -278,11 +285,14 @@ const SearchBarWrapper = styled.div`
   }
 `
 
-const ResultBarContain = styled.div`
+const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  &:hover {
+    background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
+  }
 `
 
 const SearchBar = styled.div`

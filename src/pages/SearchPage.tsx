@@ -11,8 +11,11 @@ import SearchResultBar, {
   ResultBarInfo,
   Warppaer
 } from '@/components/search/SearchResultBar'
+import useThemeStore from '@/store/useThemeStore'
 
 function SearchPage() {
+  const { $darkMode } = useThemeStore()
+
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
@@ -70,7 +73,7 @@ function SearchPage() {
       <ResultWrapper>
         {searchList.map(result => (
           <StyledLink key={result.id} to={`/detail/${result.id}`}>
-            <ResultBarContain>
+            <ResultBarContain $darkMode={$darkMode}>
               <Contain>
                 <Image
                   src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
