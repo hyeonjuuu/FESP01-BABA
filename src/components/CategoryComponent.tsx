@@ -1,11 +1,12 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
+import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Pagination } from 'swiper/modules'
+import { Pagination, Scrollbar } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
-import { useState } from 'react'
+import 'swiper/css/scrollbar'
 
 export interface FontProps {
   fontSize?: string
@@ -85,9 +86,12 @@ function CategoryComponent() {
         </form>
       </CategoryTitle>
       <SwiperWrapper
+        scrollbar={{
+          hide: true
+        }}
         slidesPerView={5}
         spaceBetween={2}
-        modules={[Pagination]}
+        modules={[Pagination, Scrollbar]}
         className="mySwiper"
         breakpoints={{
           520: {
@@ -224,8 +228,7 @@ export const SwiperWrapper = styled(Swiper)`
   .swiper-horizontal > .swiper-pagination-progressbar,
   .swiper-pagination-progressbar.swiper-pagination-horizontal,
   .swiper-vertical
-    > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite,
-  .swiper-pagination-progressbar.swiper-pagination-vertical.swiper-pagination-progressbar-opposite {
+    > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite {
     height: var(--swiper-pagination-progressbar-size, 2px);
   }
 
@@ -234,7 +237,15 @@ export const SwiperWrapper = styled(Swiper)`
   }
 
   .swiper-pagination-progressbar-fill {
-    --swiper-theme-color: #46f3f3;
+    --swiper-theme-color: #8ee7e7;
+  }
+  & .swiper-scrollbar.swiper-scrollbar-horizontal {
+    background-color: #bcbcbc;
+    opacity: 1;
+    bottom: 0;
+    & .swiper-scrollbar-drag {
+      background: #8ee7e7;
+    }
   }
 `
 
@@ -243,6 +254,6 @@ export const SwiperSlideWrapper = styled(SwiperSlide)`
   display: flex;
   flex-direction: row;
   width: 80%;
-  margin-top: 10px;
+  margin: 10px 0 15px;
   position: relative;
 `

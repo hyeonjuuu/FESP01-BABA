@@ -27,7 +27,7 @@ function SideBar() {
     >
       <SideBarWrapper>
         <Title>🍿 오늘의 추천 영화 🎬</Title>
-        {populardata?.results.map((item, index) => (
+        {populardata?.results.slice(0, 10).map((item, index) => (
           <SideContentWrapper key={item.id} href="">
             <ContentNumber>{index + 1}</ContentNumber>
             <RecommendImage
