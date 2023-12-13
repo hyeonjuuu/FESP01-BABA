@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import Button from '@/components/Button'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ottIcons from '@/utils/ottIconImage'
 import { addReview } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
@@ -11,10 +11,12 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import getSearchMovies from '@/api/getSearchMovies'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
+import debounce from '@/utils/debounce'
 
 function Writing() {
   const naviagte = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
@@ -87,9 +89,19 @@ function Writing() {
   }
 
   //# 내용 작성
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value)
-  }
+  const handleInputChange = debounce(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setText(e.target.value)
+    },
+    500
+  )
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '100px'
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+    }
+  }, [text])
 
   //# 리뷰 등록
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -220,6 +232,7 @@ function Writing() {
         </StarContainer>
 
         <FeedText
+          ref={textareaRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder="이 컨텐츠에 대한 생각을 자유롭게 공유해보세요!🎬✨"
@@ -365,7 +378,9 @@ const StarContainer = styled.div`
 
 const FeedText = styled.textarea`
   width: 390px;
-  height: 200px;
+  /* height: 200px; */
+  height: auto;
+  overflow: hidden;
   border: none;
   box-sizing: border-box;
   border-radius: 5px;
