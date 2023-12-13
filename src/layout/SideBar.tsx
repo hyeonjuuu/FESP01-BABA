@@ -1,6 +1,7 @@
 import styled, { ThemeProvider } from 'styled-components'
 import defaultImage from '@/assets/defaultImage.webp'
 import useThemeStore from '@/store/useThemeStore'
+import { Link } from 'react-router-dom'
 
 function SideBar() {
   const test = [1, 2, 3, 4, 5]
@@ -15,7 +16,7 @@ function SideBar() {
       <SideBarWrapper>
         <Title>🍿 오늘의 추천 영화 🎬</Title>
         {test.map(index => (
-          <SideContentWrapper key={index} href="">
+          <SideContentWrapper key={index} to="/detail">
             <ContentNumber>{index}</ContentNumber>
             <RecommendImage src={defaultImage} alt="" />
             <Movie>
@@ -51,7 +52,7 @@ const SideBarWrapper = styled.aside`
   }
 `
 
-const SideContentWrapper = styled.a`
+const SideContentWrapper = styled(Link)`
   width: 100%;
   display: flex;
   /* justify-content: center; */

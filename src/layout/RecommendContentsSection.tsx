@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
 import { useEffect, useState } from 'react'
 import getPopularData from '@/api/getPopularData'
+import defaultImage from '@/assets/defaultImage.webp'
+import { Link } from 'react-router-dom'
 
 interface SectionHeaderWidth {
   width?: string
@@ -34,11 +36,13 @@ function RecommendContentsSection() {
       <RecommendSectionWrapper>
         {populardata?.results.map(item => (
           <RecommendSection key={item.id}>
-            <RecommendImage
-              src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
-              alt={`${item.title} 포스터`}
-              onMouseOver={handleMouseHoverImage}
-            />
+            <Link to="/detail">
+              <RecommendImage
+                src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
+                alt={`${item.title} 포스터`}
+                onMouseOver={handleMouseHoverImage}
+              />
+            </Link>
           </RecommendSection>
         ))}
       </RecommendSectionWrapper>

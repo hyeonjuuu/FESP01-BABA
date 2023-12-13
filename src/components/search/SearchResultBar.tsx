@@ -21,13 +21,15 @@ function SearchResultBar() {
 
 export default SearchResultBar
 
-const ResultBarContain = styled.div`
+export const ResultBarContain = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
   @media (min-width: 701px) {
-    max-width: 69%;
+    /* max-width: 69%; */
+    max-width: 100%;
   }
 `
 
@@ -43,11 +45,11 @@ const Image = styled.span`
   margin-left: 0;
 `
 
-const ResultBar = styled.span`
+export const ResultBar = styled.span`
   font-weight: 600;
 `
 
-const ResultBarInfo = styled.span`
+export const ResultBarInfo = styled.span`
   font-size: 13px;
   font-weight: 300;
 `
@@ -56,12 +58,13 @@ const ClearBtn = styled.button`
   border-style: none;
 `
 
-const Contain = styled.div`
+export const Contain = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `
 
-const Warppaer = styled.div`
+export const Warppaer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3px;

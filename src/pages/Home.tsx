@@ -50,7 +50,7 @@ const ButtonDivWrapper = styled.div`
 
 export const StyledLink = styled(Link)`
   width: 100%;
-  /* max-width: 310px; */
+  max-width: 360px;
   height: 48px;
   margin: 10px 0;
   text-decoration: none;
