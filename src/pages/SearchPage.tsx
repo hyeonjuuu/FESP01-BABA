@@ -16,7 +16,6 @@ function SearchPage() {
         </SearchBar>
         <ClearBtn>취소</ClearBtn>
       </SearchBarWrapper>
-      <HorizontalLine />
       <Wrapper>
         <RecentSearch>최근 검색</RecentSearch>
         <SeeAllBtn>모두 보기</SeeAllBtn>
@@ -51,9 +50,9 @@ const Box = styled.div`
 
 const SearchBarWrapper = styled.div`
   display: flex;
-  /* flex-direction: column; */
   align-items: center;
   max-width: 500px;
+  margin-bottom: 20px;
 
   @media (min-width: 701px) {
     flex-direction: row;
@@ -72,6 +71,7 @@ const SearchBar = styled.div`
   border-radius: 8px;
   max-width: 500px;
   width: 80%;
+
   @media (min-width: 701px) {
     width: 98%;
     max-width: none;
@@ -114,21 +114,9 @@ const ClearBtn = styled.button`
   border: none;
 `
 
-const HorizontalLine = styled.div`
-  height: 1px;
-  background-color: #ccc;
-  margin-top: 10px;
-  margin-bottom: 15px;
-
-  @media (max-width: 700px) {
-    width: 100%;
-  }
-  @media (min-width: 701px) {
-    width: 69%;
-  }
-`
-
 const Wrapper = styled.div`
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  padding-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
