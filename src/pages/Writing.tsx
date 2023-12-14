@@ -27,7 +27,6 @@ function Writing() {
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
-
   const [imgSrc, setImgSrc]: any = useState(null)
   const [image, setImage] = useState<File | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
@@ -77,7 +76,6 @@ function Writing() {
   // 기본 이미지
   const handleSelectDefaultIimg = () => {
     setIsSelectImg(true)
-    console.log(selectMovie)
   }
 
   // 사용자 이미지
@@ -105,11 +103,25 @@ function Writing() {
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
       if (prevSelectedOtt.includes(iconName)) {
-        // If the OTT is already selected, do nothing
-        return prevSelectedOtt
+        // 이미 선택된 OTT인 경우, 해당 OTT를 배열에서 제거하여 체크를 해제합니다.
+        return prevSelectedOtt.filter(ott => ott !== iconName)
       } else {
         // Select the new OTT
         return [iconName]
+      }
+    })
+  }
+
+  const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputOtt = event.target.value
+
+    setSelectedOtt(prevSelectedOtt => {
+      if (prevSelectedOtt.length === 0) {
+        return [inputOtt]
+      } else {
+        const newSelectedOtt = [...prevSelectedOtt]
+        newSelectedOtt[newSelectedOtt.length - 1] = inputOtt
+        return newSelectedOtt
       }
     })
   }
@@ -191,11 +203,11 @@ function Writing() {
       console.error(error)
     }
   }
+  console.log('selectedOtt: ', selectedOtt)
 
   return (
     <Container>
       <FormStyle encType="multipart/form-data">
-        {/* <FormStyle> */}
         <SearchBarWrapper>
           <SearchBar>
             <Icon>
@@ -239,19 +251,38 @@ function Writing() {
         <Wrapper>
           {ottIcons.map((icon, index) => (
             <OttWrapper key={index}>
-              <label htmlFor="ott">ott</label>
+              <label htmlFor={`ott${index}`}>ott</label>
               <input
                 type="checkbox"
-                name="ott"
-                id="ott"
+                name={`ott${index}`}
+                id={`ott${index}`}
                 checked={selectedOtt.includes(ottIconNames[index])}
                 onChange={() => handleCheck(ottIconNames[index])}
               />
               <IconBox>
-                <OttIcon src={icon} alt={ottIconNames[index]} />
+                <OttIcon
+                  src={icon}
+                  alt={ottIconNames[index]}
+                  title={ottIconNames[index]}
+                />
               </IconBox>
             </OttWrapper>
           ))}
+          <OthersOTT>
+            <label htmlFor="othersOttText">ott</label>
+            <OthersOttText
+              type="text"
+              name="othersOtt"
+              id="othersOttText"
+              placeholder="직접 입력"
+              value={
+                selectedOtt.length > 0
+                  ? selectedOtt[selectedOtt.length - 1]
+                  : ''
+              }
+              onChange={handleInputOtt}
+            ></OthersOttText>
+          </OthersOTT>
         </Wrapper>
 
         <TitleDiv>
@@ -398,7 +429,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 60px;
   max-width: 390px;
-  overflow-x: scroll;
+  flex-wrap: wrap;
 `
 
 const OttWrapper = styled.div`
@@ -411,10 +442,24 @@ const IconBox = styled.div`
   width: 28px;
   height: 28px;
 `
+const OthersOTT = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
+  font-size: 14px;
+  padding: 0px 8px;
+  gap: 3px;
+`
+
+const OthersOttText = styled.input`
+  width: 95%;
+`
 
 const OttIcon = styled.img`
   width: 100%;
   height: 100%;
+  object-fit: cover;
 `
 
 const TitleDiv = styled.div`
@@ -438,6 +483,7 @@ const BtnWrapper = styled.div`
 const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
   width: 195px;
   height: 44px;
+  color: black;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: ${props => props.color || 'white'};
   ${props =>
@@ -472,8 +518,6 @@ const StarContainer = styled.div`
 
 const FeedText = styled.textarea`
   width: 390px;
-  /* height: 200px; */
-  height: auto;
   overflow: hidden;
   border: none;
   box-sizing: border-box;
