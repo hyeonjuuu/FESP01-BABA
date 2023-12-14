@@ -68,9 +68,9 @@ function SearchPage() {
           검색
         </ClearBtn>
       </SearchBarWrapper>
-      <Wrapper>
+      {/* <Wrapper>
         <RecentSearch>검색 결과</RecentSearch>
-      </Wrapper>
+      </Wrapper> */}
       <ResultWrapper>
         {searchList.map(result => (
           <StyledLink key={result.id} to={`/detail/${result.id}`}>

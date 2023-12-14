@@ -28,14 +28,24 @@ function SearchResultBar() {
 
 export default SearchResultBar
 
+const ClearBtn = styled.button`
+  border-style: none;
+`
+
 export const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding: 0 10px;
+  border-radius: 8px;
 
   &:hover {
     background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
+
+    ${ClearBtn} {
+      background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
+    }
   }
 `
 
@@ -58,10 +68,6 @@ export const ResultBar = styled.span`
 export const ResultBarInfo = styled.span`
   font-size: 13px;
   font-weight: 300;
-`
-
-const ClearBtn = styled.button`
-  border-style: none;
 `
 
 export const Contain = styled.div`
