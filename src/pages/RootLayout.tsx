@@ -3,11 +3,12 @@ import Header from '@/layout/Header'
 import styled from 'styled-components'
 import SideBar from '@/layout/SideBar'
 import GlobalStyle from '@/style/GlobalStyle'
-import { Outlet, useMatch } from 'react-router-dom'
+import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import Fake from '@/layout/Fake'
 
 export default function RootLayout() {
-  // const location = useLocation()
+  const location = useLocation()
+
   // const isHome = location.pathname === '/'
   const match = useMatch('/')
   const isHome = match !== null
@@ -19,7 +20,8 @@ export default function RootLayout() {
         <Header isHome={isHome} />
         <Nav />
         <Outlet />
-        <SideBar />
+
+        {location.pathname === '/main' ? <SideBar /> : ''}
         <ResponsiveFake />
       </MainContainer>
     </>

@@ -127,7 +127,7 @@ const Box = styled.div`
   margin-top: 30px;
 `
 
-const SearchBarWrapper = styled.div`
+export const SearchBarWrapper = styled.div`
   display: flex;
   /* flex-direction: column; */
   align-items: center;
@@ -140,7 +140,7 @@ const SearchBarWrapper = styled.div`
   }
 `
 
-const SearchBar = styled.div`
+export const SearchBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

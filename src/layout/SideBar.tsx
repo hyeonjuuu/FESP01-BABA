@@ -1,11 +1,24 @@
 import styled, { ThemeProvider } from 'styled-components'
-import defaultImage from '@/assets/defaultImage.webp'
 import useThemeStore from '@/store/useThemeStore'
+import { usePopularDataStore } from '@/store/usePopularDataStore'
+import { useEffect } from 'react'
+import getPopularData from '@/api/getPopularData'
+import { movieGenres } from '@/utils/genresData'
 import { Link } from 'react-router-dom'
 
 function SideBar() {
-  const test = [1, 2, 3, 4, 5]
+  const { populardata, setPopularData } = usePopularDataStore()
   const { $darkMode } = useThemeStore()
+
+  useEffect(() => {
+    const popularDataFetching = async () => {
+      const response = await getPopularData()
+      setPopularData(response)
+    }
+    popularDataFetching()
+  }, [])
+  console.log(populardata)
+
   return (
     <ThemeProvider
       theme={{
@@ -15,16 +28,25 @@ function SideBar() {
     >
       <SideBarWrapper>
         <Title>🍿 오늘의 추천 영화 🎬</Title>
-        {test.map(index => (
-          <SideContentWrapper key={index} to="/detail">
-            <ContentNumber>{index}</ContentNumber>
-            <RecommendImage src={defaultImage} alt="" />
+        {populardata?.results.slice(0, 10).map((item, index) => (
+          <SideContentWrapper key={item.id} to={`/movie/${item.id}`}>
+            <ContentNumber>{index + 1}</ContentNumber>
+            <RecommendImage
+              src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
+              alt={`${item.title} 포스터`}
+            />
             <Movie>
-              <MovieTitle>엘리멘탈</MovieTitle>
+              <MovieTitle>{item.title}</MovieTitle>
               <MovieInfo>
                 <List>
-                  <Span>장르</Span>
-                  <P>로맨스</P>
+                  {item.genre_ids
+                    .slice(0, 3)
+                    .map((id: number, index: number) => {
+                      const genre = movieGenres.genres.find(
+                        genre => genre.id === id
+                      )
+                      return <GenreSpan key={index}>{genre?.name}</GenreSpan>
+                    })}
                 </List>
               </MovieInfo>
             </Movie>
@@ -55,7 +77,6 @@ const SideBarWrapper = styled.aside`
 const SideContentWrapper = styled(Link)`
   width: 100%;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   gap: 20px;
   text-decoration: none;
@@ -74,6 +95,9 @@ const Title = styled.h5`
 const RecommendImage = styled.img`
   width: 75px;
   height: 94px;
+  aspect-ratio: 2/3;
+  object-fit: fill;
+  border-radius: 3px;
 `
 
 const Movie = styled.div`
@@ -83,13 +107,17 @@ const Movie = styled.div`
 `
 
 const MovieTitle = styled.div`
-  color: ${props => props.theme.color};
+  font-weight: 600;
+  color: #303032;
+  width: 210px;
 `
 
 const MovieInfo = styled.ul`
   display: flex;
   margin: 0;
   padding: 0;
+  font-size: 12px;
+  margin-top: 6px;
 `
 
 const List = styled.li`
@@ -97,12 +125,8 @@ const List = styled.li`
   display: flex;
 `
 
-const Span = styled.span`
-  margin-right: 8px;
-  color: ${props => props.theme.color};
-`
-
-const P = styled.p`
+const GenreSpan = styled.span`
   margin: 0;
-  color: ${props => props.theme.color};
+  color: #777777;
+  margin-right: 4px;
 `
