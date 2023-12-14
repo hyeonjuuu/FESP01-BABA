@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview } from '@/api/reviewApi'
+import { addReview, uploadFile } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -65,6 +65,7 @@ function Writing() {
     setSelectMovie(selectedResult)
     setSearchList([])
   }
+  console.log(selectMovie)
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
@@ -116,8 +117,10 @@ function Writing() {
     e.preventDefault()
 
     const ottValue = selectedOtt
+    // const title =
 
     const textValue = text === 'Enter your text here...' ? '' : text
+    // const reviewContentInfo = searchList
 
     if (
       !selectMovie ||
@@ -143,8 +146,10 @@ function Writing() {
           '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
           text,
           selectedOtt,
-          rating
+          rating,
+          selectMovie.title
         )
+        await uploadFile(selectMovie.poster_path)
       }
       alert('리뷰가 등록되었습니다!')
       naviagte('/main')

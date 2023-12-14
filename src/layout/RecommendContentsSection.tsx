@@ -22,6 +22,16 @@ function RecommendContentsSection() {
 
   const { $darkMode } = useThemeStore()
 
+  function ratingStar(value: number) {
+    const roundedValue = (Math.round(value * 2) / 2).toFixed(1)
+
+    if (roundedValue.endsWith('.5') && value % 1 < 0.5) {
+      return Math.floor(value).toString()
+    }
+
+    return roundedValue
+  }
+
   return (
     <SectionWrapper>
       <SectionHeader width="32px" $darkMode={$darkMode}>
@@ -71,7 +81,7 @@ function RecommendContentsSection() {
                 <RecommendItem>{item.title}</RecommendItem>
                 <RecommendItem color="#FFC61A">
                   <StarIcon src={starIcon} alt="평점" />
-                  {item.vote_average / 2}
+                  {ratingStar(item.vote_average)}
                 </RecommendItem>
               </RecommendContent>
             </HoverWrapper>

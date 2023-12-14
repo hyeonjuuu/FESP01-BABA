@@ -11,7 +11,8 @@ export const addReview = async (
   user_id: string,
   text: string,
   ott: string[],
-  rating: number
+  rating: number,
+  movie_title: string | undefined
 ) => {
   try {
     const { data, error } = await supabaseAdmin.from('reviews').insert([
@@ -20,7 +21,8 @@ export const addReview = async (
         user_id,
         text,
         ott,
-        rating
+        rating,
+        movie_title
       }
     ])
 
@@ -31,5 +33,17 @@ export const addReview = async (
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+  }
+}
+
+// Upload file using standard upload
+export async function uploadFile(poster: string | null) {
+  const { data, error } = await supabaseAdmin.storage
+    .from('movieImage')
+    .upload(`public/`, poster)
+  if (error) {
+    // Handle error
+  } else {
+    // Handle success
   }
 }

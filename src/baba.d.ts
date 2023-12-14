@@ -33,14 +33,19 @@ interface MovieGenres {
   }[]
 }
 
-interface SearchListProps {
-  id: number
-  title: string
-  poster_path: string | null
-}
-
-interface SearchResultProps {
-  id: number
-  title: string
-  poster_path: string | null
+interface ReviewData {
+  map(
+    arg0: (item: any) => import('react/jsx-runtime').JSX.Element
+  ): React.ReactNode
+  [
+    movie_id: string,
+    user_id: string,
+    text: string,
+    created_at: string,
+    updated_at: string,
+    id: number,
+    ott: json,
+    image_id: number,
+    rating: number
+  ]
 }
