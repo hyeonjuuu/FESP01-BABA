@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview } from '@/api/reviewApi'
+import { addReview, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -26,8 +26,11 @@ function Writing() {
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
-  const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
+
+  const [imgSrc, setImgSrc]: any = useState(null)
+  const [image, setImage] = useState<File | null>(null)
+  const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
 
@@ -42,7 +45,6 @@ function Writing() {
 
     try {
       const searchData = await getSearchMovies(inputRef.current?.value || '')
-
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
           id: result.id,
@@ -75,11 +77,28 @@ function Writing() {
   // 기본 이미지
   const handleSelectDefaultIimg = () => {
     setIsSelectImg(true)
+    console.log(selectMovie)
   }
 
   // 사용자 이미지
   const handleSelectUserIimg = () => {
     setIsSelectImg(false)
+  }
+
+  // 사용자 이미지 미리보기
+  const handleUpload = (e: any) => {
+    const file = e.target.files[0]
+
+    setImage(file) // api로 보내려고...
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+
+    return new Promise<void>(resolve => {
+      reader.onload = () => {
+        setImgSrc(reader.result || null)
+        resolve()
+      }
+    })
   }
 
   //# OTT 선택
@@ -145,22 +164,26 @@ function Writing() {
       return
     }
 
-    // formData : 주로 파일이나 이미지 같은 바이너리 데이터를 서버로 전송할 때 사용
-    // const formData = new FormData()
-    // if (selectedOtt.length > 0) {
-    //   formData.append('ott', selectedOtt[0])
-    // }
-    // formData.append('text', textValue || '')
-
     try {
-      if (selectMovie) {
+      if (selectMovie && !imgSrc) {
         await addReview(
           selectMovie.id,
           '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
           text,
           selectedOtt,
-          rating
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title'
         )
+      } else if (selectMovie && imgSrc) {
+        await addReview(
+          selectMovie.id,
+          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title'
+        )
+        await uploadImage(image!)
       }
       alert('리뷰가 등록되었습니다!')
       // naviagte('/main')
@@ -168,8 +191,6 @@ function Writing() {
       console.error(error)
     }
   }
-
-  // console.log(selectMovie)
 
   return (
     <Container>
@@ -254,33 +275,27 @@ function Writing() {
           </ImgSelectBtn>
         </BtnWrapper>
         <OriginalImage>
-          {/* <label htmlFor="photo">사진</label>
-          <input
-            ref={photoRef}
-            type="file"
-            accept="image/*"
-            name="photo"
-            id="photo"
-            // multiple
-            // onChange={handleUpload}
-          ></input> */}
           {selectMovie && isSelectImg ? (
             <MoviePoster
               src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
-              alt={`${selectMovie.title} 포스터`}
+              alt={`${selectMovie.title || selectMovie.name} 포스터`}
             />
           ) : (
             selectMovie && (
               <>
-                <MoviePoster />
+                <MoviePoster
+                  src={imgSrc}
+                  alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
+                />
                 <div>
+                  <label htmlFor="photo">사진</label>
                   <input
                     type="file"
                     accept="image/*"
                     name="photo"
                     id="photo"
                     // multiple
-                    // onChange={handleUpload}
+                    onChange={handleUpload}
                   ></input>
                 </div>
               </>
@@ -440,6 +455,7 @@ const OriginalImage = styled.div`
 `
 
 const MoviePoster = styled.img`
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
