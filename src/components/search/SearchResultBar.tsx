@@ -1,10 +1,17 @@
 import styled from 'styled-components'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import useThemeStore from '@/store/useThemeStore'
+
+interface ResultBarContainProps {
+  $darkMode: boolean
+}
 
 function SearchResultBar() {
+  const { $darkMode } = useThemeStore()
+
   return (
-    <ResultBarContain>
+    <ResultBarContain $darkMode={$darkMode}>
       <Contain>
         <Image>사진</Image>
         <Warppaer>
@@ -21,13 +28,14 @@ function SearchResultBar() {
 
 export default SearchResultBar
 
-const ResultBarContain = styled.div`
+export const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  @media (min-width: 701px) {
-    max-width: 69%;
+
+  &:hover {
+    background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
   }
 `
 
@@ -43,11 +51,11 @@ const Image = styled.span`
   margin-left: 0;
 `
 
-const ResultBar = styled.span`
+export const ResultBar = styled.span`
   font-weight: 600;
 `
 
-const ResultBarInfo = styled.span`
+export const ResultBarInfo = styled.span`
   font-size: 13px;
   font-weight: 300;
 `
@@ -56,12 +64,13 @@ const ClearBtn = styled.button`
   border-style: none;
 `
 
-const Contain = styled.div`
+export const Contain = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `
 
-const Warppaer = styled.div`
+export const Warppaer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3px;

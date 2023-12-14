@@ -1,21 +1,34 @@
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { useRef, useState } from 'react'
 import getSearchMovies from '@/api/getSearchMovies'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import SearchResultBar, {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
+import {
   Contain,
   ResultBar,
   ResultBarContain,
   ResultBarInfo,
   Warppaer
-} from '@/components/search/SearchResultBar'
-import useThemeStore from '@/store/useThemeStore'
+} from './SearchResultBar'
 
-function SearchPage() {
-  const { $darkMode } = useThemeStore()
+interface SearchListProps {
+  id: number
+  title: string
+  poster_path: string | null
+}
 
+interface SearchResultProps {
+  id: number
+  title: string
+  poster_path: string | null
+}
+
+interface SearchInputBarProps {
+  isWriting: boolean
+}
+
+const SearchInputBar: React.FC<SearchInputBarProps> = ({ isWriting }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
@@ -34,9 +47,7 @@ function SearchPage() {
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
           id: result.id,
-          media_type: result.media_type,
           title: result.title,
-          name: result.name,
           poster_path: result.poster_path
         })
       )
@@ -49,9 +60,47 @@ function SearchPage() {
     }
   }
 
+  const handleSelect = () => {}
+
+  const renderContent = (result: SearchResultProps, isWriting: boolean) => {
+    if (isWriting) {
+      return (
+        <Wrapper key={result.id}>
+          <ResultBarContain>
+            <Contain onClick={handleSelect}>
+              <Image
+                src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                alt={`${result.title} 이미지`}
+              />
+              <Wrapper>
+                <ResultBar>{result.title}</ResultBar>
+              </Wrapper>
+            </Contain>
+          </ResultBarContain>
+        </Wrapper>
+      )
+    } else {
+      return (
+        <StyledLink key={result.id} to={`/detail/${result.id}`}>
+          <ResultBarContain>
+            <Contain>
+              <Image
+                src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                alt={`${result.title} 이미지`}
+              />
+              <Wrapper>
+                <ResultBar>{result.title}</ResultBar>
+                <ResultBarInfo>{`게시물 100개 미만개`}</ResultBarInfo>
+              </Wrapper>
+            </Contain>
+          </ResultBarContain>
+        </StyledLink>
+      )
+    }
+  }
+
   return (
-    <Box>
-      <h3 hidden>검색창</h3>
+    <>
       <SearchBarWrapper>
         <SearchBar>
           <Icon>
@@ -68,69 +117,24 @@ function SearchPage() {
           검색
         </ClearBtn>
       </SearchBarWrapper>
+      <HorizontalLine />
       <Wrapper>
         <RecentSearch>검색 결과</RecentSearch>
       </Wrapper>
       <ResultWrapper>
-        {searchList.map(result => (
-          <StyledLink key={result.id} to={`/detail/${result.id}`}>
-            <ResultBarContain $darkMode={$darkMode}>
-              <Contain>
-                <Image
-                  src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                  alt={
-                    result.media_type === 'movie' ? result.title : result.name
-                  }
-                />
-                <Warppaer>
-                  <ResultBar>
-                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
-                    {result.media_type === 'movie' ? result.title : result.name}
-                  </ResultBar>
-                  <ResultBarInfo>{`게시물 100개 미만개`}</ResultBarInfo>
-                </Warppaer>
-              </Contain>
-            </ResultBarContain>
-          </StyledLink>
-        ))}
+        {searchList.map(result => renderContent(result, isWriting))}
       </ResultWrapper>
-      <Wrapper>
-        <RecentSearch>최근 검색</RecentSearch>
-        <SeeAllBtn>모두 보기</SeeAllBtn>
-      </Wrapper>
-      <ResultWrapper>
-        <StyledLink to="/detail">
-          <SearchResultBar />
-        </StyledLink>
-        <StyledLink to="/detail">
-          <SearchResultBar />
-        </StyledLink>
-        <StyledLink to="/detail">
-          <SearchResultBar />
-        </StyledLink>
-        <StyledLink to="/detail">
-          <SearchResultBar />
-        </StyledLink>
-      </ResultWrapper>
-    </Box>
+    </>
   )
 }
 
-export default SearchPage
+export default SearchInputBar
 
-const Box = styled.div`
+export const SearchBarWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 10px;
-  margin-top: 30px;
-`
-
-const SearchBarWrapper = styled.div`
-  display: flex;
+  /* flex-direction: column; */
   align-items: center;
   max-width: 500px;
-  margin-bottom: 20px;
 
   @media (min-width: 701px) {
     flex-direction: row;
@@ -139,7 +143,7 @@ const SearchBarWrapper = styled.div`
   }
 `
 
-const SearchBar = styled.div`
+export const SearchBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -149,7 +153,6 @@ const SearchBar = styled.div`
   border-radius: 8px;
   max-width: 500px;
   width: 80%;
-
   @media (min-width: 701px) {
     width: 98%;
     max-width: none;
@@ -183,7 +186,7 @@ export const Input = styled.input`
   }
 `
 
-export const ClearBtn = styled.button`
+const ClearBtn = styled.button`
   margin-left: 10px;
   font-size: 14px;
   padding: 0;
@@ -192,9 +195,21 @@ export const ClearBtn = styled.button`
   border: none;
 `
 
+const HorizontalLine = styled.div`
+  height: 1px;
+  background-color: #ccc;
+  margin-top: 10px;
+  margin-bottom: 15px;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+  @media (min-width: 701px) {
+    width: 69%;
+  }
+`
+
 const Wrapper = styled.div`
-  border-top: 2px solid rgba(0, 0, 0, 0.1);
-  padding-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -203,17 +218,8 @@ const Wrapper = styled.div`
   max-width: 550px;
 `
 
-export const RecentSearch = styled.h4`
+const RecentSearch = styled.h4`
   margin: 0;
-`
-
-const SeeAllBtn = styled.button`
-  margin-left: 10px;
-  font-size: 14px;
-  padding: 0;
-  width: 70px;
-  border: none;
-  color: #0282d1;
 `
 
 const ResultWrapper = styled.div`
@@ -235,7 +241,7 @@ const StyledLink = styled(Link)`
   }
 `
 
-export const Image = styled.img`
+const Image = styled.img`
   width: 45px;
   height: 45px;
   border-radius: 50%;

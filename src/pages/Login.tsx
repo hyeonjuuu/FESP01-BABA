@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
 
 interface PasswordInputProps extends HTMLAttributes<HTMLDivElement> {
-  inputColor?: boolean
+  $inputColor?: boolean
 }
 
 function Login() {
@@ -82,7 +82,7 @@ function Login() {
               onChange={handleInputChange}
             />
             <label htmlFor="=password"></label>
-            <PasswordInputWrapper inputColor={inputColor}>
+            <PasswordInputWrapper $inputColor={inputColor}>
               <PasswordInput
                 id="password"
                 type="password"
@@ -167,7 +167,7 @@ const PasswordInputWrapper = styled.div<PasswordInputProps>`
   max-width: 360px;
   display: flex;
   border: 1.5px solid
-    ${({ inputColor }) => (inputColor ? '#3797EF' : '#bcbcbc')};
+    ${({ $inputColor }) => ($inputColor ? '#3797EF' : '#bcbcbc')};
   border-radius: 5px;
   transition: border-color 0.3s ease;
 `

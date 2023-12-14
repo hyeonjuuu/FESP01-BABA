@@ -12,20 +12,32 @@ body, #root {
   background: ${({ theme }) => theme.bgColor};
   color: ${({ theme }) => theme.color};
   border-color: ${({ theme }) => theme.borderColor};
-  }
-  button {
-    background: ${({ theme }) => theme.bgColor};
-    color: ${({ theme }) => theme.color};
-    border-color: ${({ theme }) => theme.borderColor};
+}
+
+button {
+  background: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.color};
+  border-color: ${({ theme }) => theme.borderColor};
   cursor: pointer;
   font-family: GmarketSans;
   
-  }
-  a {
-  text-decoration: none;
-  color: black;
 }
 
+a {
+  text-decoration: none;
+  color: ${({ theme }) => theme.color};
+}
+
+label{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 `
 
 export default GlobalStyle
