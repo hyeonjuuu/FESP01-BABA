@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
 import { useState } from 'react'
-import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Scrollbar } from 'swiper/modules'
 import 'swiper/css'
