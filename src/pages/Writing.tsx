@@ -74,13 +74,11 @@ function Writing() {
 
   // 기본 이미지
   const handleSelectDefaultIimg = () => {
-    console.log('기본 이미지')
     setIsSelectImg(true)
   }
 
   // 사용자 이미지
   const handleSelectUserIimg = () => {
-    console.log('사용자 이미지')
     setIsSelectImg(false)
   }
 
@@ -171,10 +169,12 @@ function Writing() {
     }
   }
 
+  // console.log(selectMovie)
+
   return (
     <Container>
-      {/* <FormStyle encType="multipart/form-data"> */}
-      <FormStyle>
+      <FormStyle encType="multipart/form-data">
+        {/* <FormStyle> */}
         <SearchBarWrapper>
           <SearchBar>
             <Icon>
@@ -234,12 +234,12 @@ function Writing() {
         </Wrapper>
 
         <TitleDiv>
+          {!selectMovie && `영화 또는 드라마 제목을 검색해주세요`}
           {(selectMovie && selectMovie.title) || selectMovie?.name}
         </TitleDiv>
 
         <BtnWrapper onClick={handleSelectImg}>
           <ImgSelectBtn
-            // color="#3797EF"
             color={isSelectImg ? '#3797EF' : ''}
             $hasBorder
             onClick={handleSelectDefaultIimg}
@@ -264,11 +264,27 @@ function Writing() {
             // multiple
             // onChange={handleUpload}
           ></input> */}
-          {selectMovie && (
+          {selectMovie && isSelectImg ? (
             <MoviePoster
               src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
               alt={`${selectMovie.title} 포스터`}
             />
+          ) : (
+            selectMovie && (
+              <>
+                <MoviePoster />
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    name="photo"
+                    id="photo"
+                    // multiple
+                    // onChange={handleUpload}
+                  ></input>
+                </div>
+              </>
+            )
           )}
         </OriginalImage>
 
@@ -431,7 +447,7 @@ const MoviePoster = styled.img`
 
 const StarContainer = styled.div`
   width: 370px;
-  padding: 10px;
+  padding: 30px 10px 10px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
