@@ -40,7 +40,7 @@ function FeedComponent() {
     loadReviewData()
   }, [])
 
-  console.log(reviews)
+  // console.log(reviews)
 
   const storageImage = async () => {
     const data = await supabase.storage.from('movieImage')
@@ -50,7 +50,7 @@ function FeedComponent() {
     return publicUrl
   }
   // console.log(storageImage())
-  console.log(reviewImg)
+  // console.log(reviewImg.data)
 
   return (
     <FeedSection>

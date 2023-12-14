@@ -13,6 +13,7 @@ import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
+import { createClient } from '@supabase/supabase-js'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -65,7 +66,7 @@ function Writing() {
     setSelectMovie(selectedResult)
     setSearchList([])
   }
-  console.log(selectMovie)
+  // console.log(selectMovie)
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
