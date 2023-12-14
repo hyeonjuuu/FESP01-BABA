@@ -21,10 +21,13 @@ const StarRating = ({ onRatingChange }: StarRatingProps) => {
   const [rating, setRating] = useState(0)
 
   const handleStarClick = (selectedRating: number) => {
-    setRating(prevRating =>
-      prevRating === selectedRating ? 0 : selectedRating
-    )
-    onRatingChange(selectedRating)
+    if (rating === selectedRating) {
+      setRating(0)
+      onRatingChange(0)
+    } else {
+      setRating(selectedRating)
+      onRatingChange(selectedRating)
+    }
   }
 
   return (

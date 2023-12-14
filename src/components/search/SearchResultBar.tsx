@@ -1,10 +1,17 @@
 import styled from 'styled-components'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import useThemeStore from '@/store/useThemeStore'
+
+interface ResultBarContainProps {
+  $darkMode: boolean
+}
 
 function SearchResultBar() {
+  const { $darkMode } = useThemeStore()
+
   return (
-    <ResultBarContain>
+    <ResultBarContain $darkMode={$darkMode}>
       <Contain>
         <Image>사진</Image>
         <Warppaer>
@@ -21,15 +28,14 @@ function SearchResultBar() {
 
 export default SearchResultBar
 
-export const ResultBarContain = styled.div`
+export const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
 
-  @media (min-width: 701px) {
-    /* max-width: 69%; */
-    max-width: 100%;
+  &:hover {
+    background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
   }
 `
 

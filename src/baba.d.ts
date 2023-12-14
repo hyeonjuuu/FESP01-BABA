@@ -10,6 +10,22 @@ interface PopularDataItem {
   title: string
 }
 
+interface SearchListProps {
+  id: number
+  media_type: string
+  title?: string
+  name?: string
+  poster_path: string | null
+}
+
+interface SearchResultProps {
+  id: number
+  media_type: string
+  title?: string
+  name?: string
+  poster_path: string | null
+}
+
 interface MovieGenres {
   genres: {
     id: number
