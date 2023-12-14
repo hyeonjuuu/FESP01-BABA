@@ -27,6 +27,7 @@ function Writing() {
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
+  const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
 
@@ -60,10 +61,27 @@ function Writing() {
     }
   }
 
-  //# 기본 이미지 선택
-  const handleSelect = (selectedResult: SearchListProps) => {
+  // 기본 이미지 삽입
+  const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
+  }
+
+  //# 이미지 선택
+  const handleSelectImg = (e: React.MouseEvent) => {
+    e.preventDefault()
+  }
+
+  // 기본 이미지
+  const handleSelectDefaultIimg = () => {
+    console.log('기본 이미지')
+    setIsSelectImg(true)
+  }
+
+  // 사용자 이미지
+  const handleSelectUserIimg = () => {
+    console.log('사용자 이미지')
+    setIsSelectImg(false)
   }
 
   //# OTT 선택
@@ -147,7 +165,7 @@ function Writing() {
         )
       }
       alert('리뷰가 등록되었습니다!')
-      naviagte('/main')
+      // naviagte('/main')
     } catch (error) {
       console.error(error)
     }
@@ -178,7 +196,7 @@ function Writing() {
           {searchList.map(result => (
             <ResultBarContain
               key={result.id}
-              onClick={() => handleSelect(result)}
+              onClick={() => handleSelectMovie(result)}
               $darkMode={$darkMode}
             >
               <Contain>
@@ -215,11 +233,25 @@ function Writing() {
           ))}
         </Wrapper>
 
-        <BtnWrapper>
-          <ImgSelectBtn color="#3797EF" $hasBorder>
+        <TitleDiv>
+          {(selectMovie && selectMovie.title) || selectMovie?.name}
+        </TitleDiv>
+
+        <BtnWrapper onClick={handleSelectImg}>
+          <ImgSelectBtn
+            // color="#3797EF"
+            color={isSelectImg ? '#3797EF' : ''}
+            $hasBorder
+            onClick={handleSelectDefaultIimg}
+          >
             기본 이미지
           </ImgSelectBtn>
-          <ImgSelectBtn>사용자 이미지</ImgSelectBtn>
+          <ImgSelectBtn
+            color={isSelectImg ? '' : '#3797EF'}
+            onClick={handleSelectUserIimg}
+          >
+            사용자 이미지
+          </ImgSelectBtn>
         </BtnWrapper>
         <OriginalImage>
           {/* <label htmlFor="photo">사진</label>
@@ -352,6 +384,20 @@ const IconBox = styled.div`
 const OttIcon = styled.img`
   width: 100%;
   height: 100%;
+`
+
+const TitleDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  font-weight: 600;
+  @media (min-width: 701px) {
+    max-width: 390px;
+  }
 `
 
 const BtnWrapper = styled.div`
