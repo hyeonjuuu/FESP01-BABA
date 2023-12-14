@@ -6,7 +6,7 @@ const getPopularData = async () => {
       'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page=1&sort_by=popularity.desc',
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.REACT_APP_TMDB_API_KEY}`,
+          Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
           accept: 'application/json'
         }
       }
