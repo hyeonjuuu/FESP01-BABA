@@ -6,7 +6,9 @@ const getGenreData = async () => {
       'https://api.themoviedb.org/3/genre/movie/list?language=ko',
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.REACT_APP_TMDB_API_KEY}`,
+          // Authorization: `Bearer ${import.meta.env.REACT_APP_TMDB_API_KEY}`,
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYjc3OWE4NThlYzIxOWUyYmEyOGU1ZWY4MDBhNGFmMiIsInN1YiI6IjY1NzAwMDVhZDE4ZmI5MDBlM2ZhNWU5YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XDCpuR52PAiChL34UMGYBvGtWtOq7NYrjkIVBuMyuRg',
           accept: 'application/json'
         }
       }

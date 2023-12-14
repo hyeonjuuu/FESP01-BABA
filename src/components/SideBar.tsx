@@ -4,6 +4,7 @@ import { usePopularDataStore } from '@/store/usePopularDataStore'
 import { useEffect } from 'react'
 import getPopularData from '@/api/getPopularData'
 import { movieGenres } from '@/utils/genresData'
+import { Link } from 'react-router-dom'
 
 function SideBar() {
   const { populardata, setPopularData } = usePopularDataStore()
@@ -28,7 +29,7 @@ function SideBar() {
       <SideBarWrapper>
         <Title>🍿 오늘의 추천 영화 🎬</Title>
         {populardata?.results.slice(0, 10).map((item, index) => (
-          <SideContentWrapper key={item.id} href="">
+          <SideContentWrapper key={item.id} to={`/movie/${item.id}`}>
             <ContentNumber>{index + 1}</ContentNumber>
             <RecommendImage
               src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
@@ -73,7 +74,7 @@ const SideBarWrapper = styled.aside`
   }
 `
 
-const SideContentWrapper = styled.a`
+const SideContentWrapper = styled(Link)`
   width: 100%;
   display: flex;
   align-items: center;
