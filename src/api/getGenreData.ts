@@ -1,21 +1,20 @@
 import axios from 'axios'
 
-const getMovieImage = async () => {
+const getGenreData = async () => {
   try {
     const response = await axios.get(
-      'https://api.themoviedb.org/3/movie/100/images',
+      'https://api.themoviedb.org/3/genre/movie/list?language=ko',
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
+          Authorization: `Bearer ${import.meta.env.REACT_APP_TMDB_API_KEY}`,
           accept: 'application/json'
         }
       }
     )
-    // console.log(response.data)
     return response.data
   } catch (error) {
     console.error(error)
   }
 }
 
-export default getMovieImage
+export default getGenreData
