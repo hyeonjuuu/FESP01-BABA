@@ -6,7 +6,7 @@ interface InputProps {
   maxlength?: number
   id?: string
   width: string
-  noBorder?: boolean // 새로운 prop 추가
+  $noBorder?: boolean // 새로운 prop 추가
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   name?: string
   inputRef?: React.Ref<HTMLInputElement>
@@ -19,7 +19,7 @@ function Input({
   maxlength,
   id,
   width = '100%',
-  noBorder = false,
+  $noBorder = false,
   name,
   onChange,
   inputRef,
@@ -33,7 +33,7 @@ function Input({
         placeholder={placeholder}
         maxLength={maxlength}
         width={width}
-        noBorder={noBorder}
+        $noBorder={$noBorder}
         onChange={onChange}
         name={name}
         ref={inputRef}
@@ -49,7 +49,7 @@ const StyledInput = styled.input<InputProps>`
   width: ${props => props.width || '100%'};
   height: 44px;
   border: ${props =>
-    props.noBorder ? 'none' : '1.5px solid #bcbcbc'}; // 조건부로 border 설정
+    props.$noBorder ? 'none' : '1.5px solid #bcbcbc'}; // 조건부로 border 설정
   border-radius: 5px;
   padding-left: 10px;
 

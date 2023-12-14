@@ -25,7 +25,7 @@ button {
 
 a {
   text-decoration: none;
-  color: black;
+  color: ${({ theme }) => theme.color};
 }
 
 label{

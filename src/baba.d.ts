@@ -10,12 +10,16 @@ interface PopularDataItem {
 
 interface SearchListProps {
   id: number
-  title: string
+  media_type: string
+  title?: string
+  name?: string
   poster_path: string | null
 }
 
 interface SearchResultProps {
   id: number
-  title: string
+  media_type: string
+  title?: string
+  name?: string
   poster_path: string | null
 }

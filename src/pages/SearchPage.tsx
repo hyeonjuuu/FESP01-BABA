@@ -11,8 +11,11 @@ import SearchResultBar, {
   ResultBarInfo,
   Warppaer
 } from '@/components/search/SearchResultBar'
+import useThemeStore from '@/store/useThemeStore'
 
 function SearchPage() {
+  const { $darkMode } = useThemeStore()
+
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
@@ -31,7 +34,9 @@ function SearchPage() {
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
           id: result.id,
+          media_type: result.media_type,
           title: result.title,
+          name: result.name,
           poster_path: result.poster_path
         })
       )
@@ -70,14 +75,19 @@ function SearchPage() {
       <ResultWrapper>
         {searchList.map(result => (
           <StyledLink key={result.id} to={`/detail/${result.id}`}>
-            <ResultBarContain>
+            <ResultBarContain $darkMode={$darkMode}>
               <Contain>
                 <Image
                   src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                  alt={`${result.title} 이미지`}
+                  alt={
+                    result.media_type === 'movie' ? result.title : result.name
+                  }
                 />
                 <Warppaer>
-                  <ResultBar>{result.title}</ResultBar>
+                  <ResultBar>
+                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                    {result.media_type === 'movie' ? result.title : result.name}
+                  </ResultBar>
                   <ResultBarInfo>{`게시물 100개 미만개`}</ResultBarInfo>
                 </Warppaer>
               </Contain>
@@ -117,7 +127,7 @@ const Box = styled.div`
   margin-top: 30px;
 `
 
-export const SearchBarWrapper = styled.div`
+const SearchBarWrapper = styled.div`
   display: flex;
   /* flex-direction: column; */
   align-items: center;
@@ -130,7 +140,7 @@ export const SearchBarWrapper = styled.div`
   }
 `
 
-export const SearchBar = styled.div`
+const SearchBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
