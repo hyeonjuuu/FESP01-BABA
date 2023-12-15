@@ -1,20 +1,47 @@
+import { MovieInfo } from '@/types'
 import styled from 'styled-components'
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import DetailReview from '@/components/DetailReview'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { findMovieDirector, getDetailData } from '@/api/\btmdbDetailData'
 import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 function Detail() {
+  const { id: movieID } = useParams()
+
   const [reviewData, setReviewData] = useState<any[] | null>(null)
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
+  const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
+  const [movieCreditData, setMovieCreditData] = useState<string | undefined>('')
+
+  useEffect(() => {
+    const getMovieInfoData = async () => {
+      try {
+        const response = await getDetailData(movieID as string)
+        const director = await findMovieDirector(movieID as string)
+
+        if (response) {
+          const data = response.data
+          setMovieInfoData(data)
+          setMovieCreditData(director)
+        }
+      } catch (error) {
+        console.error(
+          `상세정보 데이터를 가져오는데 실패하였습니다...🥲: ${error}`
+        )
+      }
+    }
+
+    getMovieInfoData()
+  }, [movieID])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getReviewData()
         const nicknameData = await getReviewDataWithUserInfo()
-
         setReviewData(data)
         setNicknames(nicknameData)
       } catch (error) {
@@ -28,7 +55,7 @@ function Detail() {
   return (
     <Container>
       <DetailDivWrapper>
-        <DetailH2>미션 임파서블 : 데드 레코닝 PART ONE</DetailH2>
+        <DetailH2>{movieinfoData?.title}</DetailH2>
         <StarDiv>
           <FontAwesomeIcon icon={faStar} style={{ color: '#FFC61A' }} />
           <FontAwesomeIcon icon={faStar} style={{ color: '#FFC61A' }} />
@@ -42,8 +69,8 @@ function Detail() {
         </StarDiv>
 
         <Img
-          src="https://picsum.photos/seed/picsum/200/300"
-          alt="영화 이미지"
+          src={`https://image.tmdb.org/t/p/original${movieinfoData?.poster_path}`}
+          alt={`${movieinfoData?.title} 포스터`}
           width="100%"
           height="100%"
           object-fit="cover"
@@ -53,18 +80,23 @@ function Detail() {
           <MovieInfoDiv>
             <CertificationDiv>15</CertificationDiv>
             <span>|</span>
-            2023
+            {movieinfoData?.release_date}
             <span>|</span>
-            액션 &middot; 스릴러
+            {movieinfoData?.genres.map((item, index, array) => (
+              <GenreWrapper key={item.id}>
+                {item.name}
+                {index < array.length - 1 && <div>&middot;</div>}
+              </GenreWrapper>
+            ))}
             <span>|</span>
-            2시간 44분
+            {movieinfoData?.runtime}분
           </MovieInfoDiv>
           <DirectorInfoDiv>
             <DirectorDiv>
               감독
               <span>|</span>
             </DirectorDiv>
-            크리스토퍼 맥쿼리
+            {movieCreditData}
           </DirectorInfoDiv>
         </Wrapper>
       </DetailDivWrapper>
@@ -170,4 +202,9 @@ const DirectorDiv = styled.div`
   align-items: center;
   gap: 5px;
   color: #777;
+`
+
+const GenreWrapper = styled.div`
+  display: flex;
+  gap: 4px;
 `

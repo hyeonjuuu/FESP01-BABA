@@ -17,7 +17,6 @@ function SideBar() {
     }
     popularDataFetching()
   }, [])
-  console.log(populardata)
 
   return (
     <ThemeProvider
