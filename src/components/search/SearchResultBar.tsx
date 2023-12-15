@@ -1,25 +1,28 @@
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import { ResultBarContainProps } from '@/types'
+import useThemeStore from '@/store/useThemeStore'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import useThemeStore from '@/store/useThemeStore'
 
-interface ResultBarContainProps {
-  $darkMode: boolean
+interface SearchResultBarProps {
+  title: string
+  onClick?: (item: string) => void
 }
 
-function SearchResultBar() {
+function SearchResultBar({ title, onClick }: SearchResultBarProps) {
   const { $darkMode } = useThemeStore()
 
   return (
     <ResultBarContain $darkMode={$darkMode}>
-      <Contain>
-        <Image>사진</Image>
-        <Warppaer>
-          <ResultBar>#고양이</ResultBar>
-          <ResultBarInfo>게시물 100개 미만개</ResultBarInfo>
-        </Warppaer>
-      </Contain>
-      <ClearBtn>
+      <StyledLink to="/detail">
+        <Contain>
+          <Warppaer>
+            <ResultBar># {title}</ResultBar>
+          </Warppaer>
+        </Contain>
+      </StyledLink>
+      <ClearBtn type="button" onClick={() => onClick?.(title)}>
         <FontAwesomeIcon icon={faX} />
       </ClearBtn>
     </ResultBarContain>
@@ -30,6 +33,9 @@ export default SearchResultBar
 
 const ClearBtn = styled.button`
   border-style: none;
+  width: 10%;
+  height: 100%;
+  font-size: 14px;
 `
 
 export const ResultBarContain = styled.div<ResultBarContainProps>`
@@ -37,7 +43,8 @@ export const ResultBarContain = styled.div<ResultBarContainProps>`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 10px;
+  max-width: 540px;
+  padding: 16px 6px;
   border-radius: 8px;
 
   &:hover {
@@ -47,18 +54,6 @@ export const ResultBarContain = styled.div<ResultBarContainProps>`
       background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
     }
   }
-`
-
-const Image = styled.span`
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background-color: tomato;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px;
-  margin-left: 0;
 `
 
 export const ResultBar = styled.span`
@@ -80,4 +75,10 @@ export const Warppaer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3px;
+`
+const StyledLink = styled(Link)`
+  width: 100%;
+  @media (min-width: 701px) {
+    width: 70%;
+  }
 `
