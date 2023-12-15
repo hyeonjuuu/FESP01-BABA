@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, uploadImage } from '@/api/reviewApi'
+import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -163,7 +163,6 @@ function Writing() {
     e.preventDefault()
 
     const ottValue = selectedOtt
-
     const textValue = text === 'Enter your text here...' ? '' : text
 
     if (
@@ -187,23 +186,25 @@ function Writing() {
           selectMovie.title || selectMovie.name || 'Unknown Title'
         )
       } else if (selectMovie && imgSrc) {
-        await addReview(
+        const imgUrl = await uploadImage(image!)
+
+        await addReviewWithImgUrl(
           selectMovie.id,
           '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
           text,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          imgUrl!
         )
-        await uploadImage(image!)
       }
       alert('리뷰가 등록되었습니다!')
+
       // naviagte('/main')
     } catch (error) {
       console.error(error)
     }
   }
-  console.log('selectedOtt: ', selectedOtt)
 
   return (
     <Container>
