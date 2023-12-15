@@ -1,9 +1,30 @@
 import styled from 'styled-components'
+import { useEffect, useState } from 'react'
 import DetailReview from '@/components/DetailReview'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
+import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 function Detail() {
+  const [reviewData, setReviewData] = useState<any[] | null>(null)
+  const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getReviewData()
+        const nicknameData = await getReviewDataWithUserInfo()
+
+        setReviewData(data)
+        setNicknames(nicknameData)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <Container>
       <DetailDivWrapper>
@@ -49,11 +70,20 @@ function Detail() {
       </DetailDivWrapper>
 
       <Wrapper>
-        <DetailReview />
-        <DetailReview />
-        <DetailReview />
-        <DetailReview />
-        <DetailReview />
+        {reviewData?.map(reviewItem => {
+          const matchingNicknames = nicknames
+            ?.filter(n => n.user_email === reviewItem.user_id)
+            .map(n => n.nickname)
+
+          return (
+            <DetailReview
+              key={reviewItem.user_id} // 고유한 식별자로 사용하는 값으로 지정
+              nickname={matchingNicknames?.[0] || 'Default Nickname'} // 배열이 아닌 경우 첫 번째 값을 사용하거나 기본값 지정
+              rating={reviewItem.rating}
+              text={reviewItem.text}
+            />
+          )
+        })}
       </Wrapper>
     </Container>
   )

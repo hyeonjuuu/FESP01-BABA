@@ -1,9 +1,9 @@
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 import useThemeStore from '../store/useThemeStore'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useNavigate } from 'react-router-dom'
 
 interface HeaderDivProps {
   $darkMode: boolean

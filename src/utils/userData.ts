@@ -84,7 +84,7 @@ export const userLogin = async (userloginData: UserloginData) => {
       // 사용자의 정보를 로컬스토리지에 저장합니다.
       localStorage.setItem('userData', JSON.stringify(data))
       console.log('로그인 성공:', data)
-      return data
+      return
     } else if (error) {
       console.error('로그인 실패:', error.message)
     }
