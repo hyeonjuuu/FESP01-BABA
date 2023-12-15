@@ -33,8 +33,12 @@ function SearchPage() {
     }
   }
 
-  const handleSearchBtn = async (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.preventDefault()
+  const handleSearchBtn = async (
+    e?: React.MouseEvent | React.KeyboardEvent
+  ) => {
+    if (e) {
+      e.preventDefault()
+    }
     const inputValue = inputRef.current?.value || ''
 
     const earlyStorageItems = JSON.parse(
@@ -170,6 +174,8 @@ function SearchPage() {
               key={item}
               title={item}
               onClick={handleRemoveStorageItem}
+              inputRef={inputRef}
+              onSearch={handleSearchBtn}
             />
           ))
         )}
