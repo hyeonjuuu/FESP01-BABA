@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
+import { ResultBarContainProps } from '@/types'
 import useThemeStore from '@/store/useThemeStore'
 import getSearchMovies from '@/api/getSearchMovies'
+import { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
-import { ResultBarContainProps } from '@/types'
 import SearchResultBar, {
   Contain,
   ResultBar,
@@ -166,7 +166,7 @@ const Box = styled.div`
   margin-top: 30px;
 `
 
-const SearchBarWrapper = styled.div`
+export const SearchBarWrapper = styled.div`
   display: flex;
   align-items: center;
   max-width: 490px;
@@ -179,7 +179,7 @@ const SearchBarWrapper = styled.div`
   }
 `
 
-const SearchBar = styled.div`
+export const SearchBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
