@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ResultBarContainProps } from '@/types'
 import useThemeStore from '@/store/useThemeStore'
 import getSearchMovies from '@/api/getSearchMovies'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
@@ -15,7 +15,6 @@ import SearchResultBar, {
 
 function SearchPage() {
   const { $darkMode } = useThemeStore()
-  const uniqueId = useId()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [isSearched, setIsSearched] = useState(false)
@@ -34,7 +33,7 @@ function SearchPage() {
     }
   }
 
-  const handleSearchBtn = async (e: React.MouseEvent) => {
+  const handleSearchBtn = async (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault()
     const inputValue = inputRef.current?.value || ''
 
@@ -69,6 +68,7 @@ function SearchPage() {
     } catch (error) {
       console.error(error)
     } finally {
+      inputRef.current!.value = ''
       setIsSearchBtnDisabled(true)
       setIsLoading(false)
     }
@@ -110,6 +110,11 @@ function SearchPage() {
             type="text"
             placeholder="Search"
             onChange={handleSearchInput}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleSearchBtn(e)
+              }
+            }}
             ref={inputRef}
           />
         </SearchBar>
@@ -162,7 +167,7 @@ function SearchPage() {
         ) : (
           oldSearchRecordList?.map(item => (
             <SearchResultBar
-              key={uniqueId}
+              key={item}
               title={item}
               onClick={handleRemoveStorageItem}
             />
