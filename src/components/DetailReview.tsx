@@ -7,7 +7,13 @@ interface ReviewContentProps {
   $darkMode: boolean
 }
 
-function DetailReview() {
+interface DetailReviewProps {
+  nickname?: string
+  rating?: string
+  text: string
+}
+
+function DetailReview({ nickname, rating, text }: DetailReviewProps) {
   const { $darkMode } = useThemeStore()
 
   return (
@@ -22,18 +28,14 @@ function DetailReview() {
 
       <DetailReviewDiv>
         <NameStartDiv>
-          <div>UserName</div>
+          <div>{nickname}</div>
           <StarDiv>
             <FontAwesomeIcon icon={faStar} style={{ color: '#FFC61A' }} />
-            <span>4.5</span>
+            <span>{rating}</span>
           </StarDiv>
         </NameStartDiv>
 
-        <ReviewContent $darkMode={$darkMode}>
-          리뷰 내용입니다.리뷰 내용입니다.리뷰 내용입니다. 리뷰 내용입니다. 리뷰
-          내용입니다. 리뷰 내용입니다.리뷰 내용입니다. 리뷰 내용입니다. 리뷰
-          내용입니다. 리뷰 내용입니다. 리뷰 내용입니다. 리뷰 내용입니다.
-        </ReviewContent>
+        <ReviewContent $darkMode={$darkMode}>{text}</ReviewContent>
       </DetailReviewDiv>
     </DetailReviewDivWrapper>
   )
