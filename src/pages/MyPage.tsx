@@ -39,8 +39,8 @@ function MyPage() {
   //# 프로필 이미지 렌더링
   const fetchAndRenderProfileImg = async () => {
     try {
-      // const imgSrc = await getProfileImgUrl(8) // 프로필 이미지 있을 때
-      const imgSrc = await getProfileImgUrl(0) // 프로필 이미지 없을 때
+      const imgSrc = await getProfileImgUrl(8) // 프로필 이미지 있을 때
+      // const imgSrc = await getProfileImgUrl(0) // 프로필 이미지 없을 때
       if (imgSrc) {
         setRenderUserImg(imgSrc)
       }
@@ -60,7 +60,7 @@ function MyPage() {
         <ProfileContain>
           <form action="#">
             <ImageWrapper>
-              <Image
+              <ProfileImage
                 src={
                   renderUserImg
                     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderUserImg}`
@@ -162,12 +162,15 @@ const ProfileContain = styled.div`
 `
 
 const ImageWrapper = styled.div`
-  background-color: yellow;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
 `
 
-const Image = styled.img`
-  width: 90px;
-  height: 90px;
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
 `
 
 const ProfileInfo = styled.div`
