@@ -2,12 +2,15 @@ import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import FavRing from '@/components/mypage/FavRing'
 import { useEffect, useRef, useState } from 'react'
-import { uploadProfileImg } from '@/api/profileImgApi'
+import {
+  addImgUrltoUsers,
+  getProfileImgUrl,
+  uploadProfileImg
+} from '@/api/profileImgApi'
 
 function MyPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
-  const [imgSrc, setImgSrc]: any = useState(null)
   const [renderUserImg, setRenderUserImg] = useState<string | null>(null)
 
   //# 프로필 이미지 선택
@@ -22,40 +25,65 @@ function MyPage() {
   }
 
   //# 프로필 이미지 전송
-  useEffect(() => {
+  const selectProfileImg = async () => {
     if (profileImg) {
-      uploadProfileImg(profileImg)
-      console.log('이미지 업로드')
+      const imgUrl = await uploadProfileImg(profileImg)
+      await addImgUrltoUsers(imgUrl!)
     }
+  }
+
+  useEffect(() => {
+    selectProfileImg()
   }, [profileImg])
 
   //# 프로필 이미지 렌더링
-  const renderProfileImg = async () => {}
+  const fetchAndRenderProfileImg = async () => {
+    try {
+      // const imgSrc = await getProfileImgUrl(8) // 프로필 이미지 있을 때
+      const imgSrc = await getProfileImgUrl(0) // 프로필 이미지 없을 때
+      if (imgSrc) {
+        setRenderUserImg(imgSrc)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchAndRenderProfileImg()
+    console.log('renderUserImg: ', renderUserImg)
+  }, [renderUserImg])
 
   return (
     <Box>
       <ContentBox>
         <ProfileContain>
           <form action="#">
-            <Image
-              src={userImage}
-              alt="사용자 이미지"
-              onClick={handleProfileImg}
-            />
+            <ImageWrapper>
+              <Image
+                src={
+                  renderUserImg
+                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderUserImg}`
+                    : userImage
+                }
+                alt="사용자 이미지"
+                onClick={handleProfileImg}
+              />
 
-            {/* 실제 파일 입력란은 감춰두고, 사용자 정의 버튼 클릭 시 트리거되도록 함 */}
-            <div>
-              <label htmlFor="photo">사진</label>
-              <input
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-                type="file"
-                accept="image/*"
-                name="photo"
-                id="photo"
-                onChange={handleUpload}
-              ></input>
-            </div>
+              {/* 실제 파일 입력란은 감춰두고, 사용자 정의 버튼 클릭 시 트리거되도록 함 */}
+              <div>
+                <label htmlFor="photo">사진</label>
+                <input
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  type="file"
+                  accept="image/*"
+                  name="photo"
+                  id="photo"
+                  onChange={handleUpload}
+                ></input>
+              </div>
+            </ImageWrapper>
           </form>
 
           <ProfileInfo>
@@ -133,7 +161,9 @@ const ProfileContain = styled.div`
   padding: 0 12px;
 `
 
-const Formstyle = styled.form``
+const ImageWrapper = styled.div`
+  background-color: yellow;
+`
 
 const Image = styled.img`
   width: 90px;
