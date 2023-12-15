@@ -2,7 +2,12 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  getImgUrl,
+  uploadImage
+} from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -206,6 +211,24 @@ function Writing() {
     }
   }
 
+  const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
+
+  const fetchAndRenderImage = async () => {
+    try {
+      const imgSrc = await getImgUrl(157)
+      if (imgSrc) {
+        setRenderedUserImg(imgSrc)
+        console.log('imgSrc: ', imgSrc)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchAndRenderImage()
+  }, [])
+
   return (
     <Container>
       <FormStyle encType="multipart/form-data">
@@ -356,11 +379,28 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
+
+      <UserImageTest>
+        <UserImage
+          src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${renderedUserImg}`}
+        ></UserImage>
+      </UserImageTest>
     </Container>
   )
 }
 
 export default Writing
+
+const UserImageTest = styled.div`
+  width: 100px;
+  height: 100px;
+`
+
+const UserImage = styled.img`
+  width: 100%;
+  height: 100;
+  object-fit: cover;
+`
 
 const Container = styled.section`
   /* display: flex;
