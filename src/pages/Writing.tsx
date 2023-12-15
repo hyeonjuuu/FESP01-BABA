@@ -146,7 +146,7 @@ function Writing() {
           rating,
           selectMovie.title
         )
-        await uploadFile(poster, posterPath)
+        await uploadFile(poster)
       }
       alert('리뷰가 등록되었습니다!')
       naviagte('/main')

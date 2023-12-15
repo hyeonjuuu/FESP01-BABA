@@ -22,7 +22,7 @@ interface TextColorProps {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
-  const [reviewImg, setReviewImg] = useState<any>()
+  // const [reviewImg, setReviewImg] = useState<any>()
 
   useEffect(() => {
     const loadReviewData = async () => {
@@ -39,18 +39,18 @@ function FeedComponent() {
 
     loadReviewData()
   }, [])
-
   // console.log(reviews)
 
-  const storageImage = async () => {
-    const data = await supabase.storage.from('movieImage')
+  const reviewImage =
+    'https://image.tmdb.org/t/p/original/318YNPBDdt4VU1nsJDdImGc8Gek.jpg'
 
-    const publicUrl = supabase.storage.from('movieImage').getPublicUrl('*')
-    setReviewImg(publicUrl)
-    return publicUrl
-  }
-  // console.log(storageImage())
-  // console.log(reviewImg.data)
+  // const storageImage = async () => {
+  //   const data = await supabase.storage.from('movieImage')
+
+  //   const publicUrl = supabase.storage.from('movieImage').getPublicUrl('*')
+  //   setReviewImg(publicUrl)
+  //   return publicUrl
+  // }
 
   return (
     <FeedSection>
@@ -62,7 +62,11 @@ function FeedComponent() {
                 <UserImage src="" alt="" />
                 <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
               </CommonDivWrapper>
-              <FeedImage src="" alt="" />
+              <FeedImage
+                src={reviewImage}
+                // src={`https://image.tmdb.org/t/p/original${item.img_url}`}
+                alt=""
+              />
               <ContentTitleWrapper>
                 <ContentTitle>{item.movie_title}</ContentTitle>
                 <CommonDivWrapper>
@@ -130,7 +134,7 @@ const TextColor = styled.span<TextColorProps>`
   font-size: 14px;
 `
 const FeedImage = styled.img`
-  height: 310px;
+  width: 310px;
   border: 1px solid black;
   display: block;
 `
