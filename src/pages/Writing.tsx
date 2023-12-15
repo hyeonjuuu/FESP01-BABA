@@ -133,12 +133,6 @@ function Writing() {
       return
     }
 
-    // formData : 주로 파일이나 이미지 같은 바이너리 데이터를 서버로 전송할 때 사용
-    // const formData = new FormData()
-    // if (selectedOtt.length > 0) {
-    //   formData.append('ott', selectedOtt[0])
-    // }
-    // formData.append('text', textValue || '')
     const posterPath = `https://image.tmdb.org/t/p/original${selectMovie.poster_path}`
     const poster = selectMovie.poster_path
 
@@ -152,7 +146,7 @@ function Writing() {
           rating,
           selectMovie.title
         )
-        await uploadFile(posterPath, poster)
+        await uploadFile(poster, posterPath)
       }
       alert('리뷰가 등록되었습니다!')
       naviagte('/main')

@@ -37,12 +37,13 @@ export const addReview = async (
   }
 }
 
-export async function uploadFile(poster: any) {
+export async function uploadFile(poster: any, posterPath: string) {
   try {
     const { data, error } = await supabase.storage
       .from('movieImage')
-      .upload(`public${poster}`, poster, {
-        // .upload(`public${poster}`, poster, {
+      // .upload(`public${poster}`, poster, {
+      .upload(`public${poster}`, posterPath, {
+        contentType: 'image/jpg'
       })
 
     console.log(data)
@@ -58,23 +59,3 @@ export async function uploadFile(poster: any) {
     console.error('예외 발생:', supabaseError.message)
   }
 }
-
-// export async function uploadFile(poster: any) {
-//   try {
-//     const { data, error } = await supabase.storage
-//       .from('movieImage')
-//       .upload(`public${poster}`, poster, {
-//         // .upload(`public${poster}`, poster, {
-//       })
-
-//     console.log(data)
-
-//     if (error) {
-//       console.error('에러 발생:', error.message)
-//     } else {
-//       console.log('성공:', data)
-//     }
-//   } catch (error) {
-//     console.error('예외 발생:', error.message)
-//   }
-// }
