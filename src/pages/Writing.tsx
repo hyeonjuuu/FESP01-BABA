@@ -205,7 +205,7 @@ function Writing() {
       }
       alert('리뷰가 등록되었습니다!')
 
-      // naviagte('/main')
+      naviagte('/main')
     } catch (error) {
       console.error(error)
     }
@@ -218,7 +218,6 @@ function Writing() {
       const imgSrc = await getImgUrl(157)
       if (imgSrc) {
         setRenderedUserImg(imgSrc)
-        console.log('imgSrc: ', imgSrc)
       }
     } catch (error) {
       console.error(error)
