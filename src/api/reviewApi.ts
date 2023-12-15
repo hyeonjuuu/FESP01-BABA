@@ -11,7 +11,8 @@ export const addReview = async (
   user_id: string,
   text: string,
   ott: string[],
-  rating: number
+  rating: number,
+  movie_title: string
 ) => {
   try {
     const { data, error } = await supabaseAdmin.from('reviews').insert([
@@ -20,7 +21,8 @@ export const addReview = async (
         user_id,
         text,
         ott,
-        rating
+        rating,
+        movie_title
       }
     ])
 
@@ -31,5 +33,27 @@ export const addReview = async (
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+  }
+}
+
+// storage에 이미지 업로드
+export const uploadImage = async (file: File): Promise<void> => {
+  try {
+    // 파일 확장자 추출
+    const fileExt = file.name.split('.').pop()
+    // 현재 시간을 이용하여 파일 이름 생성
+    const newName = `${Date.now()}.${fileExt}`
+
+    const { data, error } = await supabaseAdmin.storage
+      .from('movieImage')
+      .upload(`public/${newName}`, file)
+
+    if (error) {
+      console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+    } else {
+      console.log('Supabase 이미지 삽입 성공:', data)
+    }
+  } catch (error) {
+    console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
   }
 }

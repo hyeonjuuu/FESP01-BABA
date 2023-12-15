@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
 import { useState } from 'react'
-import { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Scrollbar } from 'swiper/modules'
 import 'swiper/css'
@@ -143,7 +142,7 @@ const CategorySection = styled.section`
 `
 
 const SectionHeader = styled.h2<SizeProps>`
-  color: #303032;
+  color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   font-size: 16px;
   margin: 0;
   padding: 0;
