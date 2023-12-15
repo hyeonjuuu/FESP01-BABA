@@ -139,6 +139,8 @@ function Writing() {
     //   formData.append('ott', selectedOtt[0])
     // }
     // formData.append('text', textValue || '')
+    const posterPath = `https://image.tmdb.org/t/p/original${selectMovie.poster_path}`
+    const poster = selectMovie.poster_path
 
     try {
       if (selectMovie) {
@@ -150,7 +152,7 @@ function Writing() {
           rating,
           selectMovie.title
         )
-        await uploadFile(selectMovie.poster_path)
+        await uploadFile(posterPath, poster)
       }
       alert('리뷰가 등록되었습니다!')
       naviagte('/main')

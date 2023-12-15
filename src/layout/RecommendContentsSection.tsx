@@ -74,7 +74,7 @@ function RecommendContentsSection() {
           <SwiperSlideWrapper key={item.id}>
             <HoverWrapper href="">
               <RecommendImage
-                src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
+                src={`https://image.tmdb.org/t/p/original${item.poster_path}`}
                 alt={`${item.title} 포스터`}
               />
               <RecommendContent>
