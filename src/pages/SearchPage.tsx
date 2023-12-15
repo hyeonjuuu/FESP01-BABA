@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ResultBarContainProps } from '@/types'
 import useThemeStore from '@/store/useThemeStore'
 import getSearchMovies from '@/api/getSearchMovies'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
@@ -15,7 +15,7 @@ import SearchResultBar, {
 
 function SearchPage() {
   const { $darkMode } = useThemeStore()
-
+  const uniqueId = useId()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [isSearched, setIsSearched] = useState(false)
@@ -82,6 +82,15 @@ function SearchPage() {
     setOldSearchRecordList(earlyStorageItems)
   }, [])
 
+  // 최근 검색어 모두 삭제
+  const handleAllRemove = () => {
+    setOldSearchRecordList(() => {
+      const updatedList: string[] = []
+      localStorage.setItem('oldSearchRecordList', JSON.stringify(updatedList))
+      return updatedList
+    })
+  }
+
   // 삭제버튼 클릭시 최근검색어가 제거됩니다.
   const handleRemoveStorageItem = (item: string) => {
     const updatedList = oldSearchRecordList.filter(list => list !== item)
@@ -116,7 +125,11 @@ function SearchPage() {
         <RecentSearch>
           {showSearchResult ? '검색 결과' : '최근 검색'}
         </RecentSearch>
-        <SeeAllBtn>모두 삭제</SeeAllBtn>
+        {showSearchResult ? (
+          ''
+        ) : (
+          <SeeAllBtn onClick={handleAllRemove}>모두 삭제</SeeAllBtn>
+        )}
       </Wrapper>
       <ResultWrapper>
         {isLoading ? (
@@ -148,7 +161,11 @@ function SearchPage() {
           ))
         ) : (
           oldSearchRecordList?.map(item => (
-            <SearchResultBar title={item} onClick={handleRemoveStorageItem} />
+            <SearchResultBar
+              key={uniqueId}
+              title={item}
+              onClick={handleRemoveStorageItem}
+            />
           ))
         )}
       </ResultWrapper>

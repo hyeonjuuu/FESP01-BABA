@@ -15,13 +15,11 @@ function SearchResultBar({ title, onClick }: SearchResultBarProps) {
 
   return (
     <ResultBarContain $darkMode={$darkMode}>
-      <StyledLink to="/detail">
-        <Contain>
-          <Warppaer>
-            <ResultBar># {title}</ResultBar>
-          </Warppaer>
-        </Contain>
-      </StyledLink>
+      <Contain>
+        <Warppaer>
+          <ResultBar># {title}</ResultBar>
+        </Warppaer>
+      </Contain>
       <ClearBtn type="button" onClick={() => onClick?.(title)}>
         <FontAwesomeIcon icon={faX} />
       </ClearBtn>
