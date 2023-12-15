@@ -20,7 +20,6 @@ function MyPage() {
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
-    console.log('선택된 파일:', selectedFile)
     setProfileImg(selectedFile || null)
   }
 
@@ -51,7 +50,6 @@ function MyPage() {
 
   useEffect(() => {
     fetchAndRenderProfileImg()
-    console.log('renderUserImg: ', renderUserImg)
   }, [renderUserImg])
 
   return (

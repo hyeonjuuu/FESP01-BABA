@@ -13,9 +13,15 @@ interface SearchResultBarProps {
 function SearchResultBar({ title, onClick }: SearchResultBarProps) {
   const { $darkMode } = useThemeStore()
 
+  // const handleSearchInput = () => {
+  //   onClick?.(title)
+  // }
+
   return (
     <ResultBarContain $darkMode={$darkMode}>
-      <Contain>
+      <Contain
+      //  onClick={handleSearchInput}
+      >
         <Warppaer>
           <ResultBar># {title}</ResultBar>
         </Warppaer>
