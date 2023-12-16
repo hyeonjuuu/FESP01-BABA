@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import { useAuthStore } from '@/store/useAuthStore'
+import userInfoInLs from '@/utils/userInfoInLs'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -29,6 +30,8 @@ function Writing() {
   const naviagte = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const [userEmail, setUserEmail] = useState<string | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
@@ -52,10 +55,15 @@ function Writing() {
         navigate('/login')
       } else {
         // navigate('/main')
-        window.history.back() // 전전 페이지로 이동됨..(2번...)
+        window.history.back()
       }
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    const userIdInLs = userInfoInLs()
+    setUserEmail(userIdInLs)
+  }, [])
 
   //# 검색
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,7 +211,8 @@ function Writing() {
       if (selectMovie && !imgSrc) {
         await addReview(
           selectMovie.id,
-          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          // '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          userEmail!,
           text,
           selectedOtt,
           rating,
@@ -211,10 +220,10 @@ function Writing() {
         )
       } else if (selectMovie && imgSrc) {
         const imgUrl = await uploadImage(image!)
-
         await addReviewWithImgUrl(
           selectMovie.id,
-          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          // '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          userEmail!,
           text,
           selectedOtt,
           rating,
@@ -230,22 +239,22 @@ function Writing() {
     }
   }
 
-  const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
+  // const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
 
-  const fetchAndRenderImage = async () => {
-    try {
-      const imgSrc = await getImgUrl(157)
-      if (imgSrc) {
-        setRenderedUserImg(imgSrc)
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  // const fetchAndRenderImage = async () => {
+  //   try {
+  //     const imgSrc = await getImgUrl(157)
+  //     if (imgSrc) {
+  //       setRenderedUserImg(imgSrc)
+  //     }
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchAndRenderImage()
-  }, [])
+  // useEffect(() => {
+  //   fetchAndRenderImage()
+  // }, [])
 
   return (
     <Container>
@@ -398,27 +407,27 @@ function Writing() {
         />
       </FormStyle>
 
-      <UserImageTest>
+      {/* <UserImageTest>
         <UserImage
           src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${renderedUserImg}`}
         ></UserImage>
-      </UserImageTest>
+      </UserImageTest> */}
     </Container>
   )
 }
 
 export default Writing
 
-const UserImageTest = styled.div`
-  width: 100px;
-  height: 100px;
-`
+// const UserImageTest = styled.div`
+//   width: 100px;
+//   height: 100px;
+// `
 
-const UserImage = styled.img`
-  width: 100%;
-  height: 100;
-  object-fit: cover;
-`
+// const UserImage = styled.img`
+//   width: 100%;
+//   height: 100;
+//   object-fit: cover;
+// `
 
 const Container = styled.section`
   /* display: flex;
