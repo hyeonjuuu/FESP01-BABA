@@ -7,11 +7,31 @@ import {
   getProfileImgUrl,
   uploadProfileImg
 } from '@/api/profileImgApi'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/useAuthStore'
 
 function MyPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
   const [renderUserImg, setRenderUserImg] = useState<string | null>(null)
+
+  //# 로그인 여부 확인
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        // navigate('/main')
+        window.history.back() // 전전 페이지로 이동됨..(2번...)
+      }
+    }
+  }, [isAuthenticated, navigate])
 
   //# 프로필 이미지 선택
   const handleProfileImg = () => {

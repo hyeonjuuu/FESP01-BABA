@@ -18,6 +18,7 @@ import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
+import { useAuthStore } from '@/store/useAuthStore'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -37,6 +38,24 @@ function Writing() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
+
+  //# 로그인 여부 확인
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        // navigate('/main')
+        window.history.back() // 전전 페이지로 이동됨..(2번...)
+      }
+    }
+  }, [isAuthenticated, navigate])
 
   //# 검색
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
