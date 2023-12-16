@@ -2,12 +2,7 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import {
-  addReview,
-  addReviewWithImgUrl,
-  getImgUrl,
-  uploadImage
-} from '@/api/reviewApi'
+import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -54,7 +49,6 @@ function Writing() {
       if (confirmed) {
         navigate('/login')
       } else {
-        // navigate('/main')
         window.history.back()
       }
     }
@@ -62,7 +56,7 @@ function Writing() {
 
   useEffect(() => {
     const userIdInLs = userInfoInLs()
-    setUserEmail(userIdInLs)
+    setUserEmail(userIdInLs.userId) // local storage의 id = user Table의 email
   }, [])
 
   //# 검색
@@ -211,7 +205,6 @@ function Writing() {
       if (selectMovie && !imgSrc) {
         await addReview(
           selectMovie.id,
-          // '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
           userEmail!,
           text,
           selectedOtt,
@@ -222,7 +215,6 @@ function Writing() {
         const imgUrl = await uploadImage(image!)
         await addReviewWithImgUrl(
           selectMovie.id,
-          // '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
           userEmail!,
           text,
           selectedOtt,
@@ -238,23 +230,6 @@ function Writing() {
       console.error(error)
     }
   }
-
-  // const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
-
-  // const fetchAndRenderImage = async () => {
-  //   try {
-  //     const imgSrc = await getImgUrl(157)
-  //     if (imgSrc) {
-  //       setRenderedUserImg(imgSrc)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchAndRenderImage()
-  // }, [])
 
   return (
     <Container>
@@ -406,28 +381,11 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
-
-      {/* <UserImageTest>
-        <UserImage
-          src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${renderedUserImg}`}
-        ></UserImage>
-      </UserImageTest> */}
     </Container>
   )
 }
 
 export default Writing
-
-// const UserImageTest = styled.div`
-//   width: 100px;
-//   height: 100px;
-// `
-
-// const UserImage = styled.img`
-//   width: 100%;
-//   height: 100;
-//   object-fit: cover;
-// `
 
 const Container = styled.section`
   /* display: flex;

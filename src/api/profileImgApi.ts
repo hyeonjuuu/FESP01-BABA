@@ -6,11 +6,26 @@ const supabaseAdmin = createClient(
 )
 
 // storage에 유저 이미지 업로드
-export const uploadProfileImg = async (file: File): Promise<string | null> => {
+export const uploadProfileImg = async (
+  file: File,
+  id: string
+): Promise<string | null> => {
   try {
+    // 1. 사용자의 현재 프로필 이미지 URL을 가져옵니다.
+    const oldImgUrl = await getProfileImgUrl(id)
+
+    // 2. 가져온 URL을 사용해서 Storage에서 해당 이미지를 삭제합니다.
+    if (oldImgUrl) {
+      const oldImgName = oldImgUrl.split('/').pop()
+      await supabaseAdmin.storage
+        .from('userImage')
+        .remove([`public/${oldImgName}`])
+    }
+
     const fileExt = file.name.split('.').pop()
     const newName = `${Date.now()}.${fileExt}`
 
+    // 3. 새 이미지를 업로드합니다.
     const { data, error } = await supabaseAdmin.storage
       .from('userImage')
       .upload(`public/${newName}`, file)
@@ -30,13 +45,16 @@ export const uploadProfileImg = async (file: File): Promise<string | null> => {
 }
 
 // 유저 프로필을 유저 테이블에 등록
-export const addImgUrltoUsers = async (profile_img: string) => {
+export const addImgUrlToUsers = async (id: string, profile_img: string) => {
   try {
-    const { data, error } = await supabaseAdmin.from('users').upsert([
-      {
-        profile_img
-      }
-    ])
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .update([
+        {
+          profile_img
+        }
+      ])
+      .eq('user_email', id)
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
@@ -49,12 +67,12 @@ export const addImgUrltoUsers = async (profile_img: string) => {
 }
 
 // 프로필 이미지 가져오기
-export const getProfileImgUrl = async (id: number): Promise<string | null> => {
+export const getProfileImgUrl = async (id: string): Promise<string | null> => {
   try {
     const { data, error } = await supabaseAdmin
       .from('users')
       .select('profile_img')
-      .eq('user_unique_id', id)
+      .eq('user_email', id)
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)

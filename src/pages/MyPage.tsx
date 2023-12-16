@@ -3,18 +3,25 @@ import userImage from '@/assets/userIcon.png'
 import FavRing from '@/components/mypage/FavRing'
 import { useEffect, useRef, useState } from 'react'
 import {
-  addImgUrltoUsers,
+  addImgUrlToUsers,
   getProfileImgUrl,
   uploadProfileImg
 } from '@/api/profileImgApi'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
+import userInfoInLs from '@/utils/userInfoInLs'
 
 function MyPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  const [userId, setUserId] = useState<string | null>(null)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
   const [renderUserImg, setRenderUserImg] = useState<string | null>(null)
 
+  console.log('profileImg: ', profileImg)
+  console.log('userEmail: ', userEmail)
+  console.log('renderUserImg: ', renderUserImg)
   //# 로그인 여부 확인
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
@@ -27,13 +34,18 @@ function MyPage() {
       if (confirmed) {
         navigate('/login')
       } else {
-        // navigate('/main')
-        window.history.back() // 전전 페이지로 이동됨..(2번...)
+        window.history.back()
       }
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated])
 
-  //# 프로필 이미지 선택
+  useEffect(() => {
+    const userIdInLs = userInfoInLs()
+    setUserId(userIdInLs.userId) // // local storage의 id = user Table의 email
+    setUserEmail(userIdInLs.userEmail) // local storage의 email
+  }, [])
+
+  //# 프로필 이미지 선택 후 전송
   const handleProfileImg = () => {
     fileInputRef?.current?.click()
   }
@@ -43,11 +55,11 @@ function MyPage() {
     setProfileImg(selectedFile || null)
   }
 
-  //# 프로필 이미지 전송
   const selectProfileImg = async () => {
     if (profileImg) {
-      const imgUrl = await uploadProfileImg(profileImg)
-      await addImgUrltoUsers(imgUrl!)
+      const imgUrl = await uploadProfileImg(profileImg, userId!)
+      await addImgUrlToUsers(userId!, imgUrl!)
+      fetchAndRenderProfileImg() // 이미지 업로드 후 이미지 렌더링
     }
   }
 
@@ -57,20 +69,21 @@ function MyPage() {
 
   //# 프로필 이미지 렌더링
   const fetchAndRenderProfileImg = async () => {
-    try {
-      const imgSrc = await getProfileImgUrl(8) // 프로필 이미지 있을 때
-      // const imgSrc = await getProfileImgUrl(0) // 프로필 이미지 없을 때
-      if (imgSrc) {
-        setRenderUserImg(imgSrc)
+    if (userId) {
+      try {
+        const imgSrc = await getProfileImgUrl(userId)
+        if (imgSrc) {
+          setRenderUserImg(imgSrc)
+        }
+      } catch (error) {
+        console.error(error)
       }
-    } catch (error) {
-      console.error(error)
     }
   }
 
   useEffect(() => {
     fetchAndRenderProfileImg()
-  }, [renderUserImg])
+  }, [userId])
 
   return (
     <Box>
@@ -105,7 +118,7 @@ function MyPage() {
           </form>
 
           <ProfileInfo>
-            <p>bomlang4211@gmail.com</p>
+            <p>{userEmail}</p>
             <ProfileBtn>프로필 편집</ProfileBtn>
           </ProfileInfo>
         </ProfileContain>
