@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import axios from 'axios'
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -8,12 +7,13 @@ const supabase = createClient(
 
 // 리뷰 등록
 export const addReview = async (
-  movie_id: number,
-  user_id: string,
-  text: string,
-  ott: string[],
-  rating: number,
-  movie_title: string | undefined
+  movie_id?: number,
+  user_id?: string,
+  text?: string,
+  ott?: string[],
+  rating?: number,
+  movie_title?: string,
+  filePath?: string
 ) => {
   try {
     const { data, error } = await supabase.from('reviews').upsert([
@@ -23,7 +23,8 @@ export const addReview = async (
         text,
         ott,
         rating,
-        movie_title
+        movie_title,
+        img_url: filePath
       }
     ])
 
@@ -41,16 +42,22 @@ export async function uploadFile(poster: any) {
   try {
     const { data, error } = await supabase.storage
       .from('movieImage')
-      .upload(`public/${poster}`, poster)
+      .upload(`public/${poster}`, poster, {
+        upsert: true
+      })
 
     console.log(data)
+    console.log(poster)
 
     if (error) {
       console.error('에러 발생:', error.message)
     } else {
       console.log('성공:', data)
+      const filePath = `public/${poster.name}`
+      // await addReview()
     }
   } catch (error) {
-    console.error('예외 발생:', error.message)
+    const supabaseError = error as Error
+    console.error('예외 발생:', supabaseError.message)
   }
 }

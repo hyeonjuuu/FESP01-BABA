@@ -134,7 +134,8 @@ function Writing() {
     }
 
     const posterPath = `https://image.tmdb.org/t/p/original${selectMovie.poster_path}`
-    const poster = selectMovie.poster_path
+    // const poster = selectMovie.poster_path
+    const poster = '1gJMSXS0gwM8gDJnzVSITcxbQc.jpg'
 
     try {
       if (selectMovie) {
