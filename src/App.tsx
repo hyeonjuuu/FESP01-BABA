@@ -4,6 +4,7 @@ import GlobalStyle from './style/GlobalStyle'
 import useThemeStore from './store/useThemeStore'
 import { ThemeProvider } from 'styled-components'
 import { RouterProvider } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 function App() {
   const { $darkMode } = useThemeStore()
@@ -13,13 +14,23 @@ function App() {
     color: $darkMode ? '#FFFFFF' : '#303032'
   }
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false
+      }
+    }
+  })
+
   return (
     <>
       <Suspense fallback={<div>Loading...</div>}>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </QueryClientProvider>
       </Suspense>
     </>
   )

@@ -49,3 +49,8 @@ interface ReviewData {
     rating: number
   ]
 }
+
+interface UserData {
+  email: string | undefined
+  id: string | undefined
+}

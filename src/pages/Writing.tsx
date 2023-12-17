@@ -13,7 +13,6 @@ import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { createClient } from '@supabase/supabase-js'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -133,9 +132,6 @@ function Writing() {
       return
     }
 
-    // const posterPath = `https://image.tmdb.org/t/p/original${selectMovie.poster_path}`
-    // const poster = selectMovie.poster_path
-
     try {
       if (selectMovie) {
         const filePath = await uploadFile(selectMovie.poster_path)
@@ -165,25 +161,6 @@ function Writing() {
       console.error(error)
     }
   }
-  //   try {
-  //     if (selectMovie) {
-  //       await uploadFile(selectMovie.poster_path)
-  //       await addReview(
-  //         selectMovie.id,
-  //         '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
-  //         text,
-  //         selectedOtt,
-  //         rating,
-  //         selectMovie.title,
-  //         selectMovie.poster_path
-  //       )
-  //     }
-  //     alert('리뷰가 등록되었습니다!')
-  //     naviagte('/main')
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 
   return (
     <Container>

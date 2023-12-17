@@ -5,6 +5,7 @@ import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -19,10 +20,56 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
+const fetchReviewData = async () => {
+  try {
+    const { data, error } = await supabase.from('reviews').select('like')
+    if (!data) {
+      return []
+    }
+    return data
+    console.log(data)
+  } catch (error) {
+    console.error('데이터를 불러오는 중 에러 발생:', error)
+    throw error
+  }
+}
+console.log(fetchReviewData())
+
+/* -------------------------------------------------------------------------- */
+
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
-  // const [reviewImg, setReviewImg] = useState<any>()
+  const [user, setUser] = useState<UserData | null>(null)
+
+  useEffect(() => {
+    const userData = async () => {
+      try {
+        const { data } = await supabase.auth.getUser()
+        const userData: UserData | null = {
+          email: data?.user?.email || undefined,
+          id: data?.user?.id || undefined
+        }
+        setUser(userData)
+      } catch (error) {
+        console.error('에러가 발생했습니다.', error)
+      }
+    }
+    userData()
+  }, [])
+
+  console.log(user?.id)
+
+  const queryClient = useQueryClient()
+  const queryKey = ['reviews', user?.id]
+
+  const { data: bookmarkItems } = useQuery({
+    queryKey: queryKey,
+    queryFn: () => fetchReviewData(),
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false
+  })
+  console.log(bookmarkItems)
 
   useEffect(() => {
     const loadReviewData = async () => {
@@ -39,18 +86,6 @@ function FeedComponent() {
 
     loadReviewData()
   }, [])
-  // console.log(reviews)
-
-  const reviewImage =
-    'https://image.tmdb.org/t/p/original/318YNPBDdt4VU1nsJDdImGc8Gek.jpg'
-
-  // const storageImage = async () => {
-  //   const data = await supabase.storage.from('movieImage')
-
-  //   const publicUrl = supabase.storage.from('movieImage').getPublicUrl('*')
-  //   setReviewImg(publicUrl)
-  //   return publicUrl
-  // }
 
   return (
     <FeedSection>
