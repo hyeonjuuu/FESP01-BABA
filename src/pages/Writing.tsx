@@ -133,21 +133,31 @@ function Writing() {
       return
     }
 
-    const posterPath = `https://image.tmdb.org/t/p/original${selectMovie.poster_path}`
+    // const posterPath = `https://image.tmdb.org/t/p/original${selectMovie.poster_path}`
     // const poster = selectMovie.poster_path
-    const poster = '1gJMSXS0gwM8gDJnzVSITcxbQc.jpg'
 
     try {
       if (selectMovie) {
-        await addReview(
-          selectMovie.id,
-          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
-          text,
-          selectedOtt,
-          rating,
-          selectMovie.title
-        )
-        await uploadFile(poster)
+        const filePath = await uploadFile(selectMovie.poster_path)
+        if (filePath) {
+          const movieId = selectMovie.id
+          const userId = '0ebab27d-5be1-4d43-9e85-fa8a163b0db4'
+          const reviewText = text
+          const ottPlatforms = selectedOtt
+          const reviewRating = rating
+          const movieTitle = selectMovie.title || selectMovie.name
+
+          // addReview 함수 호출
+          await addReview(
+            movieId,
+            userId,
+            reviewText,
+            ottPlatforms,
+            reviewRating,
+            movieTitle,
+            filePath
+          )
+        }
       }
       alert('리뷰가 등록되었습니다!')
       naviagte('/main')
@@ -155,6 +165,25 @@ function Writing() {
       console.error(error)
     }
   }
+  //   try {
+  //     if (selectMovie) {
+  //       await uploadFile(selectMovie.poster_path)
+  //       await addReview(
+  //         selectMovie.id,
+  //         '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+  //         text,
+  //         selectedOtt,
+  //         rating,
+  //         selectMovie.title,
+  //         selectMovie.poster_path
+  //       )
+  //     }
+  //     alert('리뷰가 등록되었습니다!')
+  //     naviagte('/main')
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
   return (
     <Container>

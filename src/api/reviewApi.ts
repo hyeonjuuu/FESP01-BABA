@@ -13,7 +13,7 @@ export const addReview = async (
   ott?: string[],
   rating?: number,
   movie_title?: string,
-  filePath?: string
+  img_url?: string | null
 ) => {
   try {
     const { data, error } = await supabase.from('reviews').upsert([
@@ -24,7 +24,7 @@ export const addReview = async (
         ott,
         rating,
         movie_title,
-        img_url: filePath
+        img_url
       }
     ])
 
@@ -53,8 +53,8 @@ export async function uploadFile(poster: any) {
       console.error('에러 발생:', error.message)
     } else {
       console.log('성공:', data)
-      const filePath = `public/${poster.name}`
-      // await addReview()
+      const filePath = data.path
+      return filePath
     }
   } catch (error) {
     const supabaseError = error as Error

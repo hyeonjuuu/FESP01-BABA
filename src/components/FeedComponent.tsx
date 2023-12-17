@@ -63,10 +63,17 @@ function FeedComponent() {
                 <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
               </CommonDivWrapper>
               <FeedImage
-                src={reviewImage}
-                // src={`https://image.tmdb.org/t/p/original${item.img_url}`}
+                // src={reviewImage}
+                src={
+                  item.img_url &&
+                  `https://image.tmdb.org/t/p/original/${item.img_url.replace(
+                    'public/',
+                    ''
+                  )}`
+                }
                 alt=""
               />
+
               <ContentTitleWrapper>
                 <ContentTitle>{item.movie_title}</ContentTitle>
                 <CommonDivWrapper>
