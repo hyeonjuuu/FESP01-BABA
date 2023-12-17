@@ -39,12 +39,13 @@ const fetchReviewData = async (userId: string[] | undefined) => {
     const { data, error } = await supabase
       .from('reviews')
       .select('likes')
-      .eq('likes', userId)
+      .containedBy('likes', [userId] || [])
+    console.log(data)
+
     if (!data) {
       return []
     }
     return data
-    console.log(data)
   } catch (error) {
     console.error('데이터를 불러오는 중 에러 발생:', error)
     throw error
@@ -56,8 +57,8 @@ const fetchReviewData = async (userId: string[] | undefined) => {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
-  const [user, setUser] = useState<UserData | null>(null)
   const [userId, setUserId] = useState<string[] | undefined>([])
+  const [reviewId, setReviewId] = useState<string>()
   const { bookmarkList, setBookmarkList } = useBookmarkStore()
 
   useEffect(() => {
@@ -68,7 +69,6 @@ function FeedComponent() {
           email: data?.user?.email || undefined,
           id: data?.user?.id || undefined
         }
-        setUser(userData)
         setUserId(userData?.id ? [userData.id] : undefined)
       } catch (error) {
         console.error('에러가 발생했습니다.', error)
@@ -78,10 +78,9 @@ function FeedComponent() {
   }, [])
 
   const queryClient = useQueryClient()
-  // const queryKey = ['reviews', user?.id]
 
   const { data: likeItems } = useQuery({
-    queryKey: ['reviews'],
+    queryKey: ['likes', reviewId],
     queryFn: () => fetchReviewData(userId),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false
@@ -104,9 +103,6 @@ function FeedComponent() {
     loadReviewData()
   }, [])
 
-  console.log(user)
-  console.log(userId)
-
   const handleBookmark = async (
     itemId: string,
     userId: string[] | undefined
@@ -118,7 +114,9 @@ function FeedComponent() {
         .eq('id', itemId)
         .select()
       console.log(data)
-      console.log(bookmarkList)
+      setReviewId(itemId)
+    } else {
+      await supabase.from('reviews').delete().eq('likes', userId)
     }
   }
 
