@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import {
   addImgUrlToUsers,
+  deleteProfileImg,
   getProfileImgUrl,
   uploadProfileImg
 } from '@/api/profileImgApi'
@@ -54,6 +55,8 @@ function MyPage() {
   )
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
   console.log('reviews: ', reviews)
+  console.log('profileImg: ', profileImg)
+  console.log('renderProfileImg: ', renderProfileImg)
 
   //# 로그인 여부 확인
   const navigate = useNavigate()
@@ -140,6 +143,16 @@ function MyPage() {
     selectProfileImg()
   }, [profileImg])
 
+  // 프로필 이미지 삭제
+  const handleDeleteProfileImg = async () => {
+    const confirmed = window.confirm('프로필 이미지를 삭제하시겠습니까?')
+    if (confirmed) {
+      await deleteProfileImg(userId!)
+      await addImgUrlToUsers(userId!, null)
+      setRenderProfileImg(null)
+    }
+  }
+
   // 프로필 이미지 렌더링
   const fetchAndRenderProfileImg = async () => {
     if (userId) {
@@ -155,8 +168,10 @@ function MyPage() {
   }
 
   useEffect(() => {
+    console.log('renderProfileImg updated:', renderProfileImg)
+
     fetchAndRenderProfileImg()
-  }, [userId])
+  }, [userId, renderProfileImg])
 
   const handleShowReviews = () => {
     setIsShowReviews(true)
@@ -198,7 +213,9 @@ function MyPage() {
 
           <ProfileInfo>
             <p>{userEmail}</p>
-            <ProfileBtn>프로필 편집</ProfileBtn>
+            <ProfileBtn onClick={handleDeleteProfileImg}>
+              프로필 편집
+            </ProfileBtn>
           </ProfileInfo>
         </ProfileContain>
 
@@ -341,6 +358,10 @@ const ProfileBtn = styled.button`
   align-items: center;
   border-radius: 3px;
   border: none;
+  &:hover {
+    background-color: #0282d1;
+    color: #ffffff;
+  }
 `
 
 const Container = styled.div`

@@ -5,6 +5,7 @@ const supabaseAdmin = createClient(
   import.meta.env.VITE_SUPABASE_KEY as string
 )
 
+//# 프로필 이미지 등록
 // storage에 유저 이미지 업로드
 export const uploadProfileImg = async (
   file: File,
@@ -45,7 +46,10 @@ export const uploadProfileImg = async (
 }
 
 // 유저 프로필을 유저 테이블에 등록
-export const addImgUrlToUsers = async (id: string, profile_img: string) => {
+export const addImgUrlToUsers = async (
+  id: string,
+  profile_img: string | null
+) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('users')
@@ -82,6 +86,23 @@ export const getProfileImgUrl = async (id: string): Promise<string | null> => {
 
       // 첫 번째 객체의 img_url 반환
       return data && data.length > 0 ? data[0].profile_img : null
+    }
+  } catch (error) {
+    console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    return null
+  }
+}
+
+//# 프로필 이미지 삭제
+export const deleteProfileImg = async (id: string) => {
+  try {
+    const oldImgUrl = await getProfileImgUrl(id)
+
+    if (oldImgUrl) {
+      const oldImgName = oldImgUrl.split('/').pop()
+      await supabaseAdmin.storage
+        .from('userImage')
+        .remove([`public/${oldImgName}`])
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
