@@ -135,7 +135,7 @@ function MyPage() {
     if (profileImg) {
       const imgUrl = await uploadProfileImg(profileImg, userId!)
       await addImgUrlToUsers(userId!, imgUrl!)
-      fetchAndRenderProfileImg() // 이미지 업로드 후 이미지 렌더링
+      fetchAndRenderProfileImg()
     }
   }
 

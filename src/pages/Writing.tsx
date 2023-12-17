@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
@@ -277,21 +278,23 @@ function Writing() {
         <Wrapper>
           {ottIcons.map((icon, index) => (
             <OttWrapper key={index}>
-              <label htmlFor={`ott${index}`}>ott</label>
-              <input
-                type="checkbox"
-                name={`ott${index}`}
-                id={`ott${index}`}
-                checked={selectedOtt.includes(ottIconNames[index])}
-                onChange={() => handleCheck(ottIconNames[index])}
-              />
-              <IconBox>
-                <OttIcon
-                  src={icon}
-                  alt={ottIconNames[index]}
-                  title={ottIconNames[index]}
-                />
-              </IconBox>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <IconBox>
+                  <OttIcon
+                    src={icon}
+                    alt={ottIconNames[index]}
+                    title={ottIconNames[index]}
+                  />
+                  <OttLabel htmlFor={`ott${index}`}> ott</OttLabel>
+                  <OttInput
+                    type="checkbox"
+                    name={`ott${index}`}
+                    id={`ott${index}`}
+                    checked={selectedOtt.includes(ottIconNames[index])}
+                    onChange={() => handleCheck(ottIconNames[index])}
+                  />
+                </IconBox>
+              </motion.div>
             </OttWrapper>
           ))}
           <OthersOTT>
@@ -447,6 +450,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 60px;
   max-width: 390px;
+  gap: 5px;
   flex-wrap: wrap;
 `
 
@@ -459,6 +463,18 @@ const OttWrapper = styled.div`
 const IconBox = styled.div`
   width: 28px;
   height: 28px;
+  position: relative;
+`
+const OttLabel = styled.label``
+
+const OttInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 `
 const OthersOTT = styled.div`
   display: flex;
@@ -471,7 +487,7 @@ const OthersOTT = styled.div`
 `
 
 const OthersOttText = styled.input`
-  width: 95%;
+  width: 100%;
 `
 
 const OttIcon = styled.img`
