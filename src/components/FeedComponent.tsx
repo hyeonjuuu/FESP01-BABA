@@ -21,9 +21,25 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-const fetchReviewData = async () => {
+// const fetchReviewData = async () => {
+//   try {
+//     const { data, error } = await supabase.from('reviews').select('like')
+//     if (!data) {
+//       return []
+//     }
+//     return data
+//     console.log(data)
+//   } catch (error) {
+//     console.error('데이터를 불러오는 중 에러 발생:', error)
+//     throw error
+//   }
+// }
+const fetchReviewData = async (userId: string[] | undefined) => {
   try {
-    const { data, error } = await supabase.from('reviews').select('like')
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('likes')
+      .eq('likes', userId)
     if (!data) {
       return []
     }
@@ -34,7 +50,6 @@ const fetchReviewData = async () => {
     throw error
   }
 }
-console.log(fetchReviewData())
 
 /* -------------------------------------------------------------------------- */
 
@@ -42,7 +57,7 @@ function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
   const [user, setUser] = useState<UserData | null>(null)
-  const [userId, setUserId] = useState<string | undefined>()
+  const [userId, setUserId] = useState<string[] | undefined>([])
   const { bookmarkList, setBookmarkList } = useBookmarkStore()
 
   useEffect(() => {
@@ -54,7 +69,7 @@ function FeedComponent() {
           id: data?.user?.id || undefined
         }
         setUser(userData)
-        setUserId(userData?.id)
+        setUserId(userData?.id ? [userData.id] : undefined)
       } catch (error) {
         console.error('에러가 발생했습니다.', error)
       }
@@ -67,11 +82,10 @@ function FeedComponent() {
 
   const { data: likeItems } = useQuery({
     queryKey: ['reviews'],
-    queryFn: () => fetchReviewData(),
+    queryFn: () => fetchReviewData(userId),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false
   })
-  console.log(likeItems)
 
   useEffect(() => {
     const loadReviewData = async () => {
@@ -80,6 +94,7 @@ function FeedComponent() {
         if (error) throw new Error()
 
         setReviews(data)
+        console.log('리뷰데이터', data)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -92,16 +107,19 @@ function FeedComponent() {
   console.log(user)
   console.log(userId)
 
-  const handleBookmark = async (itemId: string, userId: string | undefined) => {
-    const { data } = await supabase
-      .from('reviews')
-      .update({ like: userId })
-      .eq('id', itemId)
-      .select()
-    console.log(data)
-
-    // setBookmarkList(itemId)
-    console.log(bookmarkList)
+  const handleBookmark = async (
+    itemId: string,
+    userId: string[] | undefined
+  ) => {
+    if (![...bookmarkList].includes(itemId)) {
+      const { data } = await supabase
+        .from('reviews')
+        .update({ likes: userId })
+        .eq('id', itemId)
+        .select()
+      console.log(data)
+      console.log(bookmarkList)
+    }
   }
 
   return (
