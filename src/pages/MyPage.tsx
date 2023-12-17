@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
@@ -12,6 +12,8 @@ import {
   getProfileImgUrl,
   uploadProfileImg
 } from '@/api/profileImgApi'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
 interface ReviewProps {
   created_at: string
@@ -24,6 +26,8 @@ interface ReviewProps {
   text: string
   updated_at: string | null
   user_id: string
+  like: string | null
+  likes: string | null
 }
 
 interface MovieProps {
@@ -48,6 +52,8 @@ function MyPage() {
   const [movieImgs, setMovieImgs] = useState<(string | undefined)[] | null>(
     null
   )
+  const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
+  console.log('reviews: ', reviews)
 
   //# 로그인 여부 확인
   const navigate = useNavigate()
@@ -152,6 +158,14 @@ function MyPage() {
     fetchAndRenderProfileImg()
   }, [userId])
 
+  const handleShowReviews = () => {
+    setIsShowReviews(true)
+  }
+
+  const handleShowLikes = () => {
+    setIsShowReviews(false)
+  }
+
   return (
     <Box>
       <ContentBox>
@@ -196,30 +210,76 @@ function MyPage() {
         </Container>
 
         <MarginContainer>
-          <Wrapper>
-            <p>게시물</p>
-            <span>10</span>
+          <Wrapper onClick={handleShowReviews}>
+            <StyledP>게시물</StyledP>
+            <span>{reviews?.length}</span>
           </Wrapper>
 
-          <Wrapper>
-            <p>좋아요</p>
+          <Wrapper onClick={handleShowLikes}>
+            <StyledP>좋아요</StyledP>
             <span>5</span>
           </Wrapper>
         </MarginContainer>
 
+        {/* <PostsContain>
+          {isShowReviews && reviews && reviews.length > 0 ? (
+            reviews.map((review, index) => (
+              <Post key={review.id}>
+                <PostImg
+                  src={
+                    review.img_url
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
+                      : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                  }
+                  alt={review.movie_title}
+                ></PostImg>
+              </Post>
+            ))
+          ) : (
+            <PictureWrapper>
+              <PictureImg>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </PictureImg>
+              <PictureDiv>리뷰 공유</PictureDiv>
+              <div>리뷰를 공유하면 회원님의 프로필에 표시됩니다.</div>
+              <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
+            </PictureWrapper>
+          )}
+        </PostsContain> */}
         <PostsContain>
-          {reviews?.map((review, index) => (
-            <Post key={review.id}>
-              <PostImg
-                src={
-                  review.img_url
-                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                    : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
-                }
-                alt={review.movie_title}
-              ></PostImg>
-            </Post>
-          ))}
+          {isShowReviews ? (
+            reviews && reviews.length > 0 ? (
+              // Case 1: isShowReviews가 true이고 review.length > 0 일 때
+              reviews.map((review, index) => (
+                <Post key={review.id}>
+                  <PostImg
+                    src={
+                      review.img_url
+                        ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
+                        : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                    }
+                    alt={review.movie_title}
+                  ></PostImg>
+                </Post>
+              ))
+            ) : (
+              // Case 2: isShowReviews가 true이고 review.length = 0 일 때
+              <PictureWrapper>
+                <PictureImg>
+                  <FontAwesomeIcon icon={faPenToSquare} />
+                </PictureImg>
+                <PictureDiv>리뷰 공유</PictureDiv>
+                <div>리뷰를 공유하면 회원님의 프로필에 표시됩니다.</div>
+                <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
+              </PictureWrapper>
+            )
+          ) : reviews && reviews.length > 0 ? (
+            // Case 3: isShowReviews가 false이고 review.length > 0 일 때
+            <div>좋아요 있을 때</div>
+          ) : (
+            // Case 4: isShowReviews가 false이고 review.length = 0 일 때
+            <div>좋아요 없을 때</div>
+          )}
         </PostsContain>
       </ContentBox>
     </Box>
@@ -300,9 +360,15 @@ const Wrapper = styled.button`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 10px 0;
+  gap: 10px;
   &:hover {
-    background-color: tomato;
+    background-color: #0282d1;
+    color: #ffffff;
   }
+`
+const StyledP = styled.p`
+  margin: 0;
 `
 
 const PostsContain = styled.section`
@@ -314,11 +380,35 @@ const PostsContain = styled.section`
 const Post = styled.div<PostProps>`
   width: 129px;
   height: 129px;
-  background-color: blueviolet;
+  background-color: #0282d1;
 `
 
 const PostImg = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`
+
+const PictureWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 30px 0;
+  width: 100%;
+`
+const PictureImg = styled.div`
+  font-size: 50px;
+`
+const PictureDiv = styled.div`
+  font-size: 30px;
+  font-weight: 700;
+`
+
+const PictureLink = styled(Link)`
+  font-size: 20px;
+  color: #0282d1;
+  padding: 20px;
+  cursor: pointer;
 `
