@@ -6,6 +6,7 @@ import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -41,6 +42,8 @@ function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
   const [user, setUser] = useState<UserData | null>(null)
+  const [userId, setUserId] = useState<string | undefined>()
+  const { bookmarkList, setBookmarkList } = useBookmarkStore()
 
   useEffect(() => {
     const userData = async () => {
@@ -51,6 +54,7 @@ function FeedComponent() {
           id: data?.user?.id || undefined
         }
         setUser(userData)
+        setUserId(userData?.id)
       } catch (error) {
         console.error('에러가 발생했습니다.', error)
       }
@@ -58,18 +62,16 @@ function FeedComponent() {
     userData()
   }, [])
 
-  console.log(user?.id)
-
   const queryClient = useQueryClient()
-  const queryKey = ['reviews', user?.id]
+  // const queryKey = ['reviews', user?.id]
 
-  const { data: bookmarkItems } = useQuery({
-    queryKey: queryKey,
+  const { data: likeItems } = useQuery({
+    queryKey: ['reviews'],
     queryFn: () => fetchReviewData(),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false
   })
-  console.log(bookmarkItems)
+  console.log(likeItems)
 
   useEffect(() => {
     const loadReviewData = async () => {
@@ -86,6 +88,21 @@ function FeedComponent() {
 
     loadReviewData()
   }, [])
+
+  console.log(user)
+  console.log(userId)
+
+  const handleBookmark = async (itemId: string, userId: string | undefined) => {
+    const { data } = await supabase
+      .from('reviews')
+      .update({ like: userId })
+      .eq('id', itemId)
+      .select()
+    console.log(data)
+
+    // setBookmarkList(itemId)
+    console.log(bookmarkList)
+  }
 
   return (
     <FeedSection>
@@ -114,7 +131,7 @@ function FeedComponent() {
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
-                  <LikeIcon />
+                  <LikeIcon onClick={() => handleBookmark(item.id, userId)} />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
