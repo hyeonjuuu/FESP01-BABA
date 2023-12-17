@@ -197,7 +197,7 @@ function Writing() {
       rating === 0 ||
       textValue === ''
     ) {
-      alert('영화 또는 TV 프로그램, ott, 평점, 내용을 작성해주세요')
+      alert('제목, ott, 평점, 내용을 작성해주세요')
       return
     }
 
@@ -232,7 +232,7 @@ function Writing() {
   }
 
   return (
-    <Container>
+    <section>
       <FormStyle encType="multipart/form-data">
         <SearchBarWrapper>
           <SearchBar>
@@ -348,10 +348,9 @@ function Writing() {
                   <label htmlFor="photo">사진</label>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept=".jpg, .jpeg, .png"
                     name="photo"
                     id="photo"
-                    // multiple
                     onChange={handleUpload}
                   ></input>
                 </div>
@@ -381,18 +380,11 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
-    </Container>
+    </section>
   )
 }
 
 export default Writing
-
-const Container = styled.section`
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 30px; */
-`
 
 const FormStyle = styled.form`
   display: flex;

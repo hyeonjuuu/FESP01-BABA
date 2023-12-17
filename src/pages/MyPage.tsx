@@ -1,17 +1,17 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
+import { useNavigate } from 'react-router-dom'
+import userInfoInLs from '@/utils/userInfoInLs'
+import { getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
 import { useEffect, useRef, useState } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
+import getSearchMovies from '@/api/getSearchMovies'
 import {
   addImgUrlToUsers,
   getProfileImgUrl,
   uploadProfileImg
 } from '@/api/profileImgApi'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@/store/useAuthStore'
-import userInfoInLs from '@/utils/userInfoInLs'
-import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
-import { getImgUrl, getUserReviews } from '@/api/reviewApi'
 
 interface ReviewProps {
   created_at: string
@@ -24,6 +24,12 @@ interface ReviewProps {
   text: string
   updated_at: string | null
   user_id: string
+}
+
+interface MovieProps {
+  id: number
+  title: string
+  poster_path: string
 }
 
 interface PostProps {
@@ -39,7 +45,9 @@ function MyPage() {
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
   const [reviews, setReviews] = useState<ReviewProps[] | null>(null)
   const [reviewImgs, setReviewImgs] = useState<string[] | null>(null)
-  const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
+  const [movieImgs, setMovieImgs] = useState<(string | undefined)[] | null>(
+    null
+  )
 
   //# 로그인 여부 확인
   const navigate = useNavigate()
@@ -77,11 +85,26 @@ function MyPage() {
       }
 
       const reviewImgs = reviews.map(review => review.img_url)
-      setReviewImgs(reviewImgs)
-      setReviews(reviews)
+      const movieTitles = reviews.map(review => review.movie_title)
+      const reviewId = reviews.map(review => review.movie_id)
 
-      console.log('reviewImgs: ', reviewImgs)
-      console.log('reviews: ', reviews)
+      const moviesArray = await Promise.all(
+        movieTitles.map(async title => {
+          const response = await getSearchMovies(title)
+          return response.results
+        })
+      )
+
+      const posterPath = moviesArray.map(
+        (movies: MovieProps[], index: number) => {
+          const movie = movies.find(m => m.id.toString() === reviewId[index])
+          return movie ? movie.poster_path : undefined
+        }
+      )
+
+      setReviews(reviews)
+      setReviewImgs(reviewImgs)
+      setMovieImgs(posterPath)
     }
 
     fetchUserReviews()
@@ -187,38 +210,16 @@ function MyPage() {
         <PostsContain>
           {reviews?.map((review, index) => (
             <Post key={review.id}>
-              <img
-                // src={
-                //   review.img_url
-                //     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
-
-                //     : getSearchMovies()
-                //      `https://image.tmdb.org/t/p/original${result.poster_path}`
-                // }
-                // alt={review.movie_title}
+              <PostImg
                 src={
                   review.img_url
                     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                    : 'https://picsum.photos/seed/picsum/200/300'
+                    : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
                 }
                 alt={review.movie_title}
-              />
+              ></PostImg>
             </Post>
           ))}
-          {/* <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post> */}
         </PostsContain>
       </ContentBox>
     </Box>
@@ -269,8 +270,17 @@ const ProfileInfo = styled.div`
   display: flex;
   align-items: start;
   flex-direction: column;
+`
 
-  /* padding-right: 34px; */
+const ProfileBtn = styled.button`
+  width: 240px;
+  height: 30px;
+  background-color: EFEFEF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  border: none;
 `
 
 const Container = styled.div`
@@ -307,13 +317,8 @@ const Post = styled.div<PostProps>`
   background-color: blueviolet;
 `
 
-const ProfileBtn = styled.button`
-  width: 240px;
-  height: 30px;
-  background-color: EFEFEF;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 3px;
-  border: none;
+const PostImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `
