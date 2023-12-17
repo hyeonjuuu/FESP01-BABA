@@ -15,6 +15,7 @@ import {
 } from '@/api/profileImgApi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-regular-svg-icons'
 
 interface ReviewProps {
   created_at: string
@@ -237,32 +238,6 @@ function MyPage() {
             <span>5</span>
           </Wrapper>
         </MarginContainer>
-
-        {/* <PostsContain>
-          {isShowReviews && reviews && reviews.length > 0 ? (
-            reviews.map((review, index) => (
-              <Post key={review.id}>
-                <PostImg
-                  src={
-                    review.img_url
-                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                      : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
-                  }
-                  alt={review.movie_title}
-                ></PostImg>
-              </Post>
-            ))
-          ) : (
-            <PictureWrapper>
-              <PictureImg>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </PictureImg>
-              <PictureDiv>리뷰 공유</PictureDiv>
-              <div>리뷰를 공유하면 회원님의 프로필에 표시됩니다.</div>
-              <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
-            </PictureWrapper>
-          )}
-        </PostsContain> */}
         <PostsContain>
           {isShowReviews ? (
             reviews && reviews.length > 0 ? (
@@ -282,9 +257,9 @@ function MyPage() {
             ) : (
               // Case 2: isShowReviews가 true이고 review.length = 0 일 때
               <PictureWrapper>
-                <PictureImg>
+                <Picture>
                   <FontAwesomeIcon icon={faPenToSquare} />
-                </PictureImg>
+                </Picture>
                 <PictureDiv>리뷰 공유</PictureDiv>
                 <div>리뷰를 공유하면 회원님의 프로필에 표시됩니다.</div>
                 <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
@@ -292,10 +267,18 @@ function MyPage() {
             )
           ) : reviews && reviews.length > 0 ? (
             // Case 3: isShowReviews가 false이고 review.length > 0 일 때
-            <div>좋아요 있을 때</div>
+            <PictureWrapper>
+              <div>좋아요 있을 때</div>
+            </PictureWrapper>
           ) : (
             // Case 4: isShowReviews가 false이고 review.length = 0 일 때
-            <div>좋아요 없을 때</div>
+            <PictureWrapper>
+              <Picture>
+                <FontAwesomeIcon icon={faHeart} />
+              </Picture>
+              <PictureDiv>저장</PictureDiv>
+              <div>다시 보고 싶은 글을 저장하세요.</div>
+            </PictureWrapper>
           )}
         </PostsContain>
       </ContentBox>
@@ -419,7 +402,7 @@ const PictureWrapper = styled.div`
   padding: 30px 0;
   width: 100%;
 `
-const PictureImg = styled.div`
+const Picture = styled.div`
   font-size: 50px;
 `
 const PictureDiv = styled.div`
