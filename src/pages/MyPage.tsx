@@ -10,6 +10,25 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import userInfoInLs from '@/utils/userInfoInLs'
+import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
+import { getImgUrl, getUserReviews } from '@/api/reviewApi'
+
+interface ReviewProps {
+  created_at: string
+  id: number
+  img_url: string | null
+  movie_id: string
+  movie_title: string
+  ott: string[]
+  rating: number
+  text: string
+  updated_at: string | null
+  user_id: string
+}
+
+interface PostProps {
+  key: number
+}
 
 function MyPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -17,11 +36,11 @@ function MyPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
-  const [renderUserImg, setRenderUserImg] = useState<string | null>(null)
+  const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
+  const [reviews, setReviews] = useState<ReviewProps[] | null>(null)
+  const [reviewImgs, setReviewImgs] = useState<string[] | null>(null)
+  const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
 
-  console.log('profileImg: ', profileImg)
-  console.log('userEmail: ', userEmail)
-  console.log('renderUserImg: ', renderUserImg)
   //# 로그인 여부 확인
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
@@ -39,13 +58,37 @@ function MyPage() {
     }
   }, [isAuthenticated])
 
+  //# 리뷰 가져오기
   useEffect(() => {
-    const userIdInLs = userInfoInLs()
-    setUserId(userIdInLs.userId) // // local storage의 id = user Table의 email
-    setUserEmail(userIdInLs.userEmail) // local storage의 email
-  }, [])
+    const userInfo = userInfoInLs()
 
-  //# 프로필 이미지 선택 후 전송
+    setUserId(userInfo.userId) // local storage의 id = users의 user_email = revews의 user_id
+    setUserEmail(userInfo.userEmail) // local storage의 email
+
+    if (!userId) {
+      return
+    }
+
+    const fetchUserReviews = async () => {
+      const reviews = await getUserReviews(userId)
+
+      if (!reviews) {
+        return
+      }
+
+      const reviewImgs = reviews.map(review => review.img_url)
+      setReviewImgs(reviewImgs)
+      setReviews(reviews)
+
+      console.log('reviewImgs: ', reviewImgs)
+      console.log('reviews: ', reviews)
+    }
+
+    fetchUserReviews()
+  }, [userId])
+
+  //# 프로필 이미지
+  // 프로필 이미지 선택
   const handleProfileImg = () => {
     fileInputRef?.current?.click()
   }
@@ -55,6 +98,7 @@ function MyPage() {
     setProfileImg(selectedFile || null)
   }
 
+  // 프로필 이미지 전송
   const selectProfileImg = async () => {
     if (profileImg) {
       const imgUrl = await uploadProfileImg(profileImg, userId!)
@@ -67,13 +111,13 @@ function MyPage() {
     selectProfileImg()
   }, [profileImg])
 
-  //# 프로필 이미지 렌더링
+  // 프로필 이미지 렌더링
   const fetchAndRenderProfileImg = async () => {
     if (userId) {
       try {
         const imgSrc = await getProfileImgUrl(userId)
         if (imgSrc) {
-          setRenderUserImg(imgSrc)
+          setRenderProfileImg(imgSrc)
         }
       } catch (error) {
         console.error(error)
@@ -93,22 +137,20 @@ function MyPage() {
             <ImageWrapper>
               <ProfileImage
                 src={
-                  renderUserImg
-                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderUserImg}`
+                  renderProfileImg
+                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg}`
                     : userImage
                 }
                 alt="사용자 이미지"
                 onClick={handleProfileImg}
               />
-
-              {/* 실제 파일 입력란은 감춰두고, 사용자 정의 버튼 클릭 시 트리거되도록 함 */}
               <div>
                 <label htmlFor="photo">사진</label>
                 <input
                   ref={fileInputRef}
                   style={{ display: 'none' }}
                   type="file"
-                  accept="image/*"
+                  accept=".jpg, .jpeg, .png"
                   name="photo"
                   id="photo"
                   onChange={handleUpload}
@@ -143,6 +185,27 @@ function MyPage() {
         </MarginContainer>
 
         <PostsContain>
+          {reviews?.map((review, index) => (
+            <Post key={review.id}>
+              <img
+                // src={
+                //   review.img_url
+                //     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
+
+                //     : getSearchMovies()
+                //      `https://image.tmdb.org/t/p/original${result.poster_path}`
+                // }
+                // alt={review.movie_title}
+                src={
+                  review.img_url
+                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
+                    : 'https://picsum.photos/seed/picsum/200/300'
+                }
+                alt={review.movie_title}
+              />
+            </Post>
+          ))}
+          {/* <Post></Post>
           <Post></Post>
           <Post></Post>
           <Post></Post>
@@ -155,9 +218,7 @@ function MyPage() {
           <Post></Post>
           <Post></Post>
           <Post></Post>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
+          <Post></Post> */}
         </PostsContain>
       </ContentBox>
     </Box>
@@ -240,7 +301,7 @@ const PostsContain = styled.section`
   gap: 1px;
 `
 
-const Post = styled.div`
+const Post = styled.div<PostProps>`
   width: 129px;
   height: 129px;
   background-color: blueviolet;
