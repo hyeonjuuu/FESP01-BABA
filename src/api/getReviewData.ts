@@ -43,3 +43,23 @@ export const getReviewDataWithUserInfo = async () => {
     return null
   }
 }
+
+// reviews 테이블의 id를 기반으로 해당 리뷰 데이터 가져오기
+export const getReviewDataForEdit = async (
+  reviewId: number
+): Promise<any | null> => {
+  console.log('reviewId: ', reviewId)
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('id', reviewId)
+
+  if (data) {
+    console.log('data: ', data)
+    return data
+  } else {
+    console.error(error)
+    return null
+  }
+}

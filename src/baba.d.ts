@@ -34,3 +34,9 @@ interface MovieGenres {
     name: string
   }[]
 }
+
+interface MovieProps {
+  id: number
+  title: string
+  poster_path: string
+}

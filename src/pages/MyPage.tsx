@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import { Link, useNavigate } from 'react-router-dom'
-import userInfoInLs from '@/utils/userInfoInLs'
 import { getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
 import { useEffect, useRef, useState } from 'react'
@@ -14,8 +13,9 @@ import {
   uploadProfileImg
 } from '@/api/profileImgApi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
-import { faHeart } from '@fortawesome/free-regular-svg-icons'
+import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
+import useUserInfoStore from '@/store/useUserInfoStore'
 
 interface ReviewProps {
   created_at: string
@@ -32,17 +32,19 @@ interface ReviewProps {
   likes: string | null
 }
 
-interface MovieProps {
-  id: number
-  title: string
-  poster_path: string
-}
+// interface MovieProps {
+//   id: number
+//   title: string
+//   poster_path: string
+// }
 
 interface PostProps {
   key: number
 }
 
 function MyPage() {
+  const userInfo = useUserInfoStore()
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -78,7 +80,7 @@ function MyPage() {
 
   //# 리뷰 가져오기
   useEffect(() => {
-    const userInfo = userInfoInLs()
+    // const userInfo = userInfoInLs()
 
     setUserId(userInfo.userId) // local storage의 id = users의 user_email = revews의 user_id
     setUserEmail(userInfo.userEmail) // local storage의 email
@@ -98,6 +100,7 @@ function MyPage() {
       const movieTitles = reviews.map(review => review.movie_title)
       const reviewId = reviews.map(review => review.movie_id)
 
+      // 기본 영화 포스터 찾기
       const moviesArray = await Promise.all(
         movieTitles.map(async title => {
           const response = await getSearchMovies(title)
@@ -244,14 +247,33 @@ function MyPage() {
               // Case 1: isShowReviews가 true이고 review.length > 0 일 때
               reviews.map((review, index) => (
                 <Post key={review.id}>
-                  <PostImg
-                    src={
-                      review.img_url
-                        ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                        : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
-                    }
-                    alt={review.movie_title}
-                  ></PostImg>
+                  <HoverLink
+                    to={`/edit/${review.id}`}
+                    state={{
+                      review_id: review.id,
+                      user_id: userId,
+                      movie_id: review.movie_id
+                    }}
+                  >
+                    <PostImg
+                      src={
+                        review.img_url
+                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
+                          : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                      }
+                      alt={`${review.movie_title} 포스터`}
+                    />
+                    <HoverDiv>
+                      <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
+                      <RatingSpan>
+                        <FontAwesomeIcon
+                          icon={faStar}
+                          style={{ color: '#FFC61A' }}
+                        />{' '}
+                        {review.rating}
+                      </RatingSpan>
+                    </HoverDiv>
+                  </HoverLink>
                 </Post>
               ))
             ) : (
@@ -385,6 +407,48 @@ const Post = styled.div<PostProps>`
   width: 129px;
   height: 129px;
   background-color: #0282d1;
+`
+
+const HoverLink = styled(Link)`
+  width: 100%;
+  height: 100%;
+  display: block; /* Link는 inline 요소이므로 block으로 변경 */
+  position: relative;
+
+  &:hover {
+    > img {
+      filter: saturate(0%) brightness(40%);
+      transition: 0.5s;
+    }
+    > div {
+      color: white;
+      visibility: visible;
+    }
+  }
+`
+
+const HoverDiv = styled.div`
+  width: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  visibility: hidden;
+`
+
+const MovieTitleSpan = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`
+
+const RatingSpan = styled.span`
+  display: block;
+  padding-top: 10px;
+  color: #ffc61a;
 `
 
 const PostImg = styled.img`
