@@ -5,18 +5,8 @@ import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { useAuthStore } from '@/store/useAuthStore'
-import {
-  addLike,
-  deleteLikes,
-  fetchAllLikes,
-  matchLike,
-  useCreateLikesMutation,
-  useDeleteLikesMutation
-} from '@/api/getLikesData'
-import { match } from 'assert'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -54,11 +44,12 @@ const fetchReviewData = async (userId: string[] | undefined) => {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
-  const [userId, setUserId] = useState<string | undefined>([])
+  const [userId, setUserId] = useState<string | undefined>()
   const [reviewId, setReviewId] = useState<number>()
   const [isBookMark, setIsBookMark] = useState(false)
 
-  const loginUserData = JSON.parse(localStorage.getItem('userData'))
+  const getuserData = localStorage.getItem('userData')
+  const loginUserData = getuserData ? JSON.parse(getuserData) : null
   const loginUserId = loginUserData.user.id
 
   useEffect(() => {
@@ -125,6 +116,7 @@ function FeedComponent() {
       review_id: item.id
     }
     console.log(item.id)
+    setReviewId(item.id)
 
     const hasReviewId = likeItems?.some(
       likeItem => likeItem.review_id === item.id
@@ -133,11 +125,9 @@ function FeedComponent() {
     try {
       if (hasReviewId) {
         await deleteLikes(item.id)
-        setReviewId(item.id)
         console.log('delete')
       } else {
         await addLike(newLikes)
-        setReviewId(item.id)
         console.log('add')
       }
       queryClient.invalidateQueries({ queryKey: ['likes', reviewId] })

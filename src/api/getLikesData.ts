@@ -33,8 +33,8 @@ export const addLike = async (likeItem: LikesType) => {
   await supabase.from('likes').insert(likeItem).select()
 }
 
-export const deleteLikes = async (reviewId?: string) => {
-  await supabase.from('likes').delete().match({ review_id: reviewId })
+export const deleteLikes = async (itemId?: number) => {
+  await supabase.from('likes').delete().match({ review_id: itemId })
 }
 
 export const useCreateLikesMutation = () => {
