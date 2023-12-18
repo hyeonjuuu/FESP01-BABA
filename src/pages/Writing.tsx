@@ -1,8 +1,14 @@
+import { motion } from 'framer-motion'
 import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, uploadFile } from '@/api/reviewApi'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  uploadImage,
+  uploadFile
+} from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -13,6 +19,8 @@ import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
+import { useAuthStore } from '@/store/useAuthStore'
+import userInfoInLs from '@/utils/userInfoInLs'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -23,12 +31,39 @@ function Writing() {
   const naviagte = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const [userEmail, setUserEmail] = useState<string | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
+  const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
+  const [imgSrc, setImgSrc]: any = useState(null)
+  const [image, setImage] = useState<File | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
+
+  //# 로그인 여부 확인
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        window.history.back()
+      }
+    }
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    const userIdInLs = userInfoInLs()
+    setUserEmail(userIdInLs.userId) // local storage의 id = user Table의 email
+  }, [])
 
   //# 검색
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +76,6 @@ function Writing() {
 
     try {
       const searchData = await getSearchMovies(inputRef.current?.value || '')
-
       const searchResults = searchData.results.map(
         (result: SearchResultProps) => ({
           id: result.id,
@@ -60,22 +94,66 @@ function Writing() {
     }
   }
 
-  //# 기본 이미지 선택
-  const handleSelect = (selectedResult: SearchListProps) => {
+  // 기본 이미지 삽입
+  const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
   }
-  // console.log(selectMovie)
+
+  //# 이미지 선택
+  const handleSelectImg = (e: React.MouseEvent) => {
+    e.preventDefault()
+  }
+
+  // 기본 이미지
+  const handleSelectDefaultIimg = () => {
+    setIsSelectImg(true)
+  }
+
+  // 사용자 이미지
+  const handleSelectUserIimg = () => {
+    setIsSelectImg(false)
+  }
+
+  // 사용자 이미지 미리보기
+  const handleUpload = (e: any) => {
+    const file = e.target.files[0]
+
+    setImage(file) // api로 보내려고...
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+
+    return new Promise<void>(resolve => {
+      reader.onload = () => {
+        setImgSrc(reader.result || null)
+        resolve()
+      }
+    })
+  }
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
       if (prevSelectedOtt.includes(iconName)) {
-        // If the OTT is already selected, do nothing
-        return prevSelectedOtt
+        // 이미 선택된 OTT인 경우, 해당 OTT를 배열에서 제거하여 체크를 해제합니다.
+        return prevSelectedOtt.filter(ott => ott !== iconName)
       } else {
         // Select the new OTT
         return [iconName]
+      }
+    })
+  }
+
+  const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputOtt = event.target.value
+
+    setSelectedOtt(prevSelectedOtt => {
+      if (prevSelectedOtt.length === 0) {
+        return [inputOtt]
+      } else {
+        const newSelectedOtt = [...prevSelectedOtt]
+        newSelectedOtt[newSelectedOtt.length - 1] = inputOtt
+        return newSelectedOtt
       }
     })
   }
@@ -117,8 +195,6 @@ function Writing() {
     e.preventDefault()
 
     const ottValue = selectedOtt
-    // const title =
-
     const textValue = text === 'Enter your text here...' ? '' : text
     // const reviewContentInfo = searchList
 
@@ -128,34 +204,34 @@ function Writing() {
       rating === 0 ||
       textValue === ''
     ) {
-      alert('영화 또는 TV 프로그램, ott, 평점, 내용을 작성해주세요')
+      alert('제목, ott, 평점, 내용을 작성해주세요')
       return
     }
 
     try {
-      if (selectMovie) {
-        const filePath = await uploadFile(selectMovie.poster_path)
-        if (filePath) {
-          const movieId = selectMovie.id
-          const userId = '0ebab27d-5be1-4d43-9e85-fa8a163b0db4'
-          const reviewText = text
-          const ottPlatforms = selectedOtt
-          const reviewRating = rating
-          const movieTitle = selectMovie.title || selectMovie.name
-
-          // addReview 함수 호출
-          await addReview(
-            movieId,
-            userId,
-            reviewText,
-            ottPlatforms,
-            reviewRating,
-            movieTitle,
-            filePath
-          )
-        }
+      if (selectMovie && !imgSrc) {
+        await addReview(
+          selectMovie.id,
+          userEmail!,
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title'
+        )
+      } else if (selectMovie && imgSrc) {
+        const imgUrl = await uploadImage(image!)
+        await addReviewWithImgUrl(
+          selectMovie.id,
+          userEmail!,
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          imgUrl!
+        )
       }
       alert('리뷰가 등록되었습니다!')
+
       naviagte('/main')
     } catch (error) {
       console.error(error)
@@ -163,9 +239,8 @@ function Writing() {
   }
 
   return (
-    <Container>
-      {/* <FormStyle encType="multipart/form-data"> */}
-      <FormStyle>
+    <section>
+      <FormStyle encType="multipart/form-data">
         <SearchBarWrapper>
           <SearchBar>
             <Icon>
@@ -187,7 +262,7 @@ function Writing() {
           {searchList.map(result => (
             <ResultBarContain
               key={result.id}
-              onClick={() => handleSelect(result)}
+              onClick={() => handleSelectMovie(result)}
               $darkMode={$darkMode}
             >
               <Contain>
@@ -209,43 +284,87 @@ function Writing() {
         <Wrapper>
           {ottIcons.map((icon, index) => (
             <OttWrapper key={index}>
-              <label htmlFor="ott">ott</label>
-              <input
-                type="checkbox"
-                name="ott"
-                id="ott"
-                checked={selectedOtt.includes(ottIconNames[index])}
-                onChange={() => handleCheck(ottIconNames[index])}
-              />
-              <IconBox>
-                <OttIcon src={icon} alt={ottIconNames[index]} />
-              </IconBox>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <IconBox>
+                  <OttIcon
+                    src={icon}
+                    alt={ottIconNames[index]}
+                    title={ottIconNames[index]}
+                  />
+                  <OttLabel htmlFor={`ott${index}`}> ott</OttLabel>
+                  <OttInput
+                    type="checkbox"
+                    name={`ott${index}`}
+                    id={`ott${index}`}
+                    checked={selectedOtt.includes(ottIconNames[index])}
+                    onChange={() => handleCheck(ottIconNames[index])}
+                  />
+                </IconBox>
+              </motion.div>
             </OttWrapper>
           ))}
+          <OthersOTT>
+            <label htmlFor="othersOttText">ott</label>
+            <OthersOttText
+              type="text"
+              name="othersOtt"
+              id="othersOttText"
+              placeholder="직접 입력"
+              value={
+                selectedOtt.length > 0
+                  ? selectedOtt[selectedOtt.length - 1]
+                  : ''
+              }
+              onChange={handleInputOtt}
+            ></OthersOttText>
+          </OthersOTT>
         </Wrapper>
 
-        <BtnWrapper>
-          <ImgSelectBtn color="#3797EF" $hasBorder>
+        <TitleDiv>
+          {!selectMovie && `영화 또는 드라마 제목을 검색해주세요`}
+          {(selectMovie && selectMovie.title) || selectMovie?.name}
+        </TitleDiv>
+
+        <BtnWrapper onClick={handleSelectImg}>
+          <ImgSelectBtn
+            color={isSelectImg ? '#3797EF' : ''}
+            $hasBorder
+            onClick={handleSelectDefaultIimg}
+          >
             기본 이미지
           </ImgSelectBtn>
-          <ImgSelectBtn>사용자 이미지</ImgSelectBtn>
+          <ImgSelectBtn
+            color={isSelectImg ? '' : '#3797EF'}
+            onClick={handleSelectUserIimg}
+          >
+            사용자 이미지
+          </ImgSelectBtn>
         </BtnWrapper>
         <OriginalImage>
-          {/* <label htmlFor="photo">사진</label>
-          <input
-            ref={photoRef}
-            type="file"
-            accept="image/*"
-            name="photo"
-            id="photo"
-            // multiple
-            // onChange={handleUpload}
-          ></input> */}
-          {selectMovie && (
+          {selectMovie && isSelectImg ? (
             <MoviePoster
               src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
-              alt={`${selectMovie.title} 포스터`}
+              alt={`${selectMovie.title || selectMovie.name} 포스터`}
             />
+          ) : (
+            selectMovie && (
+              <>
+                <MoviePoster
+                  src={imgSrc}
+                  alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
+                />
+                <div>
+                  <label htmlFor="photo">사진</label>
+                  <input
+                    type="file"
+                    accept=".jpg, .jpeg, .png"
+                    name="photo"
+                    id="photo"
+                    onChange={handleUpload}
+                  ></input>
+                </div>
+              </>
+            )
           )}
         </OriginalImage>
 
@@ -270,18 +389,11 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
-    </Container>
+    </section>
   )
 }
 
 export default Writing
-
-const Container = styled.section`
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 30px; */
-`
 
 const FormStyle = styled.form`
   display: flex;
@@ -344,7 +456,8 @@ const Wrapper = styled.div`
   width: 100%;
   height: 60px;
   max-width: 390px;
-  overflow-x: scroll;
+  gap: 5px;
+  flex-wrap: wrap;
 `
 
 const OttWrapper = styled.div`
@@ -356,11 +469,51 @@ const OttWrapper = styled.div`
 const IconBox = styled.div`
   width: 28px;
   height: 28px;
+  position: relative;
+`
+const OttLabel = styled.label``
+
+const OttInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+`
+const OthersOTT = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
+  font-size: 14px;
+  padding: 0px 8px;
+  gap: 3px;
+`
+
+const OthersOttText = styled.input`
+  width: 100%;
 `
 
 const OttIcon = styled.img`
   width: 100%;
   height: 100%;
+  object-fit: cover;
+`
+
+const TitleDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  font-weight: 600;
+  @media (min-width: 701px) {
+    max-width: 390px;
+  }
 `
 
 const BtnWrapper = styled.div`
@@ -370,6 +523,7 @@ const BtnWrapper = styled.div`
 const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
   width: 195px;
   height: 44px;
+  color: black;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: ${props => props.color || 'white'};
   ${props =>
@@ -387,6 +541,7 @@ const OriginalImage = styled.div`
 `
 
 const MoviePoster = styled.img`
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -394,7 +549,7 @@ const MoviePoster = styled.img`
 
 const StarContainer = styled.div`
   width: 370px;
-  padding: 10px;
+  padding: 30px 10px 10px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -403,8 +558,6 @@ const StarContainer = styled.div`
 
 const FeedText = styled.textarea`
   width: 390px;
-  /* height: 200px; */
-  height: auto;
   overflow: hidden;
   border: none;
   box-sizing: border-box;

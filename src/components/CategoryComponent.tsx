@@ -141,7 +141,7 @@ const CategorySection = styled.section`
 `
 
 const SectionHeader = styled.h2<SizeProps>`
-  color: #303032;
+  color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   font-size: 16px;
   margin: 0;
   padding: 0;
