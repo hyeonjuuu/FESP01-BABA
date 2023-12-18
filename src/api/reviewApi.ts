@@ -5,7 +5,7 @@ const supabaseAdmin = createClient(
   import.meta.env.VITE_SUPABASE_KEY as string
 )
 
-// 리뷰 등록
+//# 리뷰 등록
 export const addReview = async (
   movie_id: number,
   user_id: string,
@@ -60,7 +60,7 @@ export const uploadImage = async (file: File): Promise<string | null> => {
   }
 }
 
-// 사용자 이미지와 리뷰 등록
+//# 사용자 이미지와 리뷰 등록
 export const addReviewWithImgUrl = async (
   movie_id: number,
   user_id: string,
@@ -112,6 +112,22 @@ export const getImgUrl = async (id: number): Promise<string | null> => {
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    return null
+  }
+}
+
+//# 리뷰 가져오기
+export const getUserReviews = async (id: string) => {
+  const { data, error } = await supabaseAdmin
+    .from('reviews')
+    .select('*')
+    .eq('user_id', id)
+
+  if (data) {
+    console.log('data: ', data)
+    return data
+  } else {
+    console.log(error)
     return null
   }
 }

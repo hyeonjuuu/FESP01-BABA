@@ -20,7 +20,7 @@ function SearchPage() {
   const [isSearched, setIsSearched] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
-  const [showSearchResult, setshowSearchResult] = useState<boolean>(false)
+  const [showSearchResult, setShowSearchResult] = useState<boolean>(false)
   const [searchDataList, setSearchDataList] = useState<SearchListProps[]>([])
   const [oldSearchRecordList, setOldSearchRecordList] = useState<string[]>([])
 
@@ -29,12 +29,16 @@ function SearchPage() {
     setIsSearchBtnDisabled(value.length === 0)
     if (!value) {
       setIsSearched(false)
-      setshowSearchResult(false)
+      setShowSearchResult(false)
     }
   }
 
-  const handleSearchBtn = async (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.preventDefault()
+  const handleSearchBtn = async (
+    e?: React.MouseEvent | React.KeyboardEvent
+  ) => {
+    if (e) {
+      e.preventDefault()
+    }
     const inputValue = inputRef.current?.value || ''
 
     const earlyStorageItems = JSON.parse(
@@ -63,7 +67,7 @@ function SearchPage() {
         })
       )
       setSearchDataList(searchResults)
-      setshowSearchResult(true)
+      setShowSearchResult(true)
       setIsSearched(true)
     } catch (error) {
       console.error(error)
@@ -72,6 +76,10 @@ function SearchPage() {
       setIsSearchBtnDisabled(true)
       setIsLoading(false)
     }
+  }
+
+  const handleSearchCancle = () => {
+    window.location.reload()
   }
 
   // 새로고침시 최근 검색목록을 스토리지에서 가져옵니다.
@@ -118,13 +126,20 @@ function SearchPage() {
             ref={inputRef}
           />
         </SearchBar>
-        <ClearBtn
-          type="button"
-          onClick={handleSearchBtn}
-          disabled={isSearchBtnDisabled}
-        >
-          검색
-        </ClearBtn>
+
+        {showSearchResult || searchDataList.length > 0 ? (
+          <ClearBtn type="button" onClick={handleSearchCancle}>
+            취소
+          </ClearBtn>
+        ) : (
+          <ClearBtn
+            type="button"
+            onClick={handleSearchBtn}
+            disabled={isSearchBtnDisabled}
+          >
+            검색
+          </ClearBtn>
+        )}
       </SearchBarWrapper>
       <Wrapper>
         <RecentSearch>
@@ -170,6 +185,8 @@ function SearchPage() {
               key={item}
               title={item}
               onClick={handleRemoveStorageItem}
+              inputRef={inputRef}
+              onSearch={handleSearchBtn}
             />
           ))
         )}
