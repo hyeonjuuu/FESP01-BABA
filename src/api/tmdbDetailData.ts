@@ -15,7 +15,6 @@ export const getDetailData = async (movieId: string) => {
     )
 
     if (result) {
-      console.log(result)
       return result
     }
   } catch (error) {
@@ -44,6 +43,28 @@ export const findMovieDirector = async (
       )
 
       return director ? director.name : undefined
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const getMovieCrew = async (
+  movieId: string
+): Promise<Crew[] | undefined> => {
+  try {
+    const result = await axios.get(
+      `https://api.themoviedb.org/3/movie/${movieId}/credits?language=ko-KR`,
+      {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`
+        }
+      }
+    )
+
+    if (result.data) {
+      return result.data.cast.slice(0, 10)
     }
   } catch (error) {
     console.error(error)

@@ -112,6 +112,7 @@ const NavContain = styled.nav<{ theme: { bgColor: string } }>`
   position: fixed;
   bottom: 0;
   background-color: ${props => props.theme.bgColor};
+  z-index: 100;
   @media (max-width: 700px) {
     min-width: 390px;
   }
@@ -130,7 +131,7 @@ const NavContain = styled.nav<{ theme: { bgColor: string } }>`
     gap: 200px;
   }
   @media (min-width: 701px) and (max-width: 1260px) {
-    width: 43px;
+    width: 45px;
   }
 `
 
