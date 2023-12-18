@@ -1,9 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_KEY as string
-)
+import { supabase } from '@/utils/supabaseClient'
 
 interface UserData {
   email: string
@@ -115,20 +110,25 @@ export const getMetaData = async () => {
   }
 }
 
-// SUPABASE Storage에서 사용자의 이미지를 가져오는 함수
-// export const getImageUrl = async (imageName: string) => {
-//   try {
-//     const { publicURL, error } = await supabase.storage
-//       .from('YOUR_STORAGE_BUCKET')
-//       .getPublicUrl(imageName)
+// 로그인된 사용자의 세션을 확인합니다.
+export const checkSession = async () => {
+  try {
+    const { data: session, error } = await supabase.auth.getSession()
 
-//     if (publicURL) {
-//       console.log('Image URL:', publicURL)
-//       return publicURL
-//     } else {
-//       console.error('Error getting image URL:', error.message)
-//     }
-//   } catch (error) {
-//     console.error('❌ Error:', error)
-//   }
-// }
+    if (error) {
+      console.error('세션 확인 실패:', error.message)
+      return null
+    }
+
+    if (session) {
+      console.log('현재 세션:', session)
+      return session
+    } else {
+      console.log('세션 없음')
+      return null
+    }
+  } catch (error) {
+    console.error('❌ Error:', error)
+    throw error // 더 상세한 오류 처리가 필요할 경우 여기서 처리하세요.
+  }
+}
