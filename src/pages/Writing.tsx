@@ -224,11 +224,11 @@ function Writing() {
           imgUrl!
         )
       }
-      alert('리뷰가 등록되었습니다!')
-
+      alert('리뷰가 등록되었습니다!😊')
       naviagte('/main')
     } catch (error) {
       console.error(error)
+      alert('리뷰 등록에 실패했습니다..😭')
     }
   }
 

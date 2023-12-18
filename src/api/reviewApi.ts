@@ -28,11 +28,13 @@ export const addReview = async (
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+      throw error // 에러를 다시 던져서 상위 함수에서 잡을 수 있게 함
     } else {
       console.log('Supabase 데이터 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    throw error
   }
 }
 
@@ -48,7 +50,7 @@ export const uploadImage = async (file: File): Promise<string | null> => {
 
     if (error) {
       console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-      return null
+      throw error
     } else {
       console.log('Supabase 이미지 삽입 성공:', data)
       // 이미지 URL 반환
@@ -56,7 +58,7 @@ export const uploadImage = async (file: File): Promise<string | null> => {
     }
   } catch (error) {
     console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
-    return null
+    throw error
   }
 }
 
@@ -85,11 +87,13 @@ export const addReviewWithImgUrl = async (
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+      throw error
     } else {
       console.log('Supabase 리뷰와 이미지 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    throw error
   }
 }
 
@@ -103,7 +107,7 @@ export const getImgUrl = async (id: number): Promise<string | null> => {
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-      return null
+      throw error
     } else {
       console.log('Supabase 이미지 가져오기 성공:', data)
 
@@ -112,7 +116,7 @@ export const getImgUrl = async (id: number): Promise<string | null> => {
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
-    return null
+    throw error
   }
 }
 
