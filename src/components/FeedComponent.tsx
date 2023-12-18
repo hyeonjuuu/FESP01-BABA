@@ -5,7 +5,7 @@ import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 const supabase = createClient(
@@ -21,14 +21,13 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-const fetchReviewData = async (userId: string[] | undefined) => {
+const fetchReviewData = async (userId: string | undefined) => {
   try {
     const { data, error } = await supabase
       .from('reviews')
-      .select('likes')
+      .select()
       .containedBy('likes', [userId] || [])
-    console.log(data)
-
+    console.log('fetchReviewData', data)
     if (!data) {
       return []
     }
@@ -38,7 +37,6 @@ const fetchReviewData = async (userId: string[] | undefined) => {
     throw error
   }
 }
-
 const addBookmark = async (itemId: string, userId: string[] | undefined) => {
   return await supabase
     .from('reviews')
@@ -56,9 +54,10 @@ const removeBookmark = async (itemId: string, userId: string[] | undefined) => {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
-  const [userId, setUserId] = useState<string[] | undefined>([])
+  const [userId, setUserId] = useState<string | undefined>()
+  const [userIdArray, setUserIdArray] = useState<string[] | undefined>([])
   const [reviewId, setReviewId] = useState<string>()
-  // const { bookmarkList, setBookmarkList } = useBookmarkStore()
+  const { bookmarkList, setBookmarkList } = useBookmarkStore()
 
   useEffect(() => {
     const userData = async () => {
@@ -68,13 +67,15 @@ function FeedComponent() {
           email: data?.user?.email || undefined,
           id: data?.user?.id || undefined
         }
-        setUserId(userData?.id ? [userData.id] : undefined)
+        setUserIdArray(userData?.id ? [userData.id] : undefined)
+        setUserId(userData.id)
       } catch (error) {
         console.error('에러가 발생했습니다.', error)
       }
     }
     userData()
   }, [])
+  console.log(userId)
 
   const queryClient = useQueryClient()
   const queryKey = ['likes', reviewId]
@@ -112,13 +113,10 @@ function FeedComponent() {
     userId: string[] | undefined
   ) => {
     try {
-      if (userId) {
-        await removeBookmark(itemId, userId)
-        setReviewId(itemId)
-      } else {
-        await addBookmark(itemId, userId)
-        setReviewId(itemId)
-      }
+      // await removeBookmark(itemId, userId)
+      // setReviewId(itemId)
+      await addBookmark(itemId, userId)
+      setReviewId(itemId)
 
       queryClient.invalidateQueries({ queryKey: ['likes', itemId] })
     } catch (error) {

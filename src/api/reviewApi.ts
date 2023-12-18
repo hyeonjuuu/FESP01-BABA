@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
+const supabaseAdmin = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_KEY
 )
@@ -15,7 +15,7 @@ export const addReview = async (
   movie_title: string
 ) => {
   try {
-    const { data, error } = await supabase.from('reviews').upsert([
+    const { data, error } = await supabaseAdmin.from('reviews').upsert([
       {
         movie_id,
         user_id,

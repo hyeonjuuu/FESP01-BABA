@@ -56,3 +56,17 @@ interface UserData {
   email: string | undefined
   id: string | undefined
 }
+
+interface LikeData {
+  created_at: string
+  id: number
+  img_url: string
+  likes: string[]
+  movie_id: string
+  movie_title: string
+  ott: string[]
+  rating: number
+  text: string
+  updated_at: string
+  user_id: string
+}
