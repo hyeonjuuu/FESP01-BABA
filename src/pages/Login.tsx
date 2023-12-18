@@ -3,7 +3,7 @@ import Logo from '@/components/Logo'
 import styled from 'styled-components'
 import Input from '@/components/Input'
 import { HTMLAttributes } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/utils/supabaseClient'
@@ -19,6 +19,7 @@ interface PasswordInputProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 function Login() {
+  const navigate = useNavigate()
   const { login, logout } = useAuthStore()
 
   const [loading, setLoading] = useState(true)
@@ -48,7 +49,9 @@ function Login() {
     event.preventDefault()
     try {
       await userLogin(formData)
-      await login(formData.email, formData.password)
+      await login(formData.email, formData.password).then(() =>
+        navigate('/main')
+      )
     } catch (error) {
       console.error(`❌ Error: ${error}`)
     }
@@ -62,7 +65,7 @@ function Login() {
     event.preventDefault()
 
     logout()
-    supabase.auth.signOut()
+    supabase.auth.signOut().then(() => alert('다음에 또만나요~ 🙏🏻'))
   }
 
   useEffect(() => {
@@ -129,10 +132,14 @@ function Login() {
           <Img
             src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${profileImg}`}
           ></Img>
-          <h4>{username}</h4>
-          <span>{nickname}</span>
+          <Username>{username} 님, 환영합니다! 🤗</Username>
+          <Nickname>닉네임 : {nickname}</Nickname>
 
-          <button onClick={handleLogOut}>로그아웃</button>
+          <Button
+            onClick={handleLogOut}
+            text={'로그아웃'}
+            width={'360px'}
+          ></Button>
         </LoginFormWrapper>
       ) : (
         <LoginFormWrapper>
@@ -170,12 +177,6 @@ function Login() {
               onClick={handleUserLogin}
             />
           </StyledLink>
-          {/* <Button
-            $bgcolor="#FFDC00"
-            color="#1E1E1E"
-            text="KaKao 로그인"
-            width="360px"
-          /> */}
           <Button
             $bgcolor="#1e1e1e"
             color="white"
@@ -186,9 +187,7 @@ function Login() {
         </LoginFormWrapper>
       )}
 
-      {session ? (
-        <div>잘됨</div>
-      ) : (
+      {session ? null : (
         <Link to="/signup">
           <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
         </Link>
@@ -265,7 +264,10 @@ const Img = styled.img`
   object-fit: cover;
 `
 
-const LogOutBtn = styled.button`
-  /* color: ${props => props.color}; */
-  width: 100%;
+const Username = styled.h4`
+  font-size: 30px;
+`
+
+const Nickname = styled.h5`
+  font-size: 22px;
 `

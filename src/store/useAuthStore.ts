@@ -47,6 +47,7 @@ export const useAuthStore = create<AuthStore>(set => ({
         localStorage.setItem('userData', JSON.stringify(userData))
         set({ isAuthenticated: true, user: userData })
         console.log('로그인 성공:', userData)
+        alert('로그인에 성공하였습니다!')
       } else if (error) {
         console.error('로그인 실패:', error.message)
         localStorage.removeItem('userData')
