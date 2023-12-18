@@ -15,7 +15,6 @@ import SearchResultBar, {
 
 function SearchPage() {
   const { $darkMode } = useThemeStore()
-
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [isSearched, setIsSearched] = useState(false)
@@ -34,7 +33,7 @@ function SearchPage() {
     }
   }
 
-  const handleSearchBtn = async (e: React.MouseEvent) => {
+  const handleSearchBtn = async (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault()
     const inputValue = inputRef.current?.value || ''
 
@@ -69,6 +68,7 @@ function SearchPage() {
     } catch (error) {
       console.error(error)
     } finally {
+      inputRef.current!.value = ''
       setIsSearchBtnDisabled(true)
       setIsLoading(false)
     }
@@ -81,6 +81,15 @@ function SearchPage() {
     ) as string[]
     setOldSearchRecordList(earlyStorageItems)
   }, [])
+
+  // 최근 검색어 모두 삭제
+  const handleAllRemove = () => {
+    setOldSearchRecordList(() => {
+      const updatedList: string[] = []
+      localStorage.setItem('oldSearchRecordList', JSON.stringify(updatedList))
+      return updatedList
+    })
+  }
 
   // 삭제버튼 클릭시 최근검색어가 제거됩니다.
   const handleRemoveStorageItem = (item: string) => {
@@ -101,6 +110,11 @@ function SearchPage() {
             type="text"
             placeholder="Search"
             onChange={handleSearchInput}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleSearchBtn(e)
+              }
+            }}
             ref={inputRef}
           />
         </SearchBar>
@@ -116,7 +130,11 @@ function SearchPage() {
         <RecentSearch>
           {showSearchResult ? '검색 결과' : '최근 검색'}
         </RecentSearch>
-        <SeeAllBtn>모두 삭제</SeeAllBtn>
+        {showSearchResult ? (
+          ''
+        ) : (
+          <SeeAllBtn onClick={handleAllRemove}>모두 삭제</SeeAllBtn>
+        )}
       </Wrapper>
       <ResultWrapper>
         {isLoading ? (
@@ -148,7 +166,11 @@ function SearchPage() {
           ))
         ) : (
           oldSearchRecordList?.map(item => (
-            <SearchResultBar title={item} onClick={handleRemoveStorageItem} />
+            <SearchResultBar
+              key={item}
+              title={item}
+              onClick={handleRemoveStorageItem}
+            />
           ))
         )}
       </ResultWrapper>

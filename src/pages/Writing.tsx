@@ -2,13 +2,18 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  getImgUrl,
+  uploadImage
+} from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { useEffect, useRef, useState } from 'react'
 import getSearchMovies from '@/api/getSearchMovies'
-import { addReview, uploadImage } from '@/api/reviewApi'
 import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -163,7 +168,6 @@ function Writing() {
     e.preventDefault()
 
     const ottValue = selectedOtt
-
     const textValue = text === 'Enter your text here...' ? '' : text
 
     if (
@@ -187,23 +191,42 @@ function Writing() {
           selectMovie.title || selectMovie.name || 'Unknown Title'
         )
       } else if (selectMovie && imgSrc) {
-        await addReview(
+        const imgUrl = await uploadImage(image!)
+
+        await addReviewWithImgUrl(
           selectMovie.id,
           '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
           text,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          imgUrl!
         )
-        await uploadImage(image!)
       }
       alert('리뷰가 등록되었습니다!')
-      // naviagte('/main')
+
+      naviagte('/main')
     } catch (error) {
       console.error(error)
     }
   }
-  console.log('selectedOtt: ', selectedOtt)
+
+  const [renderedUserImg, setRenderedUserImg] = useState<string | null>(null)
+
+  const fetchAndRenderImage = async () => {
+    try {
+      const imgSrc = await getImgUrl(157)
+      if (imgSrc) {
+        setRenderedUserImg(imgSrc)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchAndRenderImage()
+  }, [])
 
   return (
     <Container>
@@ -355,11 +378,28 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
+
+      <UserImageTest>
+        <UserImage
+          src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${renderedUserImg}`}
+        ></UserImage>
+      </UserImageTest>
     </Container>
   )
 }
 
 export default Writing
+
+const UserImageTest = styled.div`
+  width: 100px;
+  height: 100px;
+`
+
+const UserImage = styled.img`
+  width: 100%;
+  height: 100;
+  object-fit: cover;
+`
 
 const Container = styled.section`
   /* display: flex;

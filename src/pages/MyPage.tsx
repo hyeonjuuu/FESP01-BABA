@@ -1,13 +1,88 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import FavRing from '@/components/mypage/FavRing'
+import { useEffect, useRef, useState } from 'react'
+import {
+  addImgUrltoUsers,
+  getProfileImgUrl,
+  uploadProfileImg
+} from '@/api/profileImgApi'
 
 function MyPage() {
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [profileImg, setProfileImg] = useState<File | null>(null)
+  const [renderUserImg, setRenderUserImg] = useState<string | null>(null)
+
+  //# 프로필 이미지 선택
+  const handleProfileImg = () => {
+    fileInputRef?.current?.click()
+  }
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    setProfileImg(selectedFile || null)
+  }
+
+  //# 프로필 이미지 전송
+  const selectProfileImg = async () => {
+    if (profileImg) {
+      const imgUrl = await uploadProfileImg(profileImg)
+      await addImgUrltoUsers(imgUrl!)
+    }
+  }
+
+  useEffect(() => {
+    selectProfileImg()
+  }, [profileImg])
+
+  //# 프로필 이미지 렌더링
+  const fetchAndRenderProfileImg = async () => {
+    try {
+      const imgSrc = await getProfileImgUrl(8) // 프로필 이미지 있을 때
+      // const imgSrc = await getProfileImgUrl(0) // 프로필 이미지 없을 때
+      if (imgSrc) {
+        setRenderUserImg(imgSrc)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchAndRenderProfileImg()
+  }, [renderUserImg])
+
   return (
     <Box>
       <ContentBox>
         <ProfileContain>
-          <Image src={userImage} alt="사용자 이미지" />
+          <form action="#">
+            <ImageWrapper>
+              <ProfileImage
+                src={
+                  renderUserImg
+                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderUserImg}`
+                    : userImage
+                }
+                alt="사용자 이미지"
+                onClick={handleProfileImg}
+              />
+
+              {/* 실제 파일 입력란은 감춰두고, 사용자 정의 버튼 클릭 시 트리거되도록 함 */}
+              <div>
+                <label htmlFor="photo">사진</label>
+                <input
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  type="file"
+                  accept="image/*"
+                  name="photo"
+                  id="photo"
+                  onChange={handleUpload}
+                ></input>
+              </div>
+            </ImageWrapper>
+          </form>
 
           <ProfileInfo>
             <p>bomlang4211@gmail.com</p>
@@ -84,9 +159,16 @@ const ProfileContain = styled.div`
   padding: 0 12px;
 `
 
-const Image = styled.img`
-  width: 90px;
-  height: 90px;
+const ImageWrapper = styled.div`
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+`
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
 `
 
 const ProfileInfo = styled.div`
