@@ -101,12 +101,12 @@ function Writing() {
   }
 
   // 기본 이미지
-  const handleSelectDefaultIimg = () => {
+  const handleSelectDefaultImg = () => {
     setIsSelectImg(true)
   }
 
   // 사용자 이미지
-  const handleSelectUserIimg = () => {
+  const handleSelectUserImg = () => {
     setIsSelectImg(false)
   }
 
@@ -323,13 +323,13 @@ function Writing() {
           <ImgSelectBtn
             color={isSelectImg ? '#3797EF' : ''}
             $hasBorder
-            onClick={handleSelectDefaultIimg}
+            onClick={handleSelectDefaultImg}
           >
             기본 이미지
           </ImgSelectBtn>
           <ImgSelectBtn
             color={isSelectImg ? '' : '#3797EF'}
-            onClick={handleSelectUserIimg}
+            onClick={handleSelectUserImg}
           >
             사용자 이미지
           </ImgSelectBtn>

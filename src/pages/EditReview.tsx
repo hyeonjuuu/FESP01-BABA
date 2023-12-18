@@ -3,7 +3,14 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  deleteReview,
+  editReview,
+  editReviewWithImgUrl,
+  uploadImage
+} from '@/api/reviewApi'
 import { useLocation, useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
@@ -29,17 +36,22 @@ function EditReview() {
   const movieId = location.state.movie_id
   const reviewId = location.state.review_id
   const userId = location.state.user_id
-  const textRef = useRef<string | null>(null)
+
+  console.log('reviewId: ', reviewId)
+  console.log('userId: ', userId)
 
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [title, setTitle] = useState<string | null>(null)
   const [defaultImg, setDefaultImg] = useState<string | null>(null)
   const [userImg, setUserImg] = useState<string | null>(null)
+
   const [isSelectImg, setIsSelectImg] = useState<boolean>(false) // false가 기본 이미지
-  console.log('userImg; ', userImg)
+  const [image, setImage] = useState<File | null>(null)
 
   const [rating, setRating] = useState<number>(0)
   const [text, setText] = useState<string | null>(null)
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     const fetchReviewdata = async () => {
@@ -72,14 +84,13 @@ function EditReview() {
   }, [])
 
   // 정리(-)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // const [userEmail, setUserEmail] = useState<string | null>(null)
   // const [searchList, setSearchList] = useState<SearchListProps[]>([])
   // const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   // const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
-  // const [imgSrc, setImgSrc]: any = useState(null)
-  // const [image, setImage] = useState<File | null>(null)
+  const [imgSrc, setImgSrc]: any = useState(null)
+  console.log('imgSrc: ', imgSrc)
 
   // 기본 이미지 삽입
   // const handleSelectMovie = (selectedResult: SearchListProps) => {
@@ -92,13 +103,11 @@ function EditReview() {
     e.preventDefault()
   }
 
-  // 기본 이미지
-  const handleSelectDefaultIimg = () => {
+  const handleSelectDefaultImg = () => {
     setIsSelectImg(false)
   }
 
-  // 사용자 이미지
-  const handleSelectUserIimg = () => {
+  const handleSelectUserImg = () => {
     setIsSelectImg(true)
   }
 
@@ -122,10 +131,8 @@ function EditReview() {
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
       if (prevSelectedOtt.includes(iconName)) {
-        // 이미 선택된 OTT인 경우, 해당 OTT를 배열에서 제거하여 체크를 해제합니다.
         return prevSelectedOtt.filter(ott => ott !== iconName)
       } else {
-        // Select the new OTT
         return [iconName]
       }
     })
@@ -164,15 +171,8 @@ function EditReview() {
 
   //# 내용 작성
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const nextValue = e.target.value
-    if (textRef.current !== nextValue) {
-      setText(nextValue)
-    }
-    textRef.current = nextValue
+    setText(e.target.value)
   }
-  // const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   setText(e.target.value)
-  // }
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -181,63 +181,75 @@ function EditReview() {
     }
   }, [text])
 
-  //# 리뷰 등록
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  //# 리뷰 수정
+  const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     const ottValue = selectedOtt
-    const textValue = text === 'Enter your text here...' ? '' : text
+    const textValue = text
 
-    if (
-      !selectMovie ||
-      ottValue.length === 0 ||
-      rating === 0 ||
-      textValue === ''
-    ) {
-      alert('제목, ott, 평점, 내용을 작성해주세요')
+    if (ottValue.length === 0 || rating === 0 || textValue === '') {
+      alert('ott, 평점, 내용을 작성해주세요')
       return
     }
 
     try {
-      if (selectMovie && !imgSrc) {
-        await addReview(
-          selectMovie.id,
-          userEmail!,
-          text,
+      if (!imgSrc) {
+        await editReview(
+          movieId,
+          userId,
+          text!,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
+          title!,
+          reviewId
         )
-      } else if (selectMovie && imgSrc) {
+      } else if (imgSrc) {
         const imgUrl = await uploadImage(image!)
-        await addReviewWithImgUrl(
-          selectMovie.id,
-          userEmail!,
-          text,
+        await editReviewWithImgUrl(
+          movieId,
+          userId,
+          text!,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title',
-          imgUrl!
+          title!,
+          imgUrl!,
+          reviewId
         )
       }
       alert('리뷰가 수정되었습니다!😊')
-      naviagte('/main')
+      // naviagte('/main')
     } catch (error) {
       console.error(error)
-      alert('리뷰 등록에 실패했습니다..😭')
+      alert('리뷰 수정에 실패했습니다..😭')
     }
   }
 
-  const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
-    console.log('수정')
-  }
+    const isConfirmed = window.confirm('리뷰를 삭제하시겠습니까?')
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
+    if (isConfirmed) {
+      // 사용자가 '확인'을 눌렀으면 리뷰 삭제를 진행
+      try {
+        await deleteReview(reviewId, userId)
+        alert('리뷰가 삭제되었습니다!😊')
+        // naviagte('/mypage')
+      } catch (error) {
+        console.error(error)
+        alert('리뷰 삭제에 실패했습니다..😭')
+      }
+    }
 
-    console.log('삭제')
+    // try {
+    //   await deleteReview(reviewId)
+    //   alert('리뷰가 삭제되었습니다!😊')
+    //   // naviagte('/main')
+    // } catch (error) {
+    //   console.error(error)
+    //   alert('리뷰 삭제에 실패했습니다..😭')
+    // }
   }
 
   return (
@@ -288,28 +300,26 @@ function EditReview() {
           <ImgSelectBtn
             color={!isSelectImg ? '#3797EF' : ''}
             $hasBorder
-            onClick={handleSelectDefaultIimg}
+            onClick={handleSelectDefaultImg}
           >
             기본 이미지
           </ImgSelectBtn>
           <ImgSelectBtn
             color={isSelectImg ? '#3797EF' : ''}
-            onClick={handleSelectUserIimg}
+            onClick={handleSelectUserImg}
           >
             사용자 이미지
           </ImgSelectBtn>
         </BtnWrapper>
         <OriginalImage>
           {isSelectImg ? (
-            <MoviePoster
-              src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${userImg}`}
-              alt={`${title} 관련 이미지`}
-            />
-          ) : (
             <>
               <MoviePoster
-                src={`https://image.tmdb.org/t/p/original/${defaultImg}`}
-                alt={`${title} 포스터`}
+                src={
+                  imgSrc ||
+                  `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${userImg}`
+                }
+                alt={`${title} 관련 이미지`}
               />
               <div>
                 <label htmlFor="photo">사진</label>
@@ -322,6 +332,11 @@ function EditReview() {
                 ></input>
               </div>
             </>
+          ) : (
+            <MoviePoster
+              src={`https://image.tmdb.org/t/p/original/${defaultImg}`}
+              alt={`${title} 포스터`}
+            />
           )}
         </OriginalImage>
 
