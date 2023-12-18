@@ -1,11 +1,12 @@
-import { useState } from 'react'
 import { StyledLink } from './Home'
 import Logo from '@/components/Logo'
 import styled from 'styled-components'
 import Input from '@/components/Input'
 import { HTMLAttributes } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/utils/supabaseClient'
 import { useAuthStore } from '@/store/useAuthStore'
 import CheckAccount from '@/components/CheckAccount'
 import { userLogin, gitHubLogin } from '@/utils/userData'
@@ -18,9 +19,15 @@ interface PasswordInputProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 function Login() {
-  const { isAuthenticated, login, logout } = useAuthStore()
+  const navigate = useNavigate()
+  const { login, logout } = useAuthStore()
 
+  const [loading, setLoading] = useState(true)
+  const [nickname, setNickname] = useState(null)
+  const [username, setUsername] = useState(null)
+  const [profileImg, setProfileImg] = useState(null)
   const [inputColor, setInputColor] = useState(false)
+  const [session, setSession] = useState<any | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -42,7 +49,9 @@ function Login() {
     event.preventDefault()
     try {
       await userLogin(formData)
-      login()
+      await login(formData.email, formData.password).then(() =>
+        navigate('/main')
+      )
     } catch (error) {
       console.error(`❌ Error: ${error}`)
     }
@@ -52,9 +61,62 @@ function Login() {
     gitHubLogin()
   }
 
-  const handleLogOut = () => {
+  const handleLogOut = (event: React.MouseEvent) => {
+    event.preventDefault()
+
     logout()
+    supabase.auth.signOut().then(() => alert('다음에 또만나요~ 🙏🏻'))
   }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
+
+  useEffect(() => {
+    let ignore = false
+
+    async function getProfile() {
+      try {
+        setLoading(true)
+
+        if (session && session.user) {
+          const { user } = session
+
+          const { data, error } = await supabase
+            .from('users')
+            .select(`username, nickname, profile_img`)
+            .eq('user_email', user.id)
+            .single()
+
+          if (!ignore) {
+            if (error) {
+              console.warn(error)
+            } else if (data) {
+              setUsername(data.username)
+              setNickname(data.nickname)
+              setProfileImg(data.profile_img)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error in getProfile:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getProfile()
+
+    return () => {
+      ignore = true
+    }
+  }, [session])
 
   return (
     <SignUpWrapperDiv>
@@ -64,11 +126,21 @@ function Login() {
           <Logo />
         </StyledLink>
       </LogoWrapper>
-      {isAuthenticated ? (
-        <div>
-          <div>로그인되었습니다.</div>
-          <button onClick={handleLogOut}>로그아웃</button>
-        </div>
+      {session ? (
+        <LoginFormWrapper>
+          <div></div>
+          <Img
+            src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${profileImg}`}
+          ></Img>
+          <Username>{username} 님, 환영합니다! 🤗</Username>
+          <Nickname>닉네임 : {nickname}</Nickname>
+
+          <Button
+            onClick={handleLogOut}
+            text={'로그아웃'}
+            width={'360px'}
+          ></Button>
+        </LoginFormWrapper>
       ) : (
         <LoginFormWrapper>
           <InputWrapper>
@@ -100,17 +172,11 @@ function Login() {
           <StyledLink to="/main">
             <Button
               type="submit"
-              text="로그인"
+              text={loading ? 'Loading ...' : '로그인'}
               width="360px"
               onClick={handleUserLogin}
             />
           </StyledLink>
-          <Button
-            $bgcolor="#FFDC00"
-            color="#1E1E1E"
-            text="KaKao 로그인"
-            width="360px"
-          />
           <Button
             $bgcolor="#1e1e1e"
             color="white"
@@ -121,9 +187,11 @@ function Login() {
         </LoginFormWrapper>
       )}
 
-      <Link to="/signup">
-        <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
-      </Link>
+      {session ? null : (
+        <Link to="/signup">
+          <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
+        </Link>
+      )}
     </SignUpWrapperDiv>
   )
 }
@@ -187,4 +255,19 @@ const PasswordInput = styled.input`
     outline: none;
     border-color: #3797ef;
   }
+`
+
+const Img = styled.img`
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+`
+
+const Username = styled.h4`
+  font-size: 30px;
+`
+
+const Nickname = styled.h5`
+  font-size: 22px;
 `

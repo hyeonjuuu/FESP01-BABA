@@ -317,9 +317,13 @@ const LodingWrapper = styled.div`
   width: 100%;
 `
 
-const LoadingSpinner = styled.img`
+export const LoadingSpinner = styled.img`
   height: 200px;
   width: 250px;
+  @media (min-width: 701px) {
+    height: 400px;
+    width: 500px;
+  }
 `
 
 const StyledLink = styled(Link)`

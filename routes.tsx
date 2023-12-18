@@ -1,3 +1,4 @@
+import MovieInfo from '@/pages/MovieInfo'
 import React from 'react'
 import { lazy } from 'react'
 import {
@@ -51,6 +52,8 @@ const router = createBrowserRouter(
       <Route path="/search" element={<SearchPage />} />
       <Route path="/writing" element={<Writing />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/info" element={<MovieInfo />} />
+
       <Route path="*" element={<NotFound />} />
     </Route>
   )
