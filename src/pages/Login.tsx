@@ -22,9 +22,9 @@ function Login() {
   const { login, logout } = useAuthStore()
 
   const [loading, setLoading] = useState(true)
-  const [website, setWebsite] = useState(null)
+  const [nickname, setNickname] = useState(null)
   const [username, setUsername] = useState(null)
-  const [avatar_url, setAvatarUrl] = useState(null)
+  const [profileImg, setProfileImg] = useState(null)
   const [inputColor, setInputColor] = useState(false)
   const [session, setSession] = useState<any | null>(null)
   const [formData, setFormData] = useState({
@@ -58,7 +58,9 @@ function Login() {
     gitHubLogin()
   }
 
-  const handleLogOut = () => {
+  const handleLogOut = (event: React.MouseEvent) => {
+    event.preventDefault()
+
     logout()
     supabase.auth.signOut()
   }
@@ -82,7 +84,6 @@ function Login() {
 
         if (session && session.user) {
           const { user } = session
-          console.log(user)
 
           const { data, error } = await supabase
             .from('users')
@@ -95,8 +96,8 @@ function Login() {
               console.warn(error)
             } else if (data) {
               setUsername(data.username)
-              setWebsite(data.nickname)
-              setAvatarUrl(data.profile_img)
+              setNickname(data.nickname)
+              setProfileImg(data.profile_img)
             }
           }
         }
@@ -123,14 +124,16 @@ function Login() {
         </StyledLink>
       </LogoWrapper>
       {session ? (
-        <div>
-          <div>로그인되었습니다.</div>
-          <span>{username}</span>
-          <span>{website}</span>
-          <span>{avatar_url}</span>
+        <LoginFormWrapper>
+          <div></div>
+          <Img
+            src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${profileImg}`}
+          ></Img>
+          <h4>{username}</h4>
+          <span>{nickname}</span>
 
           <button onClick={handleLogOut}>로그아웃</button>
-        </div>
+        </LoginFormWrapper>
       ) : (
         <LoginFormWrapper>
           <InputWrapper>
@@ -167,12 +170,12 @@ function Login() {
               onClick={handleUserLogin}
             />
           </StyledLink>
-          <Button
+          {/* <Button
             $bgcolor="#FFDC00"
             color="#1E1E1E"
             text="KaKao 로그인"
             width="360px"
-          />
+          /> */}
           <Button
             $bgcolor="#1e1e1e"
             color="white"
@@ -183,9 +186,13 @@ function Login() {
         </LoginFormWrapper>
       )}
 
-      <Link to="/signup">
-        <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
-      </Link>
+      {session ? (
+        <div>잘됨</div>
+      ) : (
+        <Link to="/signup">
+          <CheckAccount text1="계정이 없으신가요?" text2="가입하기" />
+        </Link>
+      )}
     </SignUpWrapperDiv>
   )
 }
@@ -249,4 +256,16 @@ const PasswordInput = styled.input`
     outline: none;
     border-color: #3797ef;
   }
+`
+
+const Img = styled.img`
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+`
+
+const LogOutBtn = styled.button`
+  /* color: ${props => props.color}; */
+  width: 100%;
 `
