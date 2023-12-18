@@ -3,19 +3,19 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
+import userInfoInLs from '@/utils/userInfoInLs'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { useEffect, useRef, useState } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { useAuthStore } from '@/store/useAuthStore'
-import userInfoInLs from '@/utils/userInfoInLs'
+import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -100,17 +100,15 @@ function Writing() {
     e.preventDefault()
   }
 
-  // 기본 이미지
   const handleSelectDefaultImg = () => {
     setIsSelectImg(true)
   }
 
-  // 사용자 이미지
   const handleSelectUserImg = () => {
     setIsSelectImg(false)
   }
 
-  // 사용자 이미지 미리보기
+  // 이미지 미리보기
   const handleUpload = (e: any) => {
     const file = e.target.files[0]
 
@@ -130,10 +128,8 @@ function Writing() {
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
       if (prevSelectedOtt.includes(iconName)) {
-        // 이미 선택된 OTT인 경우, 해당 OTT를 배열에서 제거하여 체크를 해제합니다.
         return prevSelectedOtt.filter(ott => ott !== iconName)
       } else {
-        // Select the new OTT
         return [iconName]
       }
     })

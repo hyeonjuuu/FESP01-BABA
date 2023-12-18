@@ -15,7 +15,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import useUserInfoStore from '@/store/useUserInfoStore'
+import userInfoInLs from '@/utils/userInfoInLs'
 
 interface ReviewProps {
   created_at: string
@@ -32,19 +32,11 @@ interface ReviewProps {
   likes: string | null
 }
 
-// interface MovieProps {
-//   id: number
-//   title: string
-//   poster_path: string
-// }
-
 interface PostProps {
   key: number
 }
 
 function MyPage() {
-  const userInfo = useUserInfoStore()
-
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -80,7 +72,7 @@ function MyPage() {
 
   //# 리뷰 가져오기
   useEffect(() => {
-    // const userInfo = userInfoInLs()
+    const userInfo = userInfoInLs()
 
     setUserId(userInfo.userId) // local storage의 id = users의 user_email = revews의 user_id
     setUserEmail(userInfo.userEmail) // local storage의 email

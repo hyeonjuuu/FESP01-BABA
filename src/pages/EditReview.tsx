@@ -1,57 +1,37 @@
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
-import debounce from '@/utils/debounce'
-import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
+import StarRating from '@/components/StarRating'
+import getSearchMovies from '@/api/getSearchMovies'
+import { ottIconNames } from '@/utils/ottIconImage'
+import { useEffect, useRef, useState } from 'react'
+import { getReviewDataForEdit } from '@/api/getReviewData'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  addReview,
-  addReviewWithImgUrl,
   deleteReview,
   editReview,
   editReviewWithImgUrl,
   uploadImage
 } from '@/api/reviewApi'
-import { useLocation, useNavigate } from 'react-router-dom'
-import StarRating from '@/components/StarRating'
-import useThemeStore from '@/store/useThemeStore'
-import { ottIconNames } from '@/utils/ottIconImage'
-import { useEffect, useRef, useState } from 'react'
-import getSearchMovies from '@/api/getSearchMovies'
-import { ClearBtn, Icon, Image, Input } from './SearchPage'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { useAuthStore } from '@/store/useAuthStore'
-import userInfoInLs from '@/utils/userInfoInLs'
-import { getReviewDataForEdit } from '@/api/getReviewData'
-import useUserInfoStore from '@/store/useUserInfoStore'
-
-interface ResultBarContainProps {
-  $darkMode: boolean
-}
 
 function EditReview() {
   const naviagte = useNavigate()
   const location = useLocation()
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
   const movieId = location.state.movie_id
   const reviewId = location.state.review_id
   const userId = location.state.user_id
-
-  console.log('reviewId: ', reviewId)
-  console.log('userId: ', userId)
 
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [title, setTitle] = useState<string | null>(null)
   const [defaultImg, setDefaultImg] = useState<string | null>(null)
   const [userImg, setUserImg] = useState<string | null>(null)
-
   const [isSelectImg, setIsSelectImg] = useState<boolean>(false) // false가 기본 이미지
   const [image, setImage] = useState<File | null>(null)
-
+  const [imgSrc, setImgSrc]: any = useState(null)
   const [rating, setRating] = useState<number>(0)
   const [text, setText] = useState<string | null>(null)
-
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     const fetchReviewdata = async () => {
@@ -83,21 +63,6 @@ function EditReview() {
     fetchReviewdata()
   }, [])
 
-  // 정리(-)
-
-  // const [userEmail, setUserEmail] = useState<string | null>(null)
-  // const [searchList, setSearchList] = useState<SearchListProps[]>([])
-  // const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
-  // const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
-  const [imgSrc, setImgSrc]: any = useState(null)
-  console.log('imgSrc: ', imgSrc)
-
-  // 기본 이미지 삽입
-  // const handleSelectMovie = (selectedResult: SearchListProps) => {
-  //   setSelectMovie(selectedResult)
-  //   setSearchList([])
-  // }
-
   //# 이미지 선택
   const handleSelectImg = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -111,7 +76,7 @@ function EditReview() {
     setIsSelectImg(true)
   }
 
-  // 사용자 이미지 미리보기
+  // 이미지 미리보기
   const handleUpload = (e: any) => {
     const file = e.target.files[0]
 
@@ -218,7 +183,7 @@ function EditReview() {
         )
       }
       alert('리뷰가 수정되었습니다!😊')
-      // naviagte('/main')
+      naviagte('/main')
     } catch (error) {
       console.error(error)
       alert('리뷰 수정에 실패했습니다..😭')
@@ -231,25 +196,15 @@ function EditReview() {
     const isConfirmed = window.confirm('리뷰를 삭제하시겠습니까?')
 
     if (isConfirmed) {
-      // 사용자가 '확인'을 눌렀으면 리뷰 삭제를 진행
       try {
         await deleteReview(reviewId, userId)
         alert('리뷰가 삭제되었습니다!😊')
-        // naviagte('/mypage')
+        naviagte('/mypage')
       } catch (error) {
         console.error(error)
         alert('리뷰 삭제에 실패했습니다..😭')
       }
     }
-
-    // try {
-    //   await deleteReview(reviewId)
-    //   alert('리뷰가 삭제되었습니다!😊')
-    //   // naviagte('/main')
-    // } catch (error) {
-    //   console.error(error)
-    //   alert('리뷰 삭제에 실패했습니다..😭')
-    // }
   }
 
   return (
@@ -374,54 +329,6 @@ const FormStyle = styled.form`
   align-items: center;
   margin-top: 30px;
   gap: 5px;
-`
-
-const SearchBarWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  max-width: 390px;
-  @media (min-width: 701px) {
-    width: 100%;
-  }
-`
-
-const ResultBarContain = styled.div<ResultBarContainProps>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  &:hover {
-    background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
-  }
-`
-
-const SearchBar = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 30px;
-  padding: 10px;
-  background-color: #e8e8e8;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 80%;
-`
-
-const ResultWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  @media (min-width: 701px) {
-    max-width: 400px;
-  }
-`
-
-const Contain = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
 `
 
 const Wrapper = styled.div`

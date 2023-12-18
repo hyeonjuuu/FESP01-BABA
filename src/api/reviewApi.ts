@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { getProfileImgUrl } from './profileImgApi'
 
 const supabaseAdmin = createClient(
   import.meta.env.VITE_SUPABASE_URL as string,
@@ -14,7 +13,6 @@ export const addReview = async (
   ott: string[],
   rating: number,
   movie_title: string
-  // id?: Number
 ) => {
   try {
     const { data, error } = await supabaseAdmin.from('reviews').insert([
@@ -25,7 +23,6 @@ export const addReview = async (
         ott,
         rating,
         movie_title
-        // id
       }
     ])
 
@@ -56,7 +53,6 @@ export const uploadImage = async (file: File): Promise<string | null> => {
       throw error
     } else {
       console.log('Supabase 이미지 삽입 성공:', data)
-      // 이미지 URL 반환
       return data?.path ?? null
     }
   } catch (error) {
@@ -74,7 +70,6 @@ export const addReviewWithImgUrl = async (
   rating: number,
   movie_title: string,
   img_url: string
-  // id?: Number
 ) => {
   try {
     const oldImgUrl = await getMovieImgUrl(user_id)
@@ -95,7 +90,6 @@ export const addReviewWithImgUrl = async (
         rating,
         movie_title,
         img_url
-        // id
       }
     ])
 
@@ -124,8 +118,6 @@ export const getImgUrl = async (id: number): Promise<string | null> => {
       throw error
     } else {
       console.log('Supabase 이미지 가져오기 성공:', data)
-
-      // 첫 번째 객체의 img_url 반환
       return data && data.length > 0 ? data[0].img_url : null
     }
   } catch (error) {
@@ -134,7 +126,7 @@ export const getImgUrl = async (id: number): Promise<string | null> => {
   }
 }
 
-//# 리뷰 가져오기
+// 리뷰 가져오기
 export const getUserReviews = async (id: string) => {
   const { data, error } = await supabaseAdmin
     .from('reviews')
@@ -175,7 +167,7 @@ export const editReview = async (
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-      throw error // 에러를 다시 던져서 상위 함수에서 잡을 수 있게 함
+      throw error
     } else {
       console.log('Supabase 데이터 삽입 성공:', data)
     }
