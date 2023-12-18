@@ -12,15 +12,14 @@ export const fetchAllLikes = async () => {
   console.log(data)
 }
 
-// export const matchLike = async (userId: string) => {
+// export const matchLike = async (reviewId: number, userId: string) => {
 //   const { data } = await supabase
 //     .from('likes')
 //     .select()
-//     .match({ likes_user_id: userId, user_id: userId })
+//     .match({ review_id: reviewId, user_id: userId })
 
 //   return data
 // }
-
 export const matchLike = async (userId: string) => {
   const { data } = await supabase
     .from('likes')
@@ -34,8 +33,8 @@ export const addLike = async (likeItem: LikesType) => {
   await supabase.from('likes').insert(likeItem).select()
 }
 
-export const deleteLikes = async (tutorId?: string) => {
-  await supabase.from('bookmark').delete().match({ tutor_id: tutorId })
+export const deleteLikes = async (reviewId?: string) => {
+  await supabase.from('likes').delete().match({ review_id: reviewId })
 }
 
 export const useCreateLikesMutation = () => {

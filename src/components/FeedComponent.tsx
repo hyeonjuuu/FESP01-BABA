@@ -56,7 +56,7 @@ function FeedComponent() {
   const [reviews, setReviews] = useState<ReviewData>([])
   const [userId, setUserId] = useState<string | undefined>([])
   const [reviewId, setReviewId] = useState<number>()
-  // const { bookmarkList, setBookmarkList } = useBookmarkStore()
+  const [isBookMark, setIsBookMark] = useState(false)
 
   const loginUserData = JSON.parse(localStorage.getItem('userData'))
   const loginUserId = loginUserData.user.id
@@ -101,15 +101,15 @@ function FeedComponent() {
           .select()
         if (reviewError) throw new Error()
 
-        const { data: likesData, error: likesError } = await supabase
-          .from('reviews')
-          .select()
-          .containedBy('likes', [userId] || [])
+        // const { data: likesData, error: likesError } = await supabase
+        //   .from('reviews')
+        //   .select()
+        //   .containedBy('likes', [userId] || [])
 
-        if (likesError) throw new Error()
+        // if (likesError) throw new Error()
         setReviews(reviewData)
         console.log('리뷰데이터', reviewData)
-        console.log('likeData', likesData)
+        // console.log('likeData', likesData)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -124,10 +124,22 @@ function FeedComponent() {
       user_id: loginUserId,
       review_id: item.id
     }
+    console.log(item.id)
+
+    const hasReviewId = likeItems?.some(
+      likeItem => likeItem.review_id === item.id
+    )
+
     try {
-      // if()
-      await addLike(newLikes)
-      setReviewId(item.id)
+      if (hasReviewId) {
+        await deleteLikes(item.id)
+        setReviewId(item.id)
+        console.log('delete')
+      } else {
+        await addLike(newLikes)
+        setReviewId(item.id)
+        console.log('add')
+      }
       queryClient.invalidateQueries({ queryKey: ['likes', reviewId] })
     } catch (error) {
       console.error('북마크 에러 발생:', error)
