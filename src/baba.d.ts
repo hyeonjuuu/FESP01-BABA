@@ -70,3 +70,8 @@ interface LikeData {
   updated_at: string
   user_id: string
 }
+
+interface LikesType {
+  user_id: string
+  review_id: number
+}
