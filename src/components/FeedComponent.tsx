@@ -5,7 +5,7 @@ import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 const supabase = createClient(
@@ -21,19 +21,6 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-// const fetchReviewData = async () => {
-//   try {
-//     const { data, error } = await supabase.from('reviews').select('like')
-//     if (!data) {
-//       return []
-//     }
-//     return data
-//     console.log(data)
-//   } catch (error) {
-//     console.error('데이터를 불러오는 중 에러 발생:', error)
-//     throw error
-//   }
-// }
 const fetchReviewData = async (userId: string[] | undefined) => {
   try {
     const { data, error } = await supabase
@@ -52,6 +39,18 @@ const fetchReviewData = async (userId: string[] | undefined) => {
   }
 }
 
+const addBookmark = async (itemId: string, userId: string[] | undefined) => {
+  return await supabase
+    .from('reviews')
+    .update({ likes: userId })
+    .eq('id', itemId)
+    .select()
+}
+
+const removeBookmark = async (itemId: string, userId: string[] | undefined) => {
+  return await supabase.from('reviews').delete().eq('id', itemId).select()
+}
+
 /* -------------------------------------------------------------------------- */
 
 function FeedComponent() {
@@ -59,7 +58,7 @@ function FeedComponent() {
   const [reviews, setReviews] = useState<ReviewData>([])
   const [userId, setUserId] = useState<string[] | undefined>([])
   const [reviewId, setReviewId] = useState<string>()
-  const { bookmarkList, setBookmarkList } = useBookmarkStore()
+  // const { bookmarkList, setBookmarkList } = useBookmarkStore()
 
   useEffect(() => {
     const userData = async () => {
@@ -78,6 +77,7 @@ function FeedComponent() {
   }, [])
 
   const queryClient = useQueryClient()
+  const queryKey = ['likes', reviewId]
 
   const { data: likeItems } = useQuery({
     queryKey: ['likes', reviewId],
@@ -89,11 +89,13 @@ function FeedComponent() {
   useEffect(() => {
     const loadReviewData = async () => {
       try {
-        const { data, error } = await supabase.from('reviews').select()
+        const { data: reviewData, error } = await supabase
+          .from('reviews')
+          .select()
         if (error) throw new Error()
 
-        setReviews(data)
-        console.log('리뷰데이터', data)
+        setReviews(reviewData)
+        console.log('리뷰데이터', reviewData)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -103,20 +105,24 @@ function FeedComponent() {
     loadReviewData()
   }, [])
 
+  /* -------------------------------------------------------------------------- */
+
   const handleBookmark = async (
     itemId: string,
     userId: string[] | undefined
   ) => {
-    if (![...bookmarkList].includes(itemId)) {
-      const { data } = await supabase
-        .from('reviews')
-        .update({ likes: userId })
-        .eq('id', itemId)
-        .select()
-      console.log(data)
-      setReviewId(itemId)
-    } else {
-      await supabase.from('reviews').delete().eq('likes', userId)
+    try {
+      if (userId) {
+        await removeBookmark(itemId, userId)
+        setReviewId(itemId)
+      } else {
+        await addBookmark(itemId, userId)
+        setReviewId(itemId)
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['likes', itemId] })
+    } catch (error) {
+      console.error('북마크 에러 발생:', error)
     }
   }
 
