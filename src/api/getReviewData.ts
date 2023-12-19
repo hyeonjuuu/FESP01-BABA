@@ -48,8 +48,6 @@ export const getReviewDataWithUserInfo = async () => {
 export const getReviewDataForEdit = async (
   reviewId: number
 ): Promise<any | null> => {
-  console.log('reviewId: ', reviewId)
-
   const { data, error } = await supabase
     .from('reviews')
     .select('*')

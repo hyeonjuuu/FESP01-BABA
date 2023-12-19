@@ -17,6 +17,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { deleteProfileImg } from '@/api/profileImgApi'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -110,6 +111,10 @@ function Writing() {
   }
 
   const handleSelectUserImg = () => {
+    if (!selectMovie) {
+      alert('제목을 먼저 선택해주세요')
+      return
+    }
     setIsSelectImg(false)
   }
 
@@ -127,6 +132,14 @@ function Writing() {
         resolve()
       }
     })
+  }
+
+  const handleDeleteImg = () => {
+    const confirmed = window.confirm('이미지를 삭제하시겠습니까?')
+    if (confirmed) {
+      setImage(null)
+      setImgSrc(null)
+    }
   }
 
   //# OTT 선택
@@ -354,6 +367,7 @@ function Writing() {
                 <MoviePoster
                   src={imgSrc}
                   alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
+                  onClick={handleDeleteImg}
                 />
               ) : (
                 // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
@@ -361,16 +375,18 @@ function Writing() {
                   <FontAwesomeIcon icon={faImage} />
                 </PlzSelectImgDiv>
               )}
-              <div>
-                <label htmlFor="photo">사진</label>
-                <input
-                  type="file"
-                  accept=".jpg, .jpeg, .png"
-                  name="photo"
-                  id="photo"
-                  onChange={handleUpload}
-                ></input>
-              </div>
+              {!isSelectImg && (
+                <div>
+                  <label htmlFor="photo">사진</label>
+                  <input
+                    type="file"
+                    accept=".jpg, .jpeg, .png"
+                    name="photo"
+                    id="photo"
+                    onChange={handleUpload}
+                  />
+                </div>
+              )}
             </>
           )}
         </OriginalImage>
@@ -562,7 +578,7 @@ const MoviePoster = styled.img`
   object-fit: cover;
 `
 
-const PlzSelectImgDiv = styled.div`
+export const PlzSelectImgDiv = styled.div`
   width: 100%;
   height: 100%;
   display: flex;

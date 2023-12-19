@@ -185,7 +185,7 @@ export const editReviewWithImgUrl = async (
   ott: string[],
   rating: number,
   movie_title: string,
-  img_url: string,
+  img_url: string | null,
   id: Number
 ) => {
   try {
@@ -224,7 +224,8 @@ export const editReviewWithImgUrl = async (
 }
 
 //# 리뷰 삭제
-const getMovieImgUrl = async (id: string): Promise<string | null> => {
+// 스토리지에서 이미지 가져오기
+export const getMovieImgUrl = async (id: string): Promise<string | null> => {
   try {
     const { data, error } = await supabaseAdmin
       .from('reviews')
