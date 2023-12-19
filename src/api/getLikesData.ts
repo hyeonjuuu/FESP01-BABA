@@ -28,7 +28,7 @@ export const matchLike = async (userId: string) => {
   return data
 }
 
-export const addLike = async (likeItem: LikesType) => {
+export const addLike = async (likeItem: LikesType, itemId: number) => {
   await supabase.from('likes').insert(likeItem).select()
 }
 

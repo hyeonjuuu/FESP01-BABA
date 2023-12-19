@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -34,6 +35,8 @@ function FeedComponent() {
   const [userId, setUserId] = useState<string | undefined>()
   const [reviewId, setReviewId] = useState<number>()
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
+  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
+    useBookmarkStore()
 
   const getuserData = localStorage.getItem('userData')
   const loginUserData = getuserData ? JSON.parse(getuserData) : null
@@ -70,6 +73,14 @@ function FeedComponent() {
   console.log('likeItems', likeItems)
 
   useEffect(() => {
+    const likeItemReviewId = likeItems?.map(item => item.review_id)
+
+    if (likeItemReviewId) {
+      setBookmarkList(likeItemReviewId)
+    }
+  }, [likeItems])
+
+  useEffect(() => {
     const loadReviewData = async () => {
       try {
         const { data: reviewData, error: reviewError } = await supabase
@@ -87,6 +98,7 @@ function FeedComponent() {
 
     loadReviewData()
   }, [])
+  console.log(bookmarkList)
 
   const handleLikes = async (item: LikeData) => {
     const newLikes: LikesType = {
@@ -94,6 +106,13 @@ function FeedComponent() {
       review_id: item.id
     }
     setReviewId(item.id)
+
+    const updatedLikesReview = {
+      ...likesReview,
+      [item.id]: !(likesReview[item.id] ?? false)
+    }
+
+    setLikesReview(updatedLikesReview)
 
     const hasReviewId = likeItems?.some(
       likeItem => likeItem.review_id === item.id
@@ -103,7 +122,7 @@ function FeedComponent() {
         await deleteLikes(item.id)
         console.log('delete')
       } else {
-        await addLike(newLikes)
+        await addLike(newLikes, item.id)
 
         console.log('add')
       }
@@ -111,6 +130,7 @@ function FeedComponent() {
 
       setLikesReview(prev => ({ ...prev, [item.id]: !hasReviewId }))
     } catch (error) {
+      setLikesReview(prev => ({ ...prev, [item.id]: !prev[item.id] }))
       console.error('북마크 에러 발생:', error)
     }
   }
@@ -126,7 +146,6 @@ function FeedComponent() {
                 <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
               </CommonDivWrapper>
               <FeedImage
-                // src={reviewImage}
                 src={
                   item.img_url &&
                   `https://image.tmdb.org/t/p/original/${item.img_url.replace(
@@ -144,7 +163,7 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     onClick={() => handleLikes(item)}
-                    isBookMark={likesReview[item.id] || false}
+                    isBookmarked={bookmarkList.includes(item.id)}
                   />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
@@ -183,11 +202,10 @@ export const StarIcon = styled.button`
   display: flex;
   padding: 0;
 `
-const LikeIcon = styled(({ isBookMark, ...rest }: LikeIconProps) => (
-  <StarIcon {...rest} />
-))`
+const LikeIcon = styled(StarIcon)`
   background-image: url(${like});
-  background-color: ${({ isBookMark }) => (isBookMark ? '#ed6161' : '#4fe69f')};
+  background-color: ${({ bookmarkList }) =>
+    bookmarkList ? '#444444' : 'yellow'};
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
