@@ -26,24 +26,6 @@ interface LikeIconProps {
   onClick?: () => void
 }
 
-const fetchReviewData = async (userId: string[] | undefined) => {
-  try {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select()
-      .containedBy('likes', [userId] || [])
-    console.log('fetchingData', data)
-
-    if (!data) {
-      return []
-    }
-    return data
-  } catch (error) {
-    console.error('데이터를 불러오는 중 에러 발생:', error)
-    throw error
-  }
-}
-
 /* -------------------------------------------------------------------------- */
 
 function FeedComponent() {
@@ -51,7 +33,7 @@ function FeedComponent() {
   const [reviews, setReviews] = useState<ReviewData>([])
   const [userId, setUserId] = useState<string | undefined>()
   const [reviewId, setReviewId] = useState<number>()
-  const [likesReview, setLikesReview] = useState<boolean>()
+  const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
 
   const getuserData = localStorage.getItem('userData')
   const loginUserData = getuserData ? JSON.parse(getuserData) : null
@@ -79,7 +61,7 @@ function FeedComponent() {
   const { data: likeItems } = useQuery({
     queryKey: queryKey,
     queryFn: async () => {
-      const result = await matchLike(userId)
+      const result = await matchLike(loginUserId)
       return result
     },
     refetchOnReconnect: false,
@@ -120,14 +102,14 @@ function FeedComponent() {
       if (hasReviewId) {
         await deleteLikes(item.id)
         console.log('delete')
-        setLikesReview(false)
       } else {
         await addLike(newLikes)
 
         console.log('add')
-        setLikesReview(true)
       }
       queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
+
+      setLikesReview(prev => ({ ...prev, [item.id]: !hasReviewId }))
     } catch (error) {
       console.error('북마크 에러 발생:', error)
     }
@@ -162,7 +144,7 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     onClick={() => handleLikes(item)}
-                    isBookMark={likesReview}
+                    isBookMark={likesReview[item.id] || false}
                   />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
