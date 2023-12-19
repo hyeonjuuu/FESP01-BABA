@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
+import likefill from '@/assets/HeartIconFill.svg'
 import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
@@ -9,7 +10,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { css } from 'styled-components'
-
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
   `${import.meta.env.VITE_SUPABASE_KEY}`
@@ -23,8 +23,8 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-interface LikeIconProps {
-  fill: string
+type LikeIconProps = {
+  islike?: boolean
 }
 
 /* -------------------------------------------------------------------------- */
@@ -143,10 +143,8 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     onClick={() => handleLikes(item)}
-                    islike={bookmarkList.includes(item.id) ? true : false}
-                    fill={
-                      bookmarkList.includes(item.id) ? '#ED8585' : '#ffffff'
-                    }
+                    // islike={bookmarkList.includes(item.id) ? true : false}
+                    islike={bookmarkList.includes(item.id)}
                   />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
@@ -187,12 +185,8 @@ export const StarIcon = styled.button`
 `
 
 const LikeIcon = styled(StarIcon)<LikeIconProps>`
-  background-image: url(${like});
-  background-color: ${({ islike }) => (islike ? '#444444' : 'yellow')};
-  svg path.st0,
-  svg path.st1 {
-    fill: ${({ fill }) => (fill ? fill : '#ffffff')};
-  }
+  background-image: ${({ islike }) =>
+    islike ? `url(${likefill})` : `url(${like})`};
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
