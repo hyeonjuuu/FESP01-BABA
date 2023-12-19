@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { ResultBarContainProps } from '@/types'
 import useThemeStore from '@/store/useThemeStore'
 import { faX } from '@fortawesome/free-solid-svg-icons'
@@ -8,20 +7,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 interface SearchResultBarProps {
   title: string
   onClick?: (item: string) => void
+  inputRef: React.RefObject<HTMLInputElement>
+  onSearch: () => void
 }
 
-function SearchResultBar({ title, onClick }: SearchResultBarProps) {
+function SearchResultBar({
+  title,
+  onClick,
+  inputRef,
+  onSearch
+}: SearchResultBarProps) {
   const { $darkMode } = useThemeStore()
+
+  const handleSearchInput = () => {
+    // 검색어를 부모 컴포넌트로 전달
+    // onClick?.(title)
+    if (inputRef.current) {
+      inputRef.current.value = title
+      onSearch()
+    }
+
+    console.log('클릭')
+  }
 
   return (
     <ResultBarContain $darkMode={$darkMode}>
-      <StyledLink to="/detail">
-        <Contain>
-          <Warppaer>
-            <ResultBar># {title}</ResultBar>
-          </Warppaer>
-        </Contain>
-      </StyledLink>
+      <Contain onClick={handleSearchInput}>
+        <Warppaer>
+          <ResultBar># {title}</ResultBar>
+        </Warppaer>
+      </Contain>
       <ClearBtn type="button" onClick={() => onClick?.(title)}>
         <FontAwesomeIcon icon={faX} />
       </ClearBtn>
@@ -75,10 +90,4 @@ export const Warppaer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3px;
-`
-const StyledLink = styled(Link)`
-  width: 100%;
-  @media (min-width: 701px) {
-    width: 70%;
-  }
 `

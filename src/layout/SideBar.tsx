@@ -31,7 +31,7 @@ function SideBar() {
           <SideContentWrapper key={item.id} to={`/movie/${item.id}`}>
             <ContentNumber>{index + 1}</ContentNumber>
             <RecommendImage
-              src={`https://image.tmdb.org/t/p/w220_and_h330_face${item.poster_path}`}
+              src={`https://image.tmdb.org/t/p/original${item.poster_path}`}
               alt={`${item.title} 포스터`}
             />
             <Movie>

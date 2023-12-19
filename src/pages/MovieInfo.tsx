@@ -76,10 +76,10 @@ function MovieInfo() {
     const fetchData = async () => {
       try {
         const data = await getMovieCrew(movieID as string)
-        // const trailerData = await getTrailer('아마데우스 예고편')
+        const trailerData = await getTrailer('아마데우스 예고편')
 
         setCastData(data)
-        // setTrailers(trailerData)
+        setTrailers(trailerData)
       } catch (error) {
         console.error(error)
       }
@@ -190,7 +190,7 @@ const Wrapper = styled.div`
 `
 
 const Title = styled.h2`
-  font-size: 30px;
+  font-size: 34px;
 `
 
 const GradientOverlay = styled.div`

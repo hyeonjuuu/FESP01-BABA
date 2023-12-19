@@ -15,13 +15,12 @@ import SearchResultBar, {
 
 function SearchPage() {
   const { $darkMode } = useThemeStore()
-
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [isSearched, setIsSearched] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
-  const [showSearchResult, setshowSearchResult] = useState<boolean>(false)
+  const [showSearchResult, setShowSearchResult] = useState<boolean>(false)
   const [searchDataList, setSearchDataList] = useState<SearchListProps[]>([])
   const [oldSearchRecordList, setOldSearchRecordList] = useState<string[]>([])
 
@@ -30,12 +29,16 @@ function SearchPage() {
     setIsSearchBtnDisabled(value.length === 0)
     if (!value) {
       setIsSearched(false)
-      setshowSearchResult(false)
+      setShowSearchResult(false)
     }
   }
 
-  const handleSearchBtn = async (e: React.MouseEvent) => {
-    e.preventDefault()
+  const handleSearchBtn = async (
+    e?: React.MouseEvent | React.KeyboardEvent
+  ) => {
+    if (e) {
+      e.preventDefault()
+    }
     const inputValue = inputRef.current?.value || ''
 
     const earlyStorageItems = JSON.parse(
@@ -64,14 +67,19 @@ function SearchPage() {
         })
       )
       setSearchDataList(searchResults)
-      setshowSearchResult(true)
+      setShowSearchResult(true)
       setIsSearched(true)
     } catch (error) {
       console.error(error)
     } finally {
+      inputRef.current!.value = ''
       setIsSearchBtnDisabled(true)
       setIsLoading(false)
     }
+  }
+
+  const handleSearchCancle = () => {
+    window.location.reload()
   }
 
   // 새로고침시 최근 검색목록을 스토리지에서 가져옵니다.
@@ -81,6 +89,15 @@ function SearchPage() {
     ) as string[]
     setOldSearchRecordList(earlyStorageItems)
   }, [])
+
+  // 최근 검색어 모두 삭제
+  const handleAllRemove = () => {
+    setOldSearchRecordList(() => {
+      const updatedList: string[] = []
+      localStorage.setItem('oldSearchRecordList', JSON.stringify(updatedList))
+      return updatedList
+    })
+  }
 
   // 삭제버튼 클릭시 최근검색어가 제거됩니다.
   const handleRemoveStorageItem = (item: string) => {
@@ -101,22 +118,38 @@ function SearchPage() {
             type="text"
             placeholder="Search"
             onChange={handleSearchInput}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleSearchBtn(e)
+              }
+            }}
             ref={inputRef}
           />
         </SearchBar>
-        <ClearBtn
-          type="button"
-          onClick={handleSearchBtn}
-          disabled={isSearchBtnDisabled}
-        >
-          검색
-        </ClearBtn>
+
+        {showSearchResult || searchDataList.length > 0 ? (
+          <ClearBtn type="button" onClick={handleSearchCancle}>
+            취소
+          </ClearBtn>
+        ) : (
+          <ClearBtn
+            type="button"
+            onClick={handleSearchBtn}
+            disabled={isSearchBtnDisabled}
+          >
+            검색
+          </ClearBtn>
+        )}
       </SearchBarWrapper>
       <Wrapper>
         <RecentSearch>
           {showSearchResult ? '검색 결과' : '최근 검색'}
         </RecentSearch>
-        <SeeAllBtn>모두 삭제</SeeAllBtn>
+        {showSearchResult ? (
+          ''
+        ) : (
+          <SeeAllBtn onClick={handleAllRemove}>모두 삭제</SeeAllBtn>
+        )}
       </Wrapper>
       <ResultWrapper>
         {isLoading ? (
@@ -148,7 +181,13 @@ function SearchPage() {
           ))
         ) : (
           oldSearchRecordList?.map(item => (
-            <SearchResultBar title={item} onClick={handleRemoveStorageItem} />
+            <SearchResultBar
+              key={item}
+              title={item}
+              onClick={handleRemoveStorageItem}
+              inputRef={inputRef}
+              onSearch={handleSearchBtn}
+            />
           ))
         )}
       </ResultWrapper>

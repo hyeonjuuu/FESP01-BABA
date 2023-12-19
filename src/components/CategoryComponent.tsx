@@ -23,7 +23,6 @@ function CategoryComponent() {
   const { $darkMode } = useThemeStore()
   const [selectCategory, setSelectCategory] = useState('영화')
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    // const select = document.getElementById('영화드라마')
     const select = e.currentTarget.value
     setSelectCategory(select)
   }
@@ -207,7 +206,7 @@ export const SwiperWrapper = styled(Swiper)`
     width: 100%;
     flex-shrink: 2;
   }
-  @media (min-width: 1025px) and (max-width: 1279px) {
+  @media (min-width: 1025px) and (max-width: 1280px) {
     max-width: 610px;
     min-width: 580px;
     width: 100%;

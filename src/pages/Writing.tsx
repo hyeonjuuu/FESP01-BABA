@@ -1,18 +1,21 @@
+import { motion } from 'framer-motion'
 import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
+import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { useEffect, useRef, useState } from 'react'
 import getSearchMovies from '@/api/getSearchMovies'
-import { addReview, uploadImage } from '@/api/reviewApi'
-import { ClearBtn, Icon, Image, Input } from './SearchPage'
+import { Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
+import { useAuthStore } from '@/store/useAuthStore'
+import userInfoInLs from '@/utils/userInfoInLs'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -23,6 +26,8 @@ function Writing() {
   const naviagte = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const [userEmail, setUserEmail] = useState<string | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
@@ -32,6 +37,28 @@ function Writing() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
+
+  //# 로그인 여부 확인
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        window.history.back()
+      }
+    }
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    const userIdInLs = userInfoInLs()
+    setUserEmail(userIdInLs.userId) // local storage의 id = user Table의 email
+  }, [])
 
   //# 검색
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,8 +190,8 @@ function Writing() {
     e.preventDefault()
 
     const ottValue = selectedOtt
-
     const textValue = text === 'Enter your text here...' ? '' : text
+    // const reviewContentInfo = searchList
 
     if (
       !selectMovie ||
@@ -172,7 +199,7 @@ function Writing() {
       rating === 0 ||
       textValue === ''
     ) {
-      alert('영화 또는 TV 프로그램, ott, 평점, 내용을 작성해주세요')
+      alert('제목, ott, 평점, 내용을 작성해주세요')
       return
     }
 
@@ -180,33 +207,34 @@ function Writing() {
       if (selectMovie && !imgSrc) {
         await addReview(
           selectMovie.id,
-          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          userEmail!,
           text,
           selectedOtt,
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title'
         )
       } else if (selectMovie && imgSrc) {
-        await addReview(
+        const imgUrl = await uploadImage(image!)
+        await addReviewWithImgUrl(
           selectMovie.id,
-          '0ebab27d-5be1-4d43-9e85-fa8a163b0db4', // user_id
+          userEmail!,
           text,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          imgUrl!
         )
-        await uploadImage(image!)
       }
       alert('리뷰가 등록되었습니다!')
-      // naviagte('/main')
+
+      naviagte('/main')
     } catch (error) {
       console.error(error)
     }
   }
-  console.log('selectedOtt: ', selectedOtt)
 
   return (
-    <Container>
+    <section>
       <FormStyle encType="multipart/form-data">
         <SearchBarWrapper>
           <SearchBar>
@@ -251,21 +279,23 @@ function Writing() {
         <Wrapper>
           {ottIcons.map((icon, index) => (
             <OttWrapper key={index}>
-              <label htmlFor={`ott${index}`}>ott</label>
-              <input
-                type="checkbox"
-                name={`ott${index}`}
-                id={`ott${index}`}
-                checked={selectedOtt.includes(ottIconNames[index])}
-                onChange={() => handleCheck(ottIconNames[index])}
-              />
-              <IconBox>
-                <OttIcon
-                  src={icon}
-                  alt={ottIconNames[index]}
-                  title={ottIconNames[index]}
-                />
-              </IconBox>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <IconBox>
+                  <OttIcon
+                    src={icon}
+                    alt={ottIconNames[index]}
+                    title={ottIconNames[index]}
+                  />
+                  <OttLabel htmlFor={`ott${index}`}> ott</OttLabel>
+                  <OttInput
+                    type="checkbox"
+                    name={`ott${index}`}
+                    id={`ott${index}`}
+                    checked={selectedOtt.includes(ottIconNames[index])}
+                    onChange={() => handleCheck(ottIconNames[index])}
+                  />
+                </IconBox>
+              </motion.div>
             </OttWrapper>
           ))}
           <OthersOTT>
@@ -322,10 +352,9 @@ function Writing() {
                   <label htmlFor="photo">사진</label>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept=".jpg, .jpeg, .png"
                     name="photo"
                     id="photo"
-                    // multiple
                     onChange={handleUpload}
                   ></input>
                 </div>
@@ -355,7 +384,7 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
-    </Container>
+    </section>
   )
 }
 
@@ -435,6 +464,18 @@ const OttWrapper = styled.div`
 const IconBox = styled.div`
   width: 28px;
   height: 28px;
+  position: relative;
+`
+const OttLabel = styled.label``
+
+const OttInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 `
 
 const OthersOTT = styled.div`
@@ -448,7 +489,7 @@ const OthersOTT = styled.div`
 `
 
 const OthersOttText = styled.input`
-  width: 95%;
+  width: 100%;
 `
 
 const OttIcon = styled.img`
