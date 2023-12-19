@@ -187,6 +187,7 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
+    // const reviewContentInfo = searchList
 
     if (
       !selectMovie ||

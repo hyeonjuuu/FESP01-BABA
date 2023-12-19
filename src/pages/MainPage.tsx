@@ -3,9 +3,28 @@ import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from '@/components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/useAuthStore'
 
 function Main() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+  // //# 로그인 여부 확인
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        window.history.back()
+      }
+    }
+  }, [isAuthenticated])
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,7 +44,6 @@ function Main() {
         <CategoryComponent />
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
 
-        <FeedComponent />
         <FeedComponent />
       </Wrapper>
     </>

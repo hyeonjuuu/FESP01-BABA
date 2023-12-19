@@ -6,7 +6,7 @@ const userInfoInLs = (): {
 } => {
   // const userInfo = localStorage.getItem('userData')
   const userInfo = localStorage.getItem('sb-ufinqahbxsrpjbqmrvti-auth-token')
-  console.log('#userInfo: ', userInfo)
+  // console.log('#userInfo: ', userInfo)
 
   const userId = userInfo ? JSON.parse(userInfo)?.user?.id : null
   // const userId = userInfo ? JSON.parse(userInfo)?.user_email : null
