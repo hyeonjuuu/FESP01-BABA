@@ -73,6 +73,7 @@ function MyPage() {
   //# 리뷰 가져오기
   useEffect(() => {
     const userInfo = userInfoInLs()
+    console.log('userInfo: ', userInfo)
 
     setUserId(userInfo.userId) // local storage의 id = users의 user_email = revews의 user_id
     setUserEmail(userInfo.userEmail) // local storage의 email
