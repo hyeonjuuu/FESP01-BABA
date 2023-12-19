@@ -8,18 +8,9 @@ const supabase = createClient(
 export const fetchAllLikes = async () => {
   const { data } = await supabase.from('likes').select('*')
   return data
-  // console.log(data)
 }
 
-// export const matchLike = async (reviewId: number, userId: string) => {
-//   const { data } = await supabase
-//     .from('likes')
-//     .select()
-//     .match({ review_id: reviewId, user_id: userId })
-
-//   return data
-// }
-export const matchLike = async (userId: string) => {
+export const matchLike = async (userId: string | null) => {
   const { data } = await supabase
     .from('likes')
     .select('review_id')

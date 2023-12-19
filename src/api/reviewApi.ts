@@ -12,7 +12,8 @@ export const addReview = async (
   text: string,
   ott: string[],
   rating: number,
-  movie_title: string
+  movie_title: string,
+  img_url?: string | null
 ) => {
   try {
     const { data, error } = await supabaseAdmin.from('reviews').upsert([
@@ -22,7 +23,8 @@ export const addReview = async (
         text,
         ott,
         rating,
-        movie_title
+        movie_title,
+        img_url
       }
     ])
 
@@ -265,6 +267,30 @@ export const deleteReview = async (id: string, user_id: string) => {
   } else {
     console.log(error)
     return null
+  }
+}
+
+export async function uploadFile(poster: any) {
+  try {
+    const { data, error } = await supabaseAdmin.storage
+      .from('movieImage')
+      .upload(`public/${poster}`, poster, {
+        upsert: true
+      })
+
+    console.log(data)
+    console.log(poster)
+
+    if (error) {
+      console.error('에러 발생:', error.message)
+    } else {
+      console.log('성공:', data)
+      const filePath = data.path
+      return filePath
+    }
+  } catch (error) {
+    const supabaseError = error as Error
+    console.error('예외 발생:', supabaseError.message)
   }
 }
 

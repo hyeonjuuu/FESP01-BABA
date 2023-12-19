@@ -2,14 +2,14 @@ import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
 import likefill from '@/assets/HeartIconFill.svg'
-import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
+import { FontProps } from './CategoryComponent'
 import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { css } from 'styled-components'import userInfoInLs from '@/utils/userInfoInLs'
+import userInfoInLs from '@/utils/userInfoInLs'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 
@@ -42,22 +42,7 @@ function FeedComponent() {
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
-
-  useEffect(() => {
-    const userData = async () => {
-      try {
-        const { data } = await supabase.auth.getUser()
-        const userData: UserData | null = {
-          email: data?.user?.email || undefined,
-          id: data?.user?.id || undefined
-        }
-        setUserId(userData?.id ? userData.id : undefined)
-      } catch (error) {
-        console.error('에러가 발생했습니다.', error)
-      }
-    }
-    userData()
-  }, [])
+  console.log(loginUserId)
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -111,10 +96,9 @@ function FeedComponent() {
       } else {
         window.history.back()
       }
-      return // 로그인하지 않았다면 함수 종료
+      return
     }
 
-    // 로그인한 사용자만 아래 로직을 실행
     const newLikes: LikesType = {
       user_id: loginUserId,
       review_id: item.id
@@ -177,7 +161,6 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     onClick={() => handleLikes(item)}
-                    // islike={bookmarkList.includes(item.id) ? true : false}
                     islike={bookmarkList.includes(item.id) ? 'true' : 'false'}
                   />
                 </CommonDivWrapper>

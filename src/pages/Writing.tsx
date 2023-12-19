@@ -15,7 +15,12 @@ import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  uploadFile,
+  uploadImage
+} from '@/api/reviewApi'
 import { faImage } from '@fortawesome/free-regular-svg-icons'
 
 interface ResultBarContainProps {
@@ -179,6 +184,8 @@ function Writing() {
     500
   )
 
+  console.log(selectMovie)
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = '100px'
@@ -203,17 +210,19 @@ function Writing() {
       return
     }
 
+    // if (selectMovie && !imgSrc) {
+    //   await addReview(
+    //     selectMovie.id,
+    //     userEmail!,
+    //     text,
+    //     selectedOtt,
+    //     rating,
+    //     selectMovie.title || selectMovie.name || 'Unknown Title'
+    //   )
+    //   }
+
     try {
-      if (selectMovie && !imgSrc) {
-        await addReview(
-          selectMovie.id,
-          userEmail!,
-          text,
-          selectedOtt,
-          rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
-        )
-      } else if (selectMovie && imgSrc) {
+      if (selectMovie && imgSrc) {
         const imgUrl = await uploadImage(image!)
         await addReviewWithImgUrl(
           selectMovie.id,
@@ -223,6 +232,29 @@ function Writing() {
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
           imgUrl!
+        )
+        // } else if (selectMovie && imgSrc) {
+        //   const imgUrl = await uploadImage(image!)
+        //   await addReviewWithImgUrl(
+        //     selectMovie.id,
+        //     userEmail!,
+        //     text,
+        //     selectedOtt,
+        //     rating,
+        //     selectMovie.title || selectMovie.name || 'Unknown Title',
+        //     imgUrl!
+        //   )
+      } else if (selectMovie && isSelectImg === true) {
+        const filePath = await uploadFile(selectMovie.poster_path)
+
+        await addReview(
+          selectMovie.id,
+          userEmail!,
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          filePath
         )
       }
       alert('리뷰가 등록되었습니다!😊')
