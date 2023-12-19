@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useSpring, animated } from 'react-spring'
-import moon from '@/assets/moonImage.png'
-import sun from '@/assets/lightIcon.png'
+import moonImage from '@/assets/moonImage.png'
+import sunImage from '@/assets/lightIcon.png'
 
 interface DarkModeToggleIconProps {
   $isDarkMode: boolean
@@ -22,7 +22,11 @@ const DarkModeToggleIcon = ({
   return (
     <Wrapper onClick={toggleDarkModeAni} $isDarkMode={$isDarkMode}>
       <IconWrapper style={iconSpring}>
-        <Img src={$isDarkMode ? sun : moon} alt="" $isDarkMode={$isDarkMode} />
+        <Img
+          src={$isDarkMode ? sunImage : moonImage}
+          alt={$isDarkMode ? '라이트 모드 보기' : '다크 모드 보기'}
+          $isDarkMode={$isDarkMode}
+        />
         <ButtonText>{$isDarkMode ? 'Light' : 'Dark'}</ButtonText>
       </IconWrapper>
     </Wrapper>
