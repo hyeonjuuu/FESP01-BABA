@@ -12,6 +12,7 @@ import SearchResultBar, {
   ResultBar,
   Warppaer
 } from '@/components/search/SearchResultBar'
+import GoingUpBtn from '@/components/GoingUpBtn'
 
 function SearchPage() {
   const { $darkMode } = useThemeStore()
@@ -191,6 +192,7 @@ function SearchPage() {
           ))
         )}
       </ResultWrapper>
+      <GoingUpBtn />
     </Box>
   )
 }

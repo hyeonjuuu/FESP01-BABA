@@ -1,5 +1,5 @@
 interface IfarmeProps {
-  videoId: string
+  videoId?: string
 }
 
 function Iframe({ videoId }: IfarmeProps) {
@@ -7,10 +7,12 @@ function Iframe({ videoId }: IfarmeProps) {
     <iframe
       id="ytplayer"
       // type="text/html"
-      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&disablekb=1&modestbranding=1`}
+      src={`https://www.youtube.com/embed/${videoId}`}
       allowFullScreen
       allow="autoplay"
-      className="aspect-video w-full"
+      width={'400px'}
+      height={'250px'}
+      style={{ margin: '6px 11px' }}
     ></iframe>
   )
 }

@@ -3,6 +3,7 @@ import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from '@/components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
 import { useEffect, useState } from 'react'
+import GoingUpBtn from '@/components/GoingUpBtn'
 
 function Main() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -27,6 +28,7 @@ function Main() {
 
         <FeedComponent />
       </Wrapper>
+      <GoingUpBtn />
     </>
   )
 }

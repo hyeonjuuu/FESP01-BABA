@@ -234,7 +234,7 @@ function Writing() {
   }
 
   return (
-    <section>
+    <Container>
       <FormStyle encType="multipart/form-data">
         <SearchBarWrapper>
           <SearchBar>
@@ -384,7 +384,7 @@ function Writing() {
           onClick={handleSubmit}
         />
       </FormStyle>
-    </section>
+    </Container>
   )
 }
 
