@@ -30,6 +30,7 @@ function Writing() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
+  const [isSearched, setIsSearched] = useState(false) // 검색이 수행되었는지 나타내는 상태
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [imgSrc, setImgSrc]: any = useState(null)
@@ -68,6 +69,7 @@ function Writing() {
 
   const handleSearchBtn = async (e: React.MouseEvent) => {
     e.preventDefault()
+    setIsSearched(true) // 검색 버튼을 클릭하면 검색이 수행되었다고 상태를 갱신
 
     try {
       const searchData = await getSearchMovies(inputRef.current?.value || '')
@@ -85,6 +87,7 @@ function Writing() {
       console.error(error)
     } finally {
       inputRef.current!.value = ''
+      // setIsSearched(false)
       setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
@@ -93,6 +96,7 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
+    setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
 
   //# 이미지 선택
@@ -187,7 +191,6 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
-    // const reviewContentInfo = searchList
 
     if (
       !selectMovie ||
@@ -250,26 +253,32 @@ function Writing() {
         </SearchBarWrapper>
 
         <ResultWrapper>
-          {searchList.map(result => (
-            <ResultBarContain
-              key={result.id}
-              onClick={() => handleSelectMovie(result)}
-              $darkMode={$darkMode}
-            >
-              <Contain>
-                <Image
-                  src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                  alt={`${result.title} 이미지`}
-                />
-                <Warppaer>
-                  <ResultBar>
-                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
-                    {result.media_type === 'movie' ? result.title : result.name}
-                  </ResultBar>
-                </Warppaer>
-              </Contain>
-            </ResultBarContain>
-          ))}
+          {isSearched && searchList.length === 0 ? (
+            <NoResultsMessage>검색 결과가 없습니다.</NoResultsMessage>
+          ) : (
+            searchList.map(result => (
+              <ResultBarContain
+                key={result.id}
+                onClick={() => handleSelectMovie(result)}
+                $darkMode={$darkMode}
+              >
+                <Contain>
+                  <Image
+                    src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                    alt={`${result.title} 이미지`}
+                  />
+                  <Warppaer>
+                    <ResultBar>
+                      {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                      {result.media_type === 'movie'
+                        ? result.title
+                        : result.name}
+                    </ResultBar>
+                  </Warppaer>
+                </Contain>
+              </ResultBarContain>
+            ))
+          )}
         </ResultWrapper>
 
         <Wrapper>
@@ -434,6 +443,14 @@ const ResultWrapper = styled.div`
   @media (min-width: 701px) {
     max-width: 400px;
   }
+`
+
+const NoResultsMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
 `
 
 const Contain = styled.div`
