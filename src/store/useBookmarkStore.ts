@@ -20,13 +20,13 @@ import { create } from 'zustand'
 //   setBookmarkList: likesData => set({ bookmarkList: likesData })
 // }))
 
-export const useBookmarkStore = create(set => ({
+export const useBookmarkStore = create<BookmarkStore>(set => ({
   bookmarkList: [],
-  setBookmarkList: itemId =>
+  setBookmarkList: (itemId: number) =>
     set(state => ({
-      bookmarkList: itemId
+      bookmarkList: [...state.bookmarkList, itemId]
     })),
-  deleteBookmarkList: itemId =>
+  deleteBookmarkList: (itemId: number) =>
     set(state => ({
       bookmarkList: state.bookmarkList.filter(item => item !== itemId)
     }))
