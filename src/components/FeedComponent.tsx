@@ -21,6 +21,11 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
+interface LikeIconProps {
+  isBookMark: boolean
+  onClick?: () => void
+}
+
 const fetchReviewData = async (userId: string[] | undefined) => {
   try {
     const { data, error } = await supabase
@@ -46,7 +51,7 @@ function FeedComponent() {
   const [reviews, setReviews] = useState<ReviewData>([])
   const [userId, setUserId] = useState<string | undefined>()
   const [reviewId, setReviewId] = useState<number>()
-  const [isBookMark, setIsBookMark] = useState(false)
+  const [likesReview, setLikesReview] = useState<boolean>()
 
   const getuserData = localStorage.getItem('userData')
   const loginUserData = getuserData ? JSON.parse(getuserData) : null
@@ -82,8 +87,6 @@ function FeedComponent() {
   })
   console.log('likeItems', likeItems)
 
-  // console.log('fetchData', fetchAllLikes())
-
   useEffect(() => {
     const loadReviewData = async () => {
       try {
@@ -92,15 +95,8 @@ function FeedComponent() {
           .select()
         if (reviewError) throw new Error()
 
-        // const { data: likesData, error: likesError } = await supabase
-        //   .from('reviews')
-        //   .select()
-        //   .containedBy('likes', [userId] || [])
-
-        // if (likesError) throw new Error()
         setReviews(reviewData)
         console.log('리뷰데이터', reviewData)
-        // console.log('likeData', likesData)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -115,22 +111,23 @@ function FeedComponent() {
       user_id: loginUserId,
       review_id: item.id
     }
-    console.log(item.id)
     setReviewId(item.id)
 
     const hasReviewId = likeItems?.some(
       likeItem => likeItem.review_id === item.id
     )
-
     try {
       if (hasReviewId) {
         await deleteLikes(item.id)
         console.log('delete')
+        setLikesReview(false)
       } else {
         await addLike(newLikes)
+
         console.log('add')
+        setLikesReview(true)
       }
-      queryClient.invalidateQueries({ queryKey: ['likes', reviewId] })
+      queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
     } catch (error) {
       console.error('북마크 에러 발생:', error)
     }
@@ -163,7 +160,10 @@ function FeedComponent() {
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
-                  <LikeIcon onClick={() => handleLikes(item)} />
+                  <LikeIcon
+                    onClick={() => handleLikes(item)}
+                    isBookMark={likesReview}
+                  />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
@@ -201,8 +201,11 @@ export const StarIcon = styled.button`
   display: flex;
   padding: 0;
 `
-const LikeIcon = styled(StarIcon)`
+const LikeIcon = styled(({ isBookMark, ...rest }: LikeIconProps) => (
+  <StarIcon {...rest} />
+))`
   background-image: url(${like});
+  background-color: ${({ isBookMark }) => (isBookMark ? '#ed6161' : '#4fe69f')};
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;

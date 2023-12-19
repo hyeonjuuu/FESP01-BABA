@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -8,8 +7,8 @@ const supabase = createClient(
 
 export const fetchAllLikes = async () => {
   const { data } = await supabase.from('likes').select('*')
-  // return data
-  console.log(data)
+  return data
+  // console.log(data)
 }
 
 // export const matchLike = async (reviewId: number, userId: string) => {
@@ -35,28 +34,4 @@ export const addLike = async (likeItem: LikesType) => {
 
 export const deleteLikes = async (itemId?: number) => {
   await supabase.from('likes').delete().match({ review_id: itemId })
-}
-
-export const useCreateLikesMutation = () => {
-  const queryClient = useQueryClient()
-
-  const mutation = useMutation(addLike, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['matchLike'])
-    }
-  })
-
-  return mutation
-}
-
-export const useDeleteLikesMutation = () => {
-  const queryClient = useQueryClient()
-
-  const mutation = useMutation(deleteLikes, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['matchLike'])
-    }
-  })
-
-  return mutation
 }
