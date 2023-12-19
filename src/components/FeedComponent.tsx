@@ -24,7 +24,7 @@ interface TextColorProps {
 }
 
 type LikeIconProps = {
-  islike?: boolean
+  islike?: string
 }
 
 /* -------------------------------------------------------------------------- */
@@ -144,7 +144,7 @@ function FeedComponent() {
                   <LikeIcon
                     onClick={() => handleLikes(item)}
                     // islike={bookmarkList.includes(item.id) ? true : false}
-                    islike={bookmarkList.includes(item.id)}
+                    islike={bookmarkList.includes(item.id) ? 'true' : 'false'}
                   />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
@@ -186,7 +186,7 @@ export const StarIcon = styled.button`
 
 const LikeIcon = styled(StarIcon)<LikeIconProps>`
   background-image: ${({ islike }) =>
-    islike ? `url(${likefill})` : `url(${like})`};
+    islike === 'true' ? `url(${likefill})` : `url(${like})`};
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
