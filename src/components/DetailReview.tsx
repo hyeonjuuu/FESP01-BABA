@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import useThemeStore from '@/store/useThemeStore'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { renderStars } from './movieInfo/renderStars'
+import { useEffect, useState } from 'react'
 
 interface ReviewContentProps {
   $darkMode: boolean
@@ -15,24 +15,21 @@ interface DetailReviewProps {
 
 function DetailReview({ nickname, rating, text }: DetailReviewProps) {
   const { $darkMode } = useThemeStore()
+  const [gradeStar, setGradeStar] = useState<JSX.Element[] | null>(null)
+
+  useEffect(() => {
+    const stars = renderStars(rating as string)
+    setGradeStar(stars)
+  }, [rating])
 
   return (
     <DetailReviewDivWrapper>
-      <Img
-        src="https://picsum.photos/id/237/200/300"
-        alt="피드 이미지"
-        width="100%"
-        height="100%"
-        object-fit="cover"
-      ></Img>
+      <Img src="https://picsum.photos/id/237/200/300" alt=""></Img>
 
       <DetailReviewDiv>
         <NameStartDiv>
-          <div>{nickname}</div>
-          <StarDiv>
-            <FontAwesomeIcon icon={faStar} style={{ color: '#FFC61A' }} />
-            <span>{rating}</span>
-          </StarDiv>
+          <span>{nickname}</span>
+          <StarDiv>{gradeStar}</StarDiv>
         </NameStartDiv>
 
         <ReviewContent $darkMode={$darkMode}>{text}</ReviewContent>
@@ -45,38 +42,34 @@ export default DetailReview
 
 const DetailReviewDivWrapper = styled.div`
   display: flex;
-  width: 370px;
-  height: 130px;
-  margin: 0 auto;
-  border: solid 1.5px;
-  border-radius: 5px;
+  gap: 10px;
+  margin-bottom: 20px; /* 예시로 추가한 부분 */
 `
 
 const Img = styled.img`
-  width: 120px;
-  height: 100%;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
 `
 
 const DetailReviewDiv = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 10px;
 `
 
 const NameStartDiv = styled.div`
   display: flex;
   justify-content: space-between;
   padding-bottom: 10px;
+  gap: 10px;
 `
 
 const StarDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
 `
 
 const ReviewContent = styled.div<ReviewContentProps>`

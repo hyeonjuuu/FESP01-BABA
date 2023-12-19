@@ -215,14 +215,14 @@ function Writing() {
             </Icon>
             <Input
               type="text"
-              placeholder="Search"
+              placeholder="리뷰하고싶은 영화를 이곳에서 찾으세요!"
               onChange={handleSearchInput}
               ref={inputRef}
             />
           </SearchBar>
-          <ClearBtn onClick={handleSearchBtn} disabled={isSearchBtnDisabled}>
+          <Btn onClick={handleSearchBtn} disabled={isSearchBtnDisabled}>
             검색
-          </ClearBtn>
+          </Btn>
         </SearchBarWrapper>
 
         <ResultWrapper>
@@ -362,10 +362,10 @@ function Writing() {
 export default Writing
 
 const Container = styled.section`
-  /* display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px; */
+  margin: 30px 0;
 `
 
 const FormStyle = styled.form`
@@ -373,16 +373,15 @@ const FormStyle = styled.form`
   flex-direction: column;
   align-items: center;
   margin-top: 30px;
-  gap: 5px;
+  gap: 10px;
+  max-width: 800px;
+  width: 80%;
 `
 
 const SearchBarWrapper = styled.div`
   display: flex;
   align-items: center;
-  max-width: 390px;
-  @media (min-width: 701px) {
-    width: 100%;
-  }
+  width: 100%;
 `
 
 const ResultBarContain = styled.div<ResultBarContainProps>`
@@ -403,8 +402,7 @@ const SearchBar = styled.div`
   padding: 10px;
   background-color: #e8e8e8;
   border-radius: 8px;
-  max-width: 500px;
-  width: 80%;
+  width: 90%;
 `
 
 const ResultWrapper = styled.div`
@@ -413,9 +411,6 @@ const ResultWrapper = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  @media (min-width: 701px) {
-    max-width: 400px;
-  }
 `
 
 const Contain = styled.div`
@@ -428,7 +423,6 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: 60px;
-  max-width: 390px;
   flex-wrap: wrap;
 `
 
@@ -442,6 +436,7 @@ const IconBox = styled.div`
   width: 28px;
   height: 28px;
 `
+
 const OthersOTT = styled.div`
   display: flex;
   flex-direction: row;
@@ -471,17 +466,17 @@ const TitleDiv = styled.div`
   height: 50px;
   font-size: 20px;
   font-weight: 600;
-  @media (min-width: 701px) {
-    max-width: 390px;
-  }
 `
 
 const BtnWrapper = styled.div`
   display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
 `
 
 const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
-  width: 195px;
+  flex: 1;
   height: 44px;
   color: black;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -494,7 +489,7 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
 `
 
 const OriginalImage = styled.div`
-  width: 390px;
+  width: 100%;
   height: 500px;
   background-color: #d9d9d9;
   position: relative;
@@ -508,7 +503,7 @@ const MoviePoster = styled.img`
 `
 
 const StarContainer = styled.div`
-  width: 370px;
+  width: 100%;
   padding: 30px 10px 10px 10px;
   display: flex;
   justify-content: space-between;
@@ -517,7 +512,7 @@ const StarContainer = styled.div`
 `
 
 const FeedText = styled.textarea`
-  width: 390px;
+  width: 100%;
   overflow: hidden;
   border: none;
   box-sizing: border-box;
@@ -525,4 +520,26 @@ const FeedText = styled.textarea`
   font-size: 16px;
   resize: none;
   padding: 10px;
+`
+
+const Btn = styled.button`
+  width: 10%;
+  height: 100%;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #3797ef;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #2674c6;
+  }
+
+  &:disabled {
+    background-color: #d3d3d3;
+    color: #a1a1a1;
+    cursor: not-allowed;
+  }
 `

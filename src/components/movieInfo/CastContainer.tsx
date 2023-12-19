@@ -12,7 +12,7 @@ function CastContainer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getMovieCrew('59436')
+        const data = await getMovieCrew(movieID as string)
         setCastData(data)
       } catch (error) {
         console.error(error)

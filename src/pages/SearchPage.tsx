@@ -4,9 +4,9 @@ import { ResultBarContainProps } from '@/types'
 import useThemeStore from '@/store/useThemeStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { useEffect, useRef, useState } from 'react'
+import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
 import SearchResultBar, {
   Contain,
   ResultBar,
@@ -125,7 +125,7 @@ function SearchPage() {
           </LodingWrapper>
         ) : isSearched ? (
           searchDataList.map(result => (
-            <StyledLink key={result.id} to={`/detail/${result.id}`}>
+            <StyledLink key={result.id} to={`/info/${result.id}`}>
               <Container $darkMode={$darkMode}>
                 <Contain>
                   <Image
