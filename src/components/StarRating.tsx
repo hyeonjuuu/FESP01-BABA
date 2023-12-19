@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import yellowStar from '@/assets/StarIcon.svg'
 import useThemeStore from '@/store/useThemeStore'
@@ -8,6 +8,7 @@ import darkModeYellowStar from '@/assets/DarkModeYellowStar.svg'
 
 interface StarRatingProps {
   onRatingChange: (newRating: number) => void
+  initialRating?: number
 }
 
 interface StarIconProps {
@@ -15,15 +16,19 @@ interface StarIconProps {
   $darkMode: boolean
 }
 
-const StarRating = ({ onRatingChange }: StarRatingProps) => {
+const StarRating = ({ onRatingChange, initialRating = 0 }: StarRatingProps) => {
   const { $darkMode } = useThemeStore()
 
-  const [rating, setRating] = useState(0)
+  const [rating, setRating] = useState(initialRating)
+
+  useEffect(() => {
+    setRating(initialRating)
+  }, [initialRating])
 
   const handleStarClick = (selectedRating: number) => {
     if (rating === selectedRating) {
-      setRating(0)
-      onRatingChange(0)
+      setRating(initialRating)
+      onRatingChange(initialRating)
     } else {
       setRating(selectedRating)
       onRatingChange(selectedRating)

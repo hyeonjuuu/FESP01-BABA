@@ -7,6 +7,9 @@ import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
+import userInfoInLs from '@/utils/userInfoInLs'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/useAuthStore'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -53,9 +56,8 @@ function FeedComponent() {
   const [reviewId, setReviewId] = useState<number>()
   const [likesReview, setLikesReview] = useState<boolean>()
 
-  const getuserData = localStorage.getItem('userData')
-  const loginUserData = getuserData ? JSON.parse(getuserData) : null
-  const loginUserId = loginUserData.user.id
+  const getuserData = userInfoInLs()
+  const loginUserId = getuserData.userId
 
   useEffect(() => {
     const userData = async () => {
@@ -106,7 +108,23 @@ function FeedComponent() {
     loadReviewData()
   }, [])
 
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
   const handleLikes = async (item: LikeData) => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        window.history.back()
+      }
+      return // 로그인하지 않았다면 함수 종료
+    }
+
+    // 로그인한 사용자만 아래 로직을 실행
     const newLikes: LikesType = {
       user_id: loginUserId,
       review_id: item.id

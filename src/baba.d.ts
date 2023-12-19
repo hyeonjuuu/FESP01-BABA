@@ -75,3 +75,9 @@ interface LikesType {
   user_id: string
   review_id: number
 }
+
+interface MovieProps {
+  id: number
+  title: string
+  poster_path: string
+}
