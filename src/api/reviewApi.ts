@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseAdmin = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_KEY as string
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_KEY
 )
 
 //# 리뷰 등록
@@ -15,7 +15,7 @@ export const addReview = async (
   movie_title: string
 ) => {
   try {
-    const { data, error } = await supabaseAdmin.from('reviews').insert([
+    const { data, error } = await supabaseAdmin.from('reviews').upsert([
       {
         movie_id,
         user_id,

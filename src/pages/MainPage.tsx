@@ -26,7 +26,6 @@ function Main() {
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
 
         <FeedComponent />
-        <FeedComponent />
       </Wrapper>
     </>
   )
