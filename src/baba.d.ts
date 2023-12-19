@@ -77,6 +77,6 @@ interface LikesType {
 }
 interface BookmarkStore {
   bookmarkList: number[]
-  setBookmarkList: (itemId: number) => void
+  setBookmarkList: (itemIds: number[]) => void
   deleteBookmarkList: (itemId: number) => void
 }

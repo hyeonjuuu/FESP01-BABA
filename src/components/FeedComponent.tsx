@@ -163,7 +163,7 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     onClick={() => handleLikes(item)}
-                    bookmarklist={bookmarkList.includes(item.id)}
+                    bookmarkList={bookmarkList.includes(item.id)}
                   />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
@@ -210,8 +210,8 @@ export const StarIcon = styled.button`
 
 const LikeIcon = styled(StarIcon)<{ bookmarkList: boolean }>`
   background-image: url(${like});
-  background-color: ${({ bookmarklist }) =>
-    bookmarklist ? '#444444' : 'yellow'};
+  background-color: ${({ bookmarkList }) =>
+    bookmarkList ? '#444444' : 'yellow'};
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
