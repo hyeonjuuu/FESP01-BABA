@@ -178,6 +178,8 @@ function MyPage() {
     setIsShowReviews(false)
   }
 
+  //# 북마크 가져오기
+
   return (
     <Box>
       <ContentBox>

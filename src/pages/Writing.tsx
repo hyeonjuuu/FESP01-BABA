@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -340,6 +341,7 @@ function Writing() {
             사용자 이미지
           </ImgSelectBtn>
         </BtnWrapper>
+
         <OriginalImage>
           {selectMovie && isSelectImg ? (
             <MoviePoster
@@ -347,24 +349,29 @@ function Writing() {
               alt={`${selectMovie.title || selectMovie.name} 포스터`}
             />
           ) : (
-            selectMovie && (
-              <>
+            <>
+              {imgSrc && selectMovie ? ( // 사용자가 이미지를 업로드한 경우
                 <MoviePoster
                   src={imgSrc}
                   alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
                 />
-                <div>
-                  <label htmlFor="photo">사진</label>
-                  <input
-                    type="file"
-                    accept=".jpg, .jpeg, .png"
-                    name="photo"
-                    id="photo"
-                    onChange={handleUpload}
-                  ></input>
-                </div>
-              </>
-            )
+              ) : (
+                // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
+                <PlzSelectImgDiv>
+                  <FontAwesomeIcon icon={faImage} />
+                </PlzSelectImgDiv>
+              )}
+              <div>
+                <label htmlFor="photo">사진</label>
+                <input
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  name="photo"
+                  id="photo"
+                  onChange={handleUpload}
+                ></input>
+              </div>
+            </>
           )}
         </OriginalImage>
 
@@ -553,6 +560,15 @@ const MoviePoster = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`
+
+const PlzSelectImgDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
 `
 
 const StarContainer = styled.div`

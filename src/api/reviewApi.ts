@@ -267,3 +267,20 @@ export const deleteReview = async (id: string, user_id: string) => {
     return null
   }
 }
+
+//# 북마크 가져오기
+// export const getLikeReviews = async (id: string) => {
+//   const { data, error } = await supabaseAdmin
+//     .from('reviews')
+//     .select('*')
+//     // .eq('user_id', id)
+//     .eq('user_id', id)
+
+//   if (data) {
+//     console.log('data: ', data)
+//     return data
+//   } else {
+//     console.log(error)
+//     return null
+//   }
+// }
