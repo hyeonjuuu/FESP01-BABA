@@ -18,8 +18,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { PlzSelectImgDiv } from './Writing'
 import { supabase } from '@/utils/supabaseClient'
+import useThemeStore from '@/store/useThemeStore'
+import convertDate from '@/utils/convertDate'
+
+interface DateWrapperProps {
+  $darkMode: boolean
+}
 
 function EditReview() {
+  const { $darkMode } = useThemeStore()
+
   const naviagte = useNavigate()
   const location = useLocation()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -28,6 +36,8 @@ function EditReview() {
   const reviewId = location.state.review_id
   const userId = location.state.user_id
 
+  const [addDate, setAddDate] = useState<string>('')
+  const [updateDate, setUpdateDate] = useState<string>('')
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [title, setTitle] = useState<string | null>(null)
   const [defaultImg, setDefaultImg] = useState<string | null>(null)
@@ -43,12 +53,13 @@ function EditReview() {
     const fetchReviewdata = async () => {
       const reviewInfo = await getReviewDataForEdit(reviewId)
 
+      const addDate = reviewInfo[0]?.created_at
+      const updateDate = reviewInfo[0]?.updated_at
       const ott = reviewInfo[0]?.ott
       const title = reviewInfo[0]?.movie_title
       const img = reviewInfo[0]?.img_url || null
       const rating = reviewInfo[0]?.rating
       const text = reviewInfo[0]?.text
-      console.log('img_url: ', img)
 
       // 기본 영화 포스터 찾기
       const moviesArray = await getSearchMovies(title)
@@ -57,6 +68,10 @@ function EditReview() {
         .filter((movie: MovieProps) => movie.id.toString() === movieId)
         .map((movie: MovieProps) => movie.poster_path)
 
+      setAddDate(convertDate(addDate))
+      if (updateDate) {
+        setUpdateDate(convertDate(updateDate))
+      }
       setSelectedOtt(ott)
       setTitle(title)
       setDefaultImg(posterPath)
@@ -294,6 +309,10 @@ function EditReview() {
         </Wrapper>
 
         <TitleDiv>{title}</TitleDiv>
+        <DateWrapper $darkMode={$darkMode}>
+          <AddDateDiv>등록: {addDate}</AddDateDiv>
+          {updateDate && <EditDateDiv>수정: {updateDate}</EditDateDiv>}
+        </DateWrapper>
 
         <BtnWrapper onClick={handleSelectImg}>
           <ImgSelectBtn
@@ -393,6 +412,14 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
 `
 
+const DateWrapper = styled.div<DateWrapperProps>`
+  width: 390px;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777777')};
+`
+
+const AddDateDiv = styled.div``
+
+const EditDateDiv = styled.div``
 const OttWrapper = styled.div`
   display: flex;
   align-items: center;
