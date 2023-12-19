@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { css } from 'styled-components'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -23,8 +24,7 @@ interface TextColorProps {
 }
 
 interface LikeIconProps {
-  isBookMark: boolean
-  onClick?: () => void
+  fill: string
 }
 
 /* -------------------------------------------------------------------------- */
@@ -32,7 +32,6 @@ interface LikeIconProps {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewData>([])
-  const [userId, setUserId] = useState<string | undefined>()
   const [reviewId, setReviewId] = useState<number>()
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
@@ -41,22 +40,6 @@ function FeedComponent() {
   const getuserData = localStorage.getItem('userData')
   const loginUserData = getuserData ? JSON.parse(getuserData) : null
   const loginUserId = loginUserData.user.id
-
-  useEffect(() => {
-    const userData = async () => {
-      try {
-        const { data } = await supabase.auth.getUser()
-        const userData: UserData | null = {
-          email: data?.user?.email || undefined,
-          id: data?.user?.id || undefined
-        }
-        setUserId(userData?.id ? userData.id : undefined)
-      } catch (error) {
-        console.error('에러가 발생했습니다.', error)
-      }
-    }
-    userData()
-  }, [])
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -70,7 +53,6 @@ function FeedComponent() {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false
   })
-  console.log('likeItems', likeItems)
 
   useEffect(() => {
     const likeItemReviewId = likeItems?.map(item => item.review_id)
@@ -89,7 +71,6 @@ function FeedComponent() {
         if (reviewError) throw new Error()
 
         setReviews(reviewData)
-        console.log('리뷰데이터', reviewData)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -98,7 +79,6 @@ function FeedComponent() {
 
     loadReviewData()
   }, [])
-  console.log(bookmarkList)
 
   const handleLikes = async (item: LikeData) => {
     const newLikes: LikesType = {
@@ -163,7 +143,10 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     onClick={() => handleLikes(item)}
-                    bookmarkList={bookmarkList.includes(item.id)}
+                    islike={bookmarkList.includes(item.id) ? true : false}
+                    fill={
+                      bookmarkList.includes(item.id) ? '#ED8585' : '#ffffff'
+                    }
                   />
                 </CommonDivWrapper>
               </ContentTitleWrapper>
@@ -202,16 +185,14 @@ export const StarIcon = styled.button`
   display: flex;
   padding: 0;
 `
-// const LikeIcon = styled(StarIcon)`
-//   background-image: url(${like});
-//   background-color: ${({ bookmarkList }) =>
-//     bookmarkList ? '#444444' : 'yellow'};
-// `
 
-const LikeIcon = styled(StarIcon)<{ bookmarkList: boolean }>`
+const LikeIcon = styled(StarIcon)<LikeIconProps>`
   background-image: url(${like});
-  background-color: ${({ bookmarkList }) =>
-    bookmarkList ? '#444444' : 'yellow'};
+  background-color: ${({ islike }) => (islike ? '#444444' : 'yellow')};
+  svg path.st0,
+  svg path.st1 {
+    fill: ${({ fill }) => (fill ? fill : '#ffffff')};
+  }
 `
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
