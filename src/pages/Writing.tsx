@@ -12,12 +12,11 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { ClearBtn, Icon, Image, Input } from './SearchPage'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
-import { faImage } from '@fortawesome/free-regular-svg-icons'
-import { deleteProfileImg } from '@/api/profileImgApi'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -89,7 +88,6 @@ function Writing() {
       console.error(error)
     } finally {
       inputRef.current!.value = ''
-      // setIsSearched(false)
       setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }

@@ -161,7 +161,8 @@ export const editReview = async (
         ott,
         rating,
         movie_title,
-        id
+        id,
+        updated_at: new Date().toISOString()
       }
     ])
 
@@ -207,7 +208,8 @@ export const editReviewWithImgUrl = async (
         rating,
         movie_title,
         img_url,
-        id
+        id,
+        updated_at: new Date().toISOString()
       }
     ])
 
