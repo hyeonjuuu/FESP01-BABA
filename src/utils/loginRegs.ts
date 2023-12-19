@@ -7,6 +7,7 @@ export const isEmailValid = (email: string) => {
 
 // 비밀번호는 알파벳 대/소문자, 숫자, 그리고 특수문자 중 하나 이상을 포함한 총 8자 이상의 길이여야 합니다.
 export const isPasswordReg = (pw: string) => {
-  const pwCheck = /^(?=.*[!@#$%^&*()-_+=])[a-zA-Z0-9!@#$%^&*()-_+=]{8,}$/g
+  const pwCheck =
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/g
   return pwCheck.test(String(pw))
 }

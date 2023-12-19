@@ -1,9 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_KEY as string
-)
+import { supabase } from '@/utils/supabaseClient'
 
 interface UserData {
   email: string
@@ -82,7 +77,9 @@ export const userLogin = async (userloginData: UserloginData) => {
 
     if (data) {
       // 사용자의 정보를 로컬스토리지에 저장합니다.
-      localStorage.setItem('userData', JSON.stringify(data))
+      // localStorage.setItem('userData', JSON.stringify(data))
+      const metadata = await getMetaData(userloginData.email) // 메타데이터 가져오기
+      localStorage.setItem('userData', JSON.stringify({ ...data, metadata })) // 로그인 정보와 메타데이터를 함께 저장
       console.log('로그인 성공:', data)
       return
     } else if (error) {
@@ -94,16 +91,24 @@ export const userLogin = async (userloginData: UserloginData) => {
 }
 
 // 현재 로그인한 사용자의 정보 가져오기
-export const getMetaData = async () => {
-  const { data, error } = await supabase.auth.getUser('hori04@gmail.com')
+// export const getMetaData = async () => {
+export const getMetaData = async (email: string) => {
+  // const { data, error } = await supabase.auth.getUser('hori04@gmail.com')
+  const { data, error } = await supabase.auth.getUser(email)
 
   if (data) {
     // 사용자 메타데이터 확인
     const metadata = data.user?.user_metadata
+    console.log('User Metadata:', metadata)
 
     if (metadata) {
-      const { username, nickname } = metadata
-      console.log(`Username: ${username}, Nickname: ${nickname}`)
+      // const { username, nickname } = metadata
+      const { username, nickname, user_email } = metadata
+      console.log(
+        `Username: ${username}, Nickname: ${nickname}, Email: ${user_email}`
+        // `Username: ${username}, Nickname: ${nickname}`
+      )
+      return metadata
     } else {
       console.log('사용자 메타데이터가 없습니다.')
     }
@@ -115,20 +120,25 @@ export const getMetaData = async () => {
   }
 }
 
-// SUPABASE Storage에서 사용자의 이미지를 가져오는 함수
-// export const getImageUrl = async (imageName: string) => {
-//   try {
-//     const { publicURL, error } = await supabase.storage
-//       .from('YOUR_STORAGE_BUCKET')
-//       .getPublicUrl(imageName)
+// 로그인된 사용자의 세션을 확인합니다.
+export const checkSession = async () => {
+  try {
+    const { data: session, error } = await supabase.auth.getSession()
 
-//     if (publicURL) {
-//       console.log('Image URL:', publicURL)
-//       return publicURL
-//     } else {
-//       console.error('Error getting image URL:', error.message)
-//     }
-//   } catch (error) {
-//     console.error('❌ Error:', error)
-//   }
-// }
+    if (error) {
+      console.error('세션 확인 실패:', error.message)
+      return null
+    }
+
+    if (session) {
+      console.log('현재 세션:', session)
+      return session
+    } else {
+      console.log('세션 없음')
+      return null
+    }
+  } catch (error) {
+    console.error('❌ Error:', error)
+    throw error // 더 상세한 오류 처리가 필요할 경우 여기서 처리하세요.
+  }
+}

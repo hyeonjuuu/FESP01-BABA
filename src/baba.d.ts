@@ -80,3 +80,9 @@ interface BookmarkStore {
   setBookmarkList: (itemIds: number[]) => void
   deleteBookmarkList: (itemId: number) => void
 }
+
+interface MovieProps {
+  id: number
+  title: string
+  poster_path: string
+}

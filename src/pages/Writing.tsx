@@ -3,19 +3,20 @@ import styled from 'styled-components'
 import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
+import userInfoInLs from '@/utils/userInfoInLs'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { useEffect, useRef, useState } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { ClearBtn, Icon, Image, Input } from './SearchPage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { useAuthStore } from '@/store/useAuthStore'
-import userInfoInLs from '@/utils/userInfoInLs'
+import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -30,6 +31,7 @@ function Writing() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
+  const [isSearched, setIsSearched] = useState(false) // 검색이 수행되었는지 나타내는 상태
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [imgSrc, setImgSrc]: any = useState(null)
@@ -68,6 +70,7 @@ function Writing() {
 
   const handleSearchBtn = async (e: React.MouseEvent) => {
     e.preventDefault()
+    setIsSearched(true) // 검색 버튼을 클릭하면 검색이 수행되었다고 상태를 갱신
 
     try {
       const searchData = await getSearchMovies(inputRef.current?.value || '')
@@ -85,6 +88,7 @@ function Writing() {
       console.error(error)
     } finally {
       inputRef.current!.value = ''
+      // setIsSearched(false)
       setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
@@ -93,6 +97,7 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
+    setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
 
   //# 이미지 선택
@@ -100,17 +105,15 @@ function Writing() {
     e.preventDefault()
   }
 
-  // 기본 이미지
-  const handleSelectDefaultIimg = () => {
+  const handleSelectDefaultImg = () => {
     setIsSelectImg(true)
   }
 
-  // 사용자 이미지
-  const handleSelectUserIimg = () => {
+  const handleSelectUserImg = () => {
     setIsSelectImg(false)
   }
 
-  // 사용자 이미지 미리보기
+  // 이미지 미리보기
   const handleUpload = (e: any) => {
     const file = e.target.files[0]
 
@@ -130,10 +133,8 @@ function Writing() {
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
       if (prevSelectedOtt.includes(iconName)) {
-        // 이미 선택된 OTT인 경우, 해당 OTT를 배열에서 제거하여 체크를 해제합니다.
         return prevSelectedOtt.filter(ott => ott !== iconName)
       } else {
-        // Select the new OTT
         return [iconName]
       }
     })
@@ -191,7 +192,6 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
-    // const reviewContentInfo = searchList
 
     if (
       !selectMovie ||
@@ -225,11 +225,11 @@ function Writing() {
           imgUrl!
         )
       }
-      alert('리뷰가 등록되었습니다!')
-
+      alert('리뷰가 등록되었습니다!😊')
       naviagte('/main')
     } catch (error) {
       console.error(error)
+      alert('리뷰 등록에 실패했습니다..😭')
     }
   }
 
@@ -254,26 +254,32 @@ function Writing() {
         </SearchBarWrapper>
 
         <ResultWrapper>
-          {searchList.map(result => (
-            <ResultBarContain
-              key={result.id}
-              onClick={() => handleSelectMovie(result)}
-              $darkMode={$darkMode}
-            >
-              <Contain>
-                <Image
-                  src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                  alt={`${result.title} 이미지`}
-                />
-                <Warppaer>
-                  <ResultBar>
-                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
-                    {result.media_type === 'movie' ? result.title : result.name}
-                  </ResultBar>
-                </Warppaer>
-              </Contain>
-            </ResultBarContain>
-          ))}
+          {isSearched && searchList.length === 0 ? (
+            <NoResultsMessage>검색 결과가 없습니다.</NoResultsMessage>
+          ) : (
+            searchList.map(result => (
+              <ResultBarContain
+                key={result.id}
+                onClick={() => handleSelectMovie(result)}
+                $darkMode={$darkMode}
+              >
+                <Contain>
+                  <Image
+                    src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                    alt={`${result.title} 이미지`}
+                  />
+                  <Warppaer>
+                    <ResultBar>
+                      {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                      {result.media_type === 'movie'
+                        ? result.title
+                        : result.name}
+                    </ResultBar>
+                  </Warppaer>
+                </Contain>
+              </ResultBarContain>
+            ))
+          )}
         </ResultWrapper>
 
         <Wrapper>
@@ -324,17 +330,18 @@ function Writing() {
           <ImgSelectBtn
             color={isSelectImg ? '#3797EF' : ''}
             $hasBorder
-            onClick={handleSelectDefaultIimg}
+            onClick={handleSelectDefaultImg}
           >
             기본 이미지
           </ImgSelectBtn>
           <ImgSelectBtn
             color={isSelectImg ? '' : '#3797EF'}
-            onClick={handleSelectUserIimg}
+            onClick={handleSelectUserImg}
           >
             사용자 이미지
           </ImgSelectBtn>
         </BtnWrapper>
+
         <OriginalImage>
           {selectMovie && isSelectImg ? (
             <MoviePoster
@@ -342,24 +349,29 @@ function Writing() {
               alt={`${selectMovie.title || selectMovie.name} 포스터`}
             />
           ) : (
-            selectMovie && (
-              <>
+            <>
+              {imgSrc && selectMovie ? ( // 사용자가 이미지를 업로드한 경우
                 <MoviePoster
                   src={imgSrc}
                   alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
                 />
-                <div>
-                  <label htmlFor="photo">사진</label>
-                  <input
-                    type="file"
-                    accept=".jpg, .jpeg, .png"
-                    name="photo"
-                    id="photo"
-                    onChange={handleUpload}
-                  ></input>
-                </div>
-              </>
-            )
+              ) : (
+                // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
+                <PlzSelectImgDiv>
+                  <FontAwesomeIcon icon={faImage} />
+                </PlzSelectImgDiv>
+              )}
+              <div>
+                <label htmlFor="photo">사진</label>
+                <input
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  name="photo"
+                  id="photo"
+                  onChange={handleUpload}
+                ></input>
+              </div>
+            </>
           )}
         </OriginalImage>
 
@@ -438,6 +450,14 @@ const ResultWrapper = styled.div`
   @media (min-width: 701px) {
     max-width: 400px;
   }
+`
+
+const NoResultsMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
 `
 
 const Contain = styled.div`
@@ -540,6 +560,15 @@ const MoviePoster = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`
+
+const PlzSelectImgDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
 `
 
 const StarContainer = styled.div`

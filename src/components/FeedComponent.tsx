@@ -9,7 +9,10 @@ import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { css } from 'styled-components'
+import { css } from 'styled-components'import userInfoInLs from '@/utils/userInfoInLs'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/useAuthStore'
+
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
   `${import.meta.env.VITE_SUPABASE_KEY}`
@@ -37,9 +40,24 @@ function FeedComponent() {
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
 
-  const getuserData = localStorage.getItem('userData')
-  const loginUserData = getuserData ? JSON.parse(getuserData) : null
-  const loginUserId = loginUserData.user.id
+  const getuserData = userInfoInLs()
+  const loginUserId = getuserData.userId
+
+  useEffect(() => {
+    const userData = async () => {
+      try {
+        const { data } = await supabase.auth.getUser()
+        const userData: UserData | null = {
+          email: data?.user?.email || undefined,
+          id: data?.user?.id || undefined
+        }
+        setUserId(userData?.id ? userData.id : undefined)
+      } catch (error) {
+        console.error('에러가 발생했습니다.', error)
+      }
+    }
+    userData()
+  }, [])
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -80,7 +98,23 @@ function FeedComponent() {
     loadReviewData()
   }, [])
 
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
   const handleLikes = async (item: LikeData) => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      } else {
+        window.history.back()
+      }
+      return // 로그인하지 않았다면 함수 종료
+    }
+
+    // 로그인한 사용자만 아래 로직을 실행
     const newLikes: LikesType = {
       user_id: loginUserId,
       review_id: item.id
