@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
+import { matchLike } from '@/api/getLikesData'
 
 interface ReviewProps {
   created_at: string
@@ -49,6 +50,9 @@ function MyPage() {
     null
   )
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
+
+  const [favoriteReviews, setFavoriteReviews] = useState<number | null>(null)
+
   console.log('reviews: ', reviews)
   console.log('profileImg: ', profileImg)
   console.log('renderProfileImg: ', renderProfileImg)
@@ -73,9 +77,7 @@ function MyPage() {
   //# 리뷰 가져오기
   useEffect(() => {
     const userInfo = userInfoInLs()
-    console.log('userInfo: ', userInfo)
-
-    setUserId(userInfo.userId) // local storage의 id = users의 user_email = revews의 user_id
+    setUserId(userInfo.userId) // users의 user_email = revews의 user_id
     setUserEmail(userInfo.userEmail) // local storage의 email
 
     if (!userId) {
@@ -113,7 +115,17 @@ function MyPage() {
       setMovieImgs(posterPath)
     }
 
+    // const fetchFavoriteReviews = async (userId: string) => {
+    //   const favorite = await favoriteReviews: ReviewProps[] | null(userId)
+    // }
+    const fetchFavoriteReviews = async () => {
+      const favorite = await matchLike(userId)
+      setFavoriteReviews(favorite?.length || 0)
+      console.log('like: ', favorite)
+    }
+
     fetchUserReviews()
+    fetchFavoriteReviews()
   }, [userId])
 
   //# 프로필 이미지
@@ -233,13 +245,13 @@ function MyPage() {
 
           <Wrapper onClick={handleShowLikes}>
             <StyledP>좋아요</StyledP>
-            <span>5</span>
+            <span>{favoriteReviews}</span>
           </Wrapper>
         </MarginContainer>
         <PostsContain>
           {isShowReviews ? (
             reviews && reviews.length > 0 ? (
-              // Case 1: isShowReviews가 true이고 review.length > 0 일 때
+              // 1. 리뷰 있을 때
               reviews.map((review, index) => (
                 <Post key={review.id}>
                   <HoverLink
@@ -272,7 +284,7 @@ function MyPage() {
                 </Post>
               ))
             ) : (
-              // Case 2: isShowReviews가 true이고 review.length = 0 일 때
+              // 2. 리뷰 없을 때
               <PictureWrapper>
                 <Picture>
                   <FontAwesomeIcon icon={faPenToSquare} />
@@ -282,13 +294,42 @@ function MyPage() {
                 <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
               </PictureWrapper>
             )
-          ) : reviews && reviews.length > 0 ? (
-            // Case 3: isShowReviews가 false이고 review.length > 0 일 때
+          ) : favoriteReviews && favoriteReviews > 0 ? (
+            // 3. 좋아요 있을 때
             <PictureWrapper>
               <div>좋아요 있을 때</div>
+              {/* <Post key={review.id}>
+                  <HoverLink
+                    to={`/edit/${review.id}`}
+                    state={{
+                      review_id: review.id,
+                      user_id: userId,
+                      movie_id: review.movie_id
+                    }}
+                  >
+                    <PostImg
+                      src={
+                        review.img_url
+                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
+                          : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                      }
+                      alt={`${review.movie_title} 포스터`}
+                    />
+                    <HoverDiv>
+                      <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
+                      <RatingSpan>
+                        <FontAwesomeIcon
+                          icon={faStar}
+                          style={{ color: '#FFC61A' }}
+                        />{' '}
+                        {review.rating}
+                      </RatingSpan>
+                    </HoverDiv>
+                  </HoverLink>
+                </Post> */}
             </PictureWrapper>
           ) : (
-            // Case 4: isShowReviews가 false이고 review.length = 0 일 때
+            // 4. 좋아요 없을 때
             <PictureWrapper>
               <Picture>
                 <FontAwesomeIcon icon={faHeart} />
