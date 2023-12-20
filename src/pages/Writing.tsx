@@ -257,17 +257,6 @@ function Writing() {
           nickname,
           selectMovie.genre_ids
         )
-        // } else if (selectMovie && imgSrc) {
-        //   const imgUrl = await uploadImage(image!)
-        //   await addReviewWithImgUrl(
-        //     selectMovie.id,
-        //     userEmail!,
-        //     text,
-        //     selectedOtt,
-        //     rating,
-        //     selectMovie.title || selectMovie.name || 'Unknown Title',
-        //     imgUrl!
-        //   )
       } else if (selectMovie && isSelectImg === true) {
         const filePath = await uploadFile(selectMovie.poster_path)
 
@@ -278,29 +267,8 @@ function Writing() {
           selectedOtt,
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
-          filePath
-        )
-        // } else if (selectMovie && imgSrc) {
-        //   const imgUrl = await uploadImage(image!)
-        //   await addReviewWithImgUrl(
-        //     selectMovie.id,
-        //     userEmail!,
-        //     text,
-        //     selectedOtt,
-        //     rating,
-        //     selectMovie.title || selectMovie.name || 'Unknown Title',
-        //     imgUrl!
-        //   )
-      } else if (selectMovie && isSelectImg === true) {
-        const filePath = await uploadFile(selectMovie.poster_path)
-
-        await addReview(
-          selectMovie.id,
-          userEmail!,
-          text,
-          selectedOtt,
-          rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title',
+          nickname,
+          selectMovie.genre_ids,
           filePath
         )
       }
