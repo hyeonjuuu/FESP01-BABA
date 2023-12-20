@@ -115,7 +115,7 @@ function FeedComponent() {
     }
   }, [likeItems])
 
-  const handleLikes = async (item: LikeData) => {
+  const handleLikes = async (item: LikeData, itemId: number) => {
     if (!isAuthenticated) {
       const confirmed = window.confirm(
         '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
@@ -127,47 +127,38 @@ function FeedComponent() {
       }
       return
     }
-
-    const newLikes: LikesType = {
-      user_id: loginUserId,
-      review_id: item.id
-    }
-    setReviewId(item.id)
-
-    const updatedLikesReview = {
-      ...likesReview,
-      [item.id]: !(likesReview[item.id] ?? false)
-    }
-
-    setLikesReview(updatedLikesReview)
-
-    const hasReviewId = likeItems?.some(
-      likeItem => likeItem.review_id === item.id
-    )
-    try {
-      if (likesReview[item.id]) {
-        await deleteLikes(item.id)
-        setLikesReview(prevLikesReview => ({
-          ...prevLikesReview,
-          [item.id]: false
-        }))
-      } else {
-        await addLike(newLikes, item.id)
-        setLikesReview(prevLikesReview => ({
-          ...prevLikesReview,
-          [item.id]: true
-        }))
+    if (itemId) {
+      const newLikes: LikesType = {
+        user_id: loginUserId,
+        review_id: itemId
       }
-      queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
+      setReviewId(itemId)
 
-      setLikesReview(prev => ({ ...prev, [item.id]: !hasReviewId }))
-    } catch (error) {
-      setLikesReview(prev => ({ ...prev, [item.id]: !prev[item.id] }))
-      console.error('북마크 에러 발생:', error)
+      const updatedLikesReview = {
+        ...likesReview,
+        [itemId]: !(likesReview[itemId] ?? false)
+      }
+
+      setLikesReview(updatedLikesReview)
+      const hasReviewId = likeItems?.some(
+        likeItem => likeItem.review_id === itemId
+      )
+
+      try {
+        if (hasReviewId) {
+          await deleteLikes(itemId)
+        } else {
+          await addLike(newLikes, itemId)
+        }
+        queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
+
+        setLikesReview(prev => ({ ...prev, [itemId]: !hasReviewId }))
+      } catch (error) {
+        setLikesReview(prev => ({ ...prev, [itemId]: !prev[itemId] }))
+        console.error('북마크 에러 발생:', error)
+      }
     }
   }
-  console.log(reviews)
-  console.log('북마크', bookmarkList)
 
   return (
     <FeedSection>
@@ -184,13 +175,19 @@ function FeedComponent() {
                   }
                   alt=""
                 />
-                <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
+                <TextColor $darkMode={$darkMode}>{item.nickname}</TextColor>
               </CommonDivWrapper>
               <FeedImage
                 src={
-                  // item.img_url
-                  //   ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${item.img_url}`
-                  //   : // : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                  item.img_url
+                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${item.img_url}`
+                    : undefined
+                }
+                alt=""
+              />
+
+              <FeedImage
+                src={
                   item.img_url &&
                   `https://image.tmdb.org/t/p/original/${item.img_url.replace(
                     'public/',
@@ -201,12 +198,12 @@ function FeedComponent() {
               />
 
               <ContentTitleWrapper>
-                <ContentTitle>{item.movie_title}</ContentTitle>
+                <ContentTitle>{item.movie_title || item.name}</ContentTitle>
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
                   <LikeIcon
-                    onClick={() => handleLikes(item)}
+                    onClick={() => handleLikes(item, item.id)}
                     islike={bookmarkList.includes(item.id) ? 'true' : 'false'}
                   />
                 </CommonDivWrapper>
