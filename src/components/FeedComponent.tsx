@@ -4,7 +4,7 @@ import like from '@/assets/HeartIcon.svg'
 import likefill from '@/assets/HeartIconFill.svg'
 import useThemeStore from '../store/useThemeStore'
 import { FontProps } from './CategoryComponent'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -17,6 +17,7 @@ import userImage from '@/assets/userIcon.png'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
 import { supabase } from '@/utils/supabaseClient'
+import SideBar from '@/layout/SideBar'
 
 interface PaddingProps {
   $padding?: string
@@ -32,22 +33,23 @@ type LikeIconProps = {
 
 /* -------------------------------------------------------------------------- */
 
-function FeedComponent() {
+function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  const [reviews, setReviews] = useState<ReviewData>([])
+  // const [reviews, setReviews] = useState<ReviewData>([])
   const [reviewId, setReviewId] = useState<number>()
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList } = useBookmarkStore()
   const { setProfileImg } = useUserStore()
   const [renderProfileImg] = useState<string | null>(null)
-  const { movieGenresState } = useGenresStore()
+  // const { movieGenresState } = useGenresStore()
+  const feedContentSectionRef = useRef<HTMLDivElement>(null)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
-  const movieGenresStateId = movieGenresState[0]?.id
-  console.log(movieGenresState)
+  // const movieGenresStateId = movieGenresState[0]?.id
+  // console.log('genreid', movieGenresState)
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -61,39 +63,6 @@ function FeedComponent() {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false
   })
-
-  useEffect(() => {
-    const loadReviewData = async () => {
-      try {
-        let reviewData: ReviewData[] = []
-        if (movieGenresStateId) {
-          const genreReviewData = await getGenreReviewData(movieGenresStateId)
-          // if (genreReviewError || genreReviewData.length === 0)
-          //   throw new Error('해당 카테고리의 리뷰가 없습니다.')
-          if (!genreReviewData) {
-            throw new Error('해당 카테고리의 리뷰가 없습니다.')
-          }
-
-          reviewData = genreReviewData
-        } else if ([] || movieGenresStateId === 0) {
-          const getAllReviewData = await getReviewData()
-          if (!getAllReviewData) {
-            throw new Error('리뷰 데이터를 불러올 수 없습니다.')
-          }
-
-          reviewData = getAllReviewData
-        }
-        // setReviews(reviewData as ReviewData[]);
-        setReviews(reviewData)
-        console.log('sort', reviews)
-      } catch (err) {
-        console.error('데이터 불러오기 실패')
-        return null
-      }
-    }
-
-    loadReviewData()
-  }, [movieGenresState])
 
   const fetchAndRenderProfileImg = async () => {
     if (loginUserId) {
@@ -122,7 +91,7 @@ function FeedComponent() {
     }
   }, [likeItems])
 
-  const handleLikes = async (item: LikeData, itemId: number) => {
+  const handleLikes = async (item: ReviewData, itemId: number) => {
     if (!isAuthenticated) {
       const confirmed = window.confirm(
         '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
@@ -167,7 +136,7 @@ function FeedComponent() {
 
   return (
     <FeedSection>
-      <FeedContent>
+      <FeedContent ref={feedContentSectionRef}>
         <ContentWrapper>
           {reviews?.map(item => (
             <FeedContentSection key={item.id}>
@@ -231,6 +200,7 @@ const FeedSection = styled.section`
   display: flex;
   flex-flow: column;
   margin-top: 26px;
+  background-color: red;
 `
 
 export const StarIcon = styled.button`

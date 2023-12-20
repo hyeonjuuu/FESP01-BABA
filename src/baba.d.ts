@@ -35,10 +35,52 @@ interface MovieGenres {
   }[]
 }
 
+// interface ReviewData {
+//   map(
+//     arg0: (item: any) => import('react/jsx-runtime').JSX.Element
+//   ): React.ReactNode
+//   [
+//     movie_id: string,
+//     user_id: string,
+//     text: string,
+//     created_at: string,
+//     updated_at: string,
+//     id: number,
+//     ott: json,
+//     image_id: number,
+//     rating: number
+//   ]
+// }
 interface ReviewData {
+  movie_id: string
+  user_id: string
+  text: string
+  created_at: string
+  updated_at: string
+  id: number
+  ott: any
+  image_id: number
+  rating: number
+  img_url?: string
+  movie_title?: string
+  nickname: string
+  name: string
   map(
     arg0: (item: any) => import('react/jsx-runtime').JSX.Element
   ): React.ReactNode
+  [
+    movie_id: string,
+    user_id: string,
+    text: string,
+    created_at: string,
+    updated_at: string,
+    id: number,
+    ott: json,
+    image_id: number,
+    rating: number
+  ]
+}
+interface ReviewDataType {
   [
     movie_id: string,
     user_id: string,
@@ -61,7 +103,8 @@ interface LikeData {
   created_at: string
   id: number
   img_url: string
-  likes: string[]
+  // likes: string[]
+  likes: number
   movie_id: string
   movie_title: string
   ott: string[]
