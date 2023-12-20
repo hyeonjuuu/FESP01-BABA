@@ -12,6 +12,9 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
+import { getProfileImgUrl } from '@/api/profileImgApi'
+import { useUserStore } from '@/store/useUserStore'
+import userImage from '@/assets/userIcon.png'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -39,10 +42,13 @@ function FeedComponent() {
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
+  const { setProfileImg } = useUserStore()
+  const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
-  console.log(loginUserId)
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -58,22 +64,21 @@ function FeedComponent() {
   })
 
   useEffect(() => {
-    const likeItemReviewId = likeItems?.map(item => item.review_id)
-
-    if (likeItemReviewId) {
-      setBookmarkList(likeItemReviewId)
-    }
-  }, [likeItems])
-
-  useEffect(() => {
     const loadReviewData = async () => {
       try {
         const { data: reviewData, error: reviewError } = await supabase
           .from('reviews')
           .select()
+
         if (reviewError) throw new Error()
 
-        setReviews(reviewData)
+        const sortedReviewData = reviewData.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+
+        setReviews(sortedReviewData)
+        console.log(sortedReviewData)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -83,8 +88,32 @@ function FeedComponent() {
     loadReviewData()
   }, [])
 
-  const navigate = useNavigate()
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const fetchAndRenderProfileImg = async () => {
+    if (loginUserId) {
+      try {
+        const imgSrc = await getProfileImgUrl(loginUserId)
+        if (imgSrc) {
+          setProfileImg(imgSrc)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    console.log('renderProfileImg updated:', renderProfileImg)
+
+    fetchAndRenderProfileImg()
+  }, [loginUserId, renderProfileImg])
+
+  useEffect(() => {
+    const likeItemReviewId = likeItems?.map(item => item.review_id)
+
+    if (likeItemReviewId) {
+      setBookmarkList(likeItemReviewId)
+    }
+  }, [likeItems])
 
   const handleLikes = async (item: LikeData) => {
     if (!isAuthenticated) {
@@ -116,13 +145,18 @@ function FeedComponent() {
       likeItem => likeItem.review_id === item.id
     )
     try {
-      if (hasReviewId) {
+      if (likesReview[item.id]) {
         await deleteLikes(item.id)
-        console.log('delete')
+        setLikesReview(prevLikesReview => ({
+          ...prevLikesReview,
+          [item.id]: false
+        }))
       } else {
         await addLike(newLikes, item.id)
-
-        console.log('add')
+        setLikesReview(prevLikesReview => ({
+          ...prevLikesReview,
+          [item.id]: true
+        }))
       }
       queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
 
@@ -132,6 +166,8 @@ function FeedComponent() {
       console.error('북마크 에러 발생:', error)
     }
   }
+  console.log(reviews)
+  console.log('북마크', bookmarkList)
 
   return (
     <FeedSection>
@@ -140,11 +176,21 @@ function FeedComponent() {
           {reviews?.map(item => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
-                <UserImage src="" alt="" />
+                <UserImage
+                  src={
+                    renderProfileImg
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg}`
+                      : userImage
+                  }
+                  alt=""
+                />
                 <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
               </CommonDivWrapper>
               <FeedImage
                 src={
+                  // item.img_url
+                  //   ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${item.img_url}`
+                  //   : // : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
                   item.img_url &&
                   `https://image.tmdb.org/t/p/original/${item.img_url.replace(
                     'public/',
