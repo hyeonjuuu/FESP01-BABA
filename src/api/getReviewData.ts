@@ -48,12 +48,26 @@ export const getReviewDataWithUserInfo = async () => {
 export const getReviewDataForEdit = async (
   reviewId: number
 ): Promise<any | null> => {
-  console.log('reviewId: ', reviewId)
-
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
     .eq('id', reviewId)
+
+  if (data) {
+    console.log('data: ', data)
+    return data
+  } else {
+    console.error(error)
+    return null
+  }
+}
+
+// users 테이블의 email로 닉네임 가져오기
+export const getNickname = async (reviewId: string): Promise<any | null> => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('user_email', reviewId)
 
   if (data) {
     console.log('data: ', data)

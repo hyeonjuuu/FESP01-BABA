@@ -118,10 +118,11 @@ function FeedComponent() {
       )
       if (confirmed) {
         navigate('/login')
-      } else {
-        window.history.back()
       }
-      return // 로그인하지 않았다면 함수 종료
+      // else {
+      //   window.history.back()
+      // }
+      // return // 로그인하지 않았다면 함수 종료
     }
 
     // 로그인한 사용자만 아래 로직을 실행

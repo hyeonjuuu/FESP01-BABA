@@ -3,11 +3,9 @@ import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from '@/components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@/store/useAuthStore'
 
 function Main() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [, setWindowWidth] = useState(window.innerWidth)
 
   useEffect(() => {
     const handleResize = () => {
