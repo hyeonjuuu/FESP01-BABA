@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { ClearBtn, Icon, Image, Input } from './SearchPage'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
@@ -21,7 +22,7 @@ import {
   uploadFile,
   uploadImage
 } from '@/api/reviewApi'
-import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { getNickname, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -34,6 +35,7 @@ function Writing() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [nickname, setNickname] = useState<string>('')
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [isSearched, setIsSearched] = useState(false) // 검색이 수행되었는지 나타내는 상태
@@ -65,6 +67,14 @@ function Writing() {
   useEffect(() => {
     const userIdInLs = userInfoInLs()
     setUserEmail(userIdInLs.userId) // local storage의 id = user Table의 email
+
+    const fetchNickname = async () => {
+      const nickname = await getNickname(userIdInLs.userId!)
+      console.log('닉네임: ', nickname[0].username)
+
+      setNickname(nickname[0].username)
+    }
+    fetchNickname()
   }, [])
 
   //# 검색
@@ -85,7 +95,8 @@ function Writing() {
           media_type: result.media_type,
           title: result.title,
           name: result.name,
-          poster_path: result.poster_path
+          poster_path: result.poster_path,
+          genre_ids: result?.genre_ids
         })
       )
       setSearchList(searchResults)
@@ -93,7 +104,6 @@ function Writing() {
       console.error(error)
     } finally {
       inputRef.current!.value = ''
-      // setIsSearched(false)
       setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
@@ -115,6 +125,10 @@ function Writing() {
   }
 
   const handleSelectUserImg = () => {
+    if (!selectMovie) {
+      alert('제목을 먼저 선택해주세요')
+      return
+    }
     setIsSelectImg(false)
   }
 
@@ -132,6 +146,14 @@ function Writing() {
         resolve()
       }
     })
+  }
+
+  const handleDeleteImg = () => {
+    const confirmed = window.confirm('이미지를 삭제하시겠습니까?')
+    if (confirmed) {
+      setImage(null)
+      setImgSrc(null)
+    }
   }
 
   //# OTT 선택
@@ -231,7 +253,32 @@ function Writing() {
           selectedOtt,
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
-          imgUrl!
+          imgUrl!,
+          nickname,
+          selectMovie.genre_ids
+        )
+        // } else if (selectMovie && imgSrc) {
+        //   const imgUrl = await uploadImage(image!)
+        //   await addReviewWithImgUrl(
+        //     selectMovie.id,
+        //     userEmail!,
+        //     text,
+        //     selectedOtt,
+        //     rating,
+        //     selectMovie.title || selectMovie.name || 'Unknown Title',
+        //     imgUrl!
+        //   )
+      } else if (selectMovie && isSelectImg === true) {
+        const filePath = await uploadFile(selectMovie.poster_path)
+
+        await addReview(
+          selectMovie.id,
+          userEmail!,
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          filePath
         )
         // } else if (selectMovie && imgSrc) {
         //   const imgUrl = await uploadImage(image!)
@@ -386,6 +433,7 @@ function Writing() {
                 <MoviePoster
                   src={imgSrc}
                   alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
+                  onClick={handleDeleteImg}
                 />
               ) : (
                 // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
@@ -393,16 +441,18 @@ function Writing() {
                   <FontAwesomeIcon icon={faImage} />
                 </PlzSelectImgDiv>
               )}
-              <div>
-                <label htmlFor="photo">사진</label>
-                <input
-                  type="file"
-                  accept=".jpg, .jpeg, .png"
-                  name="photo"
-                  id="photo"
-                  onChange={handleUpload}
-                ></input>
-              </div>
+              {!isSelectImg && (
+                <div>
+                  <label htmlFor="photo">사진</label>
+                  <input
+                    type="file"
+                    accept=".jpg, .jpeg, .png"
+                    name="photo"
+                    id="photo"
+                    onChange={handleUpload}
+                  />
+                </div>
+              )}
             </>
           )}
         </OriginalImage>
@@ -594,7 +644,7 @@ const MoviePoster = styled.img`
   object-fit: cover;
 `
 
-const PlzSelectImgDiv = styled.div`
+export const PlzSelectImgDiv = styled.div`
   width: 100%;
   height: 100%;
   display: flex;

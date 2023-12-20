@@ -26,3 +26,13 @@ export const addLike = async (likeItem: LikesType, itemId: number) => {
 export const deleteLikes = async (itemId?: number) => {
   await supabase.from('likes').delete().match({ review_id: itemId })
 }
+
+// 즐겨찾기 리뷰 가져오기
+export const favoriteReviews = async (userId: string) => {
+  const { data } = await supabase
+    .from('reviews')
+    .select('likes_id')
+    .match({ likes_id: userId })
+
+  return data
+}

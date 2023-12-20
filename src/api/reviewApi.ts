@@ -13,6 +13,8 @@ export const addReview = async (
   ott: string[],
   rating: number,
   movie_title: string,
+  nickname: string,
+  genre_ids?: number[],
   img_url?: string | null
 ) => {
   try {
@@ -24,6 +26,8 @@ export const addReview = async (
         ott,
         rating,
         movie_title,
+        nickname,
+        genre_ids,
         img_url
       }
     ])
@@ -71,7 +75,9 @@ export const addReviewWithImgUrl = async (
   ott: string[],
   rating: number,
   movie_title: string,
-  img_url: string
+  img_url: string,
+  nickname: string,
+  genre_ids?: number[]
 ) => {
   try {
     const oldImgUrl = await getMovieImgUrl(user_id)
@@ -91,7 +97,9 @@ export const addReviewWithImgUrl = async (
         ott,
         rating,
         movie_title,
-        img_url
+        img_url,
+        nickname,
+        genre_ids
       }
     ])
 
@@ -163,7 +171,8 @@ export const editReview = async (
         ott,
         rating,
         movie_title,
-        id
+        id,
+        updated_at: new Date().toISOString()
       }
     ])
 
@@ -187,7 +196,7 @@ export const editReviewWithImgUrl = async (
   ott: string[],
   rating: number,
   movie_title: string,
-  img_url: string,
+  img_url: string | null,
   id: Number
 ) => {
   try {
@@ -209,7 +218,8 @@ export const editReviewWithImgUrl = async (
         rating,
         movie_title,
         img_url,
-        id
+        id,
+        updated_at: new Date().toISOString()
       }
     ])
 
@@ -226,7 +236,8 @@ export const editReviewWithImgUrl = async (
 }
 
 //# 리뷰 삭제
-const getMovieImgUrl = async (id: string): Promise<string | null> => {
+// 스토리지에서 이미지 가져오기
+export const getMovieImgUrl = async (id: string): Promise<string | null> => {
   try {
     const { data, error } = await supabaseAdmin
       .from('reviews')

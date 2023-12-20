@@ -122,8 +122,6 @@ function FeedComponent() {
       )
       if (confirmed) {
         navigate('/login')
-      } else {
-        window.history.back()
       }
       return
     }

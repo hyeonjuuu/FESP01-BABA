@@ -11,10 +11,23 @@ import {
   deleteReview,
   editReview,
   editReviewWithImgUrl,
+  getMovieImgUrl,
   uploadImage
 } from '@/api/reviewApi'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { PlzSelectImgDiv } from './Writing'
+import { supabase } from '@/utils/supabaseClient'
+import useThemeStore from '@/store/useThemeStore'
+import convertDate from '@/utils/convertDate'
+
+interface DateWrapperProps {
+  $darkMode: boolean
+}
 
 function EditReview() {
+  const { $darkMode } = useThemeStore()
+
   const naviagte = useNavigate()
   const location = useLocation()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -23,21 +36,25 @@ function EditReview() {
   const reviewId = location.state.review_id
   const userId = location.state.user_id
 
+  const [addDate, setAddDate] = useState<string>('')
+  const [updateDate, setUpdateDate] = useState<string>('')
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [title, setTitle] = useState<string | null>(null)
   const [defaultImg, setDefaultImg] = useState<string | null>(null)
-  const [userImg, setUserImg] = useState<string | null>(null)
+  const [userImg, setUserImg] = useState<string | null>(null) // 리뷰의 현재 이미지 URL
   const [isSelectImg, setIsSelectImg] = useState<boolean>(false) // false가 기본 이미지
-  const [image, setImage] = useState<File | null>(null)
-  const [imgSrc, setImgSrc]: any = useState(null)
+  const [image, setImage] = useState<File | null>(null) // 사용자가 새로 선택한 이미지 파일
+  const [imgSrc, setImgSrc]: any = useState(null) // 새로 선택한 이미지의 미리보기 URL을 저장
+  const [isImageDeleted, setImageDeleted] = useState(false) // 이미지가 삭제되었음을 나타냄
   const [rating, setRating] = useState<number>(0)
   const [text, setText] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchReviewdata = async () => {
       const reviewInfo = await getReviewDataForEdit(reviewId)
-      console.log('reviewInfo: ', reviewInfo)
 
+      const addDate = reviewInfo[0]?.created_at
+      const updateDate = reviewInfo[0]?.updated_at
       const ott = reviewInfo[0]?.ott
       const title = reviewInfo[0]?.movie_title
       const img = reviewInfo[0]?.img_url || null
@@ -51,6 +68,10 @@ function EditReview() {
         .filter((movie: MovieProps) => movie.id.toString() === movieId)
         .map((movie: MovieProps) => movie.poster_path)
 
+      setAddDate(convertDate(addDate))
+      if (updateDate) {
+        setUpdateDate(convertDate(updateDate))
+      }
       setSelectedOtt(ott)
       setTitle(title)
       setDefaultImg(posterPath)
@@ -80,7 +101,7 @@ function EditReview() {
   const handleUpload = (e: any) => {
     const file = e.target.files[0]
 
-    setImage(file) // api로 보내려고...
+    setImage(file)
     const reader = new FileReader()
     reader.readAsDataURL(file)
 
@@ -90,6 +111,27 @@ function EditReview() {
         resolve()
       }
     })
+  }
+
+  const handleDeleteImg = async () => {
+    const confirmed = window.confirm('이미지를 삭제하시겠습니까?')
+
+    if (confirmed) {
+      const oldImgUrl = await getMovieImgUrl(userId)
+
+      if (oldImgUrl) {
+        const oldImgName = oldImgUrl.split('/').pop()
+        await supabase.storage
+          .from('movieImage')
+          .remove([`public/${oldImgName}`])
+        console.log('스토리지에서 제거 후 url: ', oldImgUrl)
+      }
+
+      setUserImg(null)
+      setImgSrc(null)
+      setImage(null)
+      setImageDeleted(true)
+    }
   }
 
   //# OTT 선택
@@ -149,6 +191,7 @@ function EditReview() {
   //# 리뷰 수정
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    // e && e.preventDefault()
 
     const ottValue = selectedOtt
     const textValue = text
@@ -159,7 +202,8 @@ function EditReview() {
     }
 
     try {
-      if (!imgSrc) {
+      if (!imgSrc && !isImageDeleted) {
+        // 이미지가 삭제되지 않았고, 새 이미지가 선택되지 않은 경우
         await editReview(
           movieId,
           userId,
@@ -170,7 +214,9 @@ function EditReview() {
           reviewId
         )
       } else if (imgSrc) {
+        // 새 이미지가 선택된 경우
         const imgUrl = await uploadImage(image!)
+
         await editReviewWithImgUrl(
           movieId,
           userId,
@@ -178,10 +224,23 @@ function EditReview() {
           selectedOtt,
           rating,
           title!,
-          imgUrl!,
+          imgUrl,
+          reviewId
+        )
+      } else if (isImageDeleted) {
+        // 이미지가 삭제된 경우
+        await editReviewWithImgUrl(
+          movieId,
+          userId,
+          text!,
+          selectedOtt,
+          rating,
+          title!,
+          null,
           reviewId
         )
       }
+
       alert('리뷰가 수정되었습니다!😊')
       naviagte('/main')
     } catch (error) {
@@ -250,6 +309,10 @@ function EditReview() {
         </Wrapper>
 
         <TitleDiv>{title}</TitleDiv>
+        <DateWrapper $darkMode={$darkMode}>
+          <AddDateDiv>등록: {addDate}</AddDateDiv>
+          {updateDate && <EditDateDiv>수정: {updateDate}</EditDateDiv>}
+        </DateWrapper>
 
         <BtnWrapper onClick={handleSelectImg}>
           <ImgSelectBtn
@@ -266,16 +329,25 @@ function EditReview() {
             사용자 이미지
           </ImgSelectBtn>
         </BtnWrapper>
+
         <OriginalImage>
           {isSelectImg ? (
             <>
-              <MoviePoster
-                src={
-                  imgSrc ||
-                  `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${userImg}`
-                }
-                alt={`${title} 관련 이미지`}
-              />
+              {imgSrc || userImg ? ( // 사용자가 이미지를 업로드한 경우
+                <MoviePoster
+                  src={
+                    imgSrc ||
+                    `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${userImg}`
+                  }
+                  alt={`${title} 관련 이미지`}
+                  onClick={handleDeleteImg}
+                />
+              ) : (
+                // 사용자가 이미지를 업로드하지 않은 경우
+                <PlzSelectImgDiv>
+                  <FontAwesomeIcon icon={faImage} />
+                </PlzSelectImgDiv>
+              )}
               <div>
                 <label htmlFor="photo">사진</label>
                 <input
@@ -340,6 +412,14 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
 `
 
+const DateWrapper = styled.div<DateWrapperProps>`
+  width: 390px;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777777')};
+`
+
+const AddDateDiv = styled.div``
+
+const EditDateDiv = styled.div``
 const OttWrapper = styled.div`
   display: flex;
   align-items: center;
