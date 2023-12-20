@@ -209,6 +209,8 @@ function Writing() {
     500
   )
 
+  console.log(selectMovie)
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = '100px'
@@ -260,6 +262,20 @@ function Writing() {
           imgUrl!,
           nickname,
           selectMovie.genre_ids
+        )
+      } else if (selectMovie && isSelectImg === true) {
+        const filePath = await uploadFile(selectMovie.poster_path)
+
+        await addReview(
+          selectMovie.id,
+          userEmail!,
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          nickname,
+          selectMovie.genre_ids,
+          filePath
         )
       }
       alert('리뷰가 등록되었습니다!😊')

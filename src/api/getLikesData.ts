@@ -8,18 +8,9 @@ const supabase = createClient(
 export const fetchAllLikes = async () => {
   const { data } = await supabase.from('likes').select('*')
   return data
-  // console.log(data)
 }
 
-// export const matchLike = async (reviewId: number, userId: string) => {
-//   const { data } = await supabase
-//     .from('likes')
-//     .select()
-//     .match({ review_id: reviewId, user_id: userId })
-
-//   return data
-// }
-export const matchLike = async (userId: string) => {
+export const matchLike = async (userId: string | null) => {
   const { data } = await supabase
     .from('likes')
     .select('review_id')
@@ -28,7 +19,7 @@ export const matchLike = async (userId: string) => {
   return data
 }
 
-export const addLike = async (likeItem: LikesType) => {
+export const addLike = async (likeItem: LikesType, itemId: number) => {
   await supabase.from('likes').insert(likeItem).select()
 }
 
