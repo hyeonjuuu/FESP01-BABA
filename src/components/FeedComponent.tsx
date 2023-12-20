@@ -5,9 +5,14 @@ import likefill from '@/assets/HeartIconFill.svg'
 import useThemeStore from '../store/useThemeStore'
 import { FontProps } from './CategoryComponent'
 import { createClient } from '@supabase/supabase-js'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
+import {
+  addFavorite,
+  addLike,
+  deleteLikes,
+  matchLike
+} from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { useNavigate } from 'react-router-dom'
@@ -30,6 +35,7 @@ interface TextColorProps {
 
 type LikeIconProps = {
   islike?: string
+  disabled?: boolean
 }
 
 /* -------------------------------------------------------------------------- */
@@ -37,8 +43,10 @@ type LikeIconProps = {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewsProps[]>([])
+  const [reviewsId, setReviewsId] = useState<string[]>([])
   const [reviewId, setReviewId] = useState<number>()
   const [usersId, setUsersId] = useState<string[]>([])
+  const [isDisabledLikebtn, setIsDisabledLikebtn] = useState<boolean>(false) // true는 본인
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
@@ -53,6 +61,8 @@ function FeedComponent() {
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
+  console.log('loginUserId: ', loginUserId)
+
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
@@ -83,6 +93,9 @@ function FeedComponent() {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setReviews(sortedReviewData)
+        const reviewsId = sortedReviewData.map(item => item.user_id)
+        setReviewsId(reviewsId)
+        console.log('#reviewsId: ', reviewsId)
 
         const usersId = sortedReviewData.map(data => data.user_id)
         setUsersId(usersId)
@@ -116,15 +129,62 @@ function FeedComponent() {
     fetchAndRenderProfileImg()
   }, [loginUserId, usersId])
 
-  useEffect(() => {
-    const likeItemReviewId = likeItems?.map(item => item.review_id)
+  // useEffect(() => {
+  //   const likeItemReviewId = likeItems?.map(item => item.review_id)
 
-    if (likeItemReviewId) {
-      setBookmarkList(likeItemReviewId)
-    }
-  }, [likeItems])
+  //   if (likeItemReviewId) {
+  //     setBookmarkList(likeItemReviewId)
+  //   }
+  // }, [likeItems])
 
-  const handleLikes = async (item: LikeData, itemId: number) => {
+  // const handleLikes = async (item: LikeData, itemId: number) => {
+  //   if (!isAuthenticated) {
+  //     const confirmed = window.confirm(
+  //       '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+  //     )
+  //     if (confirmed) {
+  //       navigate('/login')
+  //     }
+  //     return
+  //   }
+  //   if (itemId) {
+  //     const newLikes: LikesType = {
+  //       user_id: loginUserId,
+  //       review_id: itemId
+  //     }
+  //     setReviewId(itemId)
+
+  //     const updatedLikesReview = {
+  //       ...likesReview,
+  //       [itemId]: !(likesReview[itemId] ?? false)
+  //     }
+
+  //     setLikesReview(updatedLikesReview)
+  //     const hasReviewId = likeItems?.some(
+  //       likeItem => likeItem.review_id === itemId
+  //     )
+
+  //     try {
+  //       if (hasReviewId) {
+  //         await deleteLikes(itemId)
+  //       } else {
+  //         await addLike(newLikes, itemId)
+  //       }
+  //       queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
+
+  //       setLikesReview(prev => ({ ...prev, [itemId]: !hasReviewId }))
+  //     } catch (error) {
+  //       setLikesReview(prev => ({ ...prev, [itemId]: !prev[itemId] }))
+  //       console.error('북마크 에러 발생:', error)
+  //     }
+  //   }
+  // }
+
+  const handleLikes = async (
+    event: React.MouseEvent,
+    item: ReviewsProps,
+    loginUserId: string
+  ) => {
     if (!isAuthenticated) {
       const confirmed = window.confirm(
         '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
@@ -134,37 +194,42 @@ function FeedComponent() {
       }
       return
     }
-    if (itemId) {
-      const newLikes: LikesType = {
-        user_id: loginUserId,
-        review_id: itemId
-      }
-      setReviewId(itemId)
 
-      const updatedLikesReview = {
-        ...likesReview,
-        [itemId]: !(likesReview[itemId] ?? false)
-      }
+    const movieId = item.movie_id
+    const userId = item.user_id
+    const text = item.text
+    const ott = item.ott
+    const rating = item.rating
+    const title = item.movie_title
+    const id = item.id
+    console.log('item: ', item)
 
-      setLikesReview(updatedLikesReview)
-      const hasReviewId = likeItems?.some(
-        likeItem => likeItem.review_id === itemId
-      )
+    // const addLikes = async (reviewId: string) => {
+    //   // handleLikes 내용...
+    // }
 
-      try {
-        if (hasReviewId) {
-          await deleteLikes(itemId)
-        } else {
-          await addLike(newLikes, itemId)
-        }
-        queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
+    // const handleClick = async () => {
+    //   // await handleLikes(loginUserId);
+    // }
 
-        setLikesReview(prev => ({ ...prev, [itemId]: !hasReviewId }))
-      } catch (error) {
-        setLikesReview(prev => ({ ...prev, [itemId]: !prev[itemId] }))
-        console.error('북마크 에러 발생:', error)
-      }
-    }
+    // setBookmarkList([loginUserId])
+    // const newBookmarkList = [...bookmarkList, loginUserId]
+    const newBookmarkList = [...bookmarkList, loginUserId]
+    setBookmarkList(newBookmarkList)
+
+    console.log(newBookmarkList)
+
+    await addFavorite(
+      movieId,
+      userId,
+      text,
+      ott,
+      rating,
+      title,
+      id,
+      // bookmarkList
+      newBookmarkList
+    )
   }
 
   return (
@@ -203,9 +268,20 @@ function FeedComponent() {
                   <StarIcon />
                   <span>{item.rating}</span>
                   <LikeIcon
-                    onClick={() => handleLikes(item, item.id)}
-                    islike={bookmarkList.includes(item.id) ? 'true' : 'false'}
+                    disabled={loginUserId === item.user_id}
+                    // onClick={() => handleLikes}
+                    // onClick={handleLikes}
+                    // onClick={handleLikes}
+                    onClick={event => handleLikes(event, item, loginUserId!)}
                   />
+                  {/* {loginUserId === item.user_id ? (
+                    ''
+                  ) : (
+                    <LikeIcon
+                      onClick={() => handleLikes(item.user_id)}
+                      islike={bookmarkList.includes(item.id) ? 'true' : 'false'}
+                    />
+                  )} */}
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
