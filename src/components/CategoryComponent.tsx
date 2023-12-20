@@ -22,6 +22,7 @@ interface SizeProps {
 }
 
 const movieCategories = [
+  { color: '#8ee7e7', text: '전체' },
   { color: '#F56A1E', text: '액션' },
   { color: '#FFE100', text: '모험', fontSize: '12px' },
   { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },

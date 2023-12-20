@@ -1,6 +1,10 @@
 export const movieGenres = {
   genres: [
     {
+      id: 0,
+      name: '전체'
+    },
+    {
       id: 28,
       name: '액션'
     },

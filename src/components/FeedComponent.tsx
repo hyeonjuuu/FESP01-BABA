@@ -16,11 +16,8 @@ import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useUserStore } from '@/store/useUserStore'
 import userImage from '@/assets/userIcon.png'
 import { useGenresStore } from '@/store/useGenresStore'
-
-const supabase = createClient(
-  `${import.meta.env.VITE_SUPABASE_URL}`,
-  `${import.meta.env.VITE_SUPABASE_KEY}`
-)
+import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
+import { supabase } from '@/utils/supabaseClient'
 
 interface PaddingProps {
   $padding?: string
@@ -41,11 +38,10 @@ function FeedComponent() {
   const [reviews, setReviews] = useState<ReviewData>([])
   const [reviewId, setReviewId] = useState<number>()
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
-  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
-    useBookmarkStore()
+  const { bookmarkList, setBookmarkList } = useBookmarkStore()
   const { setProfileImg } = useUserStore()
-  const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
-  const { movieGenresState, setMovieGenresState } = useGenresStore()
+  const [renderProfileImg] = useState<string | null>(null)
+  const { movieGenresState } = useGenresStore()
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -69,15 +65,30 @@ function FeedComponent() {
   useEffect(() => {
     const loadReviewData = async () => {
       try {
-        const { data: reviewData, error: reviewError } = await supabase
-          .from('reviews')
-          .select()
-          .order('created_at', { ascending: false })
-          .or(`genre_ids.cs.${movieGenresStateId}`)
-        // .or(`genre_ids.in.${movieGenresStateId}`)
+        let reviewData: any
+        if (movieGenresStateId) {
+          const { data: genreReviewData, error: genreReviewError } =
+            await supabase
+              .from('reviews')
+              .select()
+              .order('created_at', { ascending: false })
+              .or(`genre_ids.cs.${movieGenresStateId}`)
 
-        if (reviewError) throw new Error()
+          if (genreReviewError)
+            throw new Error('해당 카테고리의 리뷰가 없습니다.')
 
+          reviewData = genreReviewData
+        } else if (movieGenresState === null || movieGenresStateId === 0) {
+          const { data: allReviewData, error: allReviewError } = await supabase
+            .from('reviews')
+            .select()
+            .order('created_at', { ascending: false })
+
+          if (allReviewError)
+            throw new Error('리뷰 데이터를 불러올 수 없습니다.')
+
+          reviewData = allReviewData
+        }
         setReviews(reviewData)
         console.log('sort', reviewData)
       } catch (err) {
