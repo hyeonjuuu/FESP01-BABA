@@ -1,12 +1,14 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Scrollbar } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
+import { movieGenres } from '@/utils/genresData'
+import { useGenresStore } from '@/store/useGenresStore'
 
 export interface FontProps {
   fontSize?: string
@@ -19,53 +21,81 @@ interface SizeProps {
   $darkMode: boolean
 }
 
+const movieCategories = [
+  { color: '#F56A1E', text: '액션' },
+  { color: '#FFE100', text: '모험', fontSize: '12px' },
+  { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
+  { color: '#FF99AF', text: '코미디' },
+  { color: '#DF461F', text: '범죄' },
+  { color: '#496BF2', text: '다큐' },
+  { color: '#77B1B9', text: '드라마' },
+  { color: '#CEE319', text: '가족' },
+  { color: '#69A7E7', text: '판타지' },
+  { color: '#7B5F48', text: '역사' },
+  { color: '#AD2625', text: '공포' },
+  { color: '#A28CB7', text: '음악' },
+  { color: '#177649', text: '미스터리' },
+  { color: '#F4D6D4', text: '로맨스' },
+  { color: '#513582', text: 'SF' },
+  { color: '#F5E2A7', text: 'TV 영화', fontSize: '11px' },
+  { color: '#F03F36', text: '스릴러' },
+  { color: '#015097', text: '전쟁' },
+  { color: '#857b15', text: '서부' }
+]
+const dramaCategories = [
+  { color: '#F56A1E', text: '액션&어드벤쳐', fontSize: '12px' },
+  { color: '#3FD6A6', text: '애니메이션', fontSize: '12px' },
+  { color: '#FF99AF', text: '코미디' },
+  { color: '#DF461F', text: '범죄' },
+  { color: '#496BF2', text: '다큐' },
+  { color: '#77B1B9', text: '드라마' },
+  { color: '#CEE319', text: '가족' },
+  { color: '#69A7E7', text: '키즈' },
+  { color: '#177649', text: '미스터리' },
+  { color: '#F4D6D4', text: '뉴스' },
+  { color: '#513582', text: '리얼리티' },
+  { color: '#F5E2A7', text: '판타지' },
+  { color: '#F03F36', text: '오페라' },
+  { color: '#015097', text: '토크' },
+  { color: '#015097', text: '전쟁&정치' },
+  { color: '#857b15', text: '서부' }
+]
+
 function CategoryComponent() {
   const { $darkMode } = useThemeStore()
   const [selectCategory, setSelectCategory] = useState('영화')
+  const { movieGenresState, setMovieGenresState } = useGenresStore()
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const select = e.currentTarget.value
     setSelectCategory(select)
   }
+  const handleFilterCategory = async (
+    e: React.ChangeEvent<HTMLButtonElement>
+  ) => {
+    const selectCategoryButton =
+      e.currentTarget.querySelectorAll('div')[1].textContent
 
-  const movieCategories = [
-    { color: '#F56A1E', text: '액션' },
-    { color: '#FFE100', text: '모험', fontSize: '12px' },
-    { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
-    { color: '#FF99AF', text: '코미디' },
-    { color: '#DF461F', text: '범죄' },
-    { color: '#496BF2', text: '다큐' },
-    { color: '#77B1B9', text: '드라마' },
-    { color: '#CEE319', text: '가족' },
-    { color: '#69A7E7', text: '판타지' },
-    { color: '#7B5F48', text: '역사' },
-    { color: '#AD2625', text: '공포' },
-    { color: '#A28CB7', text: '음악' },
-    { color: '#177649', text: '미스터리' },
-    { color: '#F4D6D4', text: '로맨스' },
-    { color: '#513582', text: 'SF' },
-    { color: '#F5E2A7', text: 'TV 영화', fontSize: '11px' },
-    { color: '#F03F36', text: '스릴러' },
-    { color: '#015097', text: '전쟁' },
-    { color: '#857b15', text: '서부' }
-  ]
-  const dramaCategories = [
-    { color: '#F56A1E', text: '액션&어드벤쳐', fontSize: '12px' },
-    { color: '#3FD6A6', text: '애니메이션', fontSize: '12px' },
-    { color: '#FF99AF', text: '코미디' },
-    { color: '#DF461F', text: '범죄' },
-    { color: '#496BF2', text: '다큐' },
-    { color: '#77B1B9', text: '드라마' },
-    { color: '#CEE319', text: '가족' },
-    { color: '#69A7E7', text: '키즈' },
-    { color: '#177649', text: '미스터리' },
-    { color: '#F4D6D4', text: '뉴스' },
-    { color: '#513582', text: '리얼리티' },
-    { color: '#F5E2A7', text: '판타지' },
-    { color: '#F03F36', text: '오페라' },
-    { color: '#015097', text: '토크' },
-    { color: '#015097', text: '전쟁&정치' },
-    { color: '#857b15', text: '서부' }
-  ]
+    const filterCategory = movieGenres.genres.filter(
+      item => item.name === selectCategoryButton
+    )
+
+    setMovieGenresState(filterCategory)
+  }
+
+  useEffect(() => {
+    console.log(movieGenresState)
+  }, [movieGenresState])
+  // const handleFilterCategory = (category: { name: string }) => {
+  //   const filterCategory = movieGenresState.filter(
+  //     item => item.name === category.name
+  //   )
+  //   setMovieGenresState(filterCategory)
+  // }
+
+  // useEffect(() => {
+  //   console.log(movieGenresState)
+  // }, [movieGenresState])
+
   return (
     <CategorySection>
       <CategoryTitle>
@@ -114,18 +144,22 @@ function CategoryComponent() {
         {selectCategory === '영화'
           ? movieCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
-                <CategoryCircle color={color}></CategoryCircle>
-                <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
-                  {text}
-                </CategroyList>
+                <CategoryButton onClick={handleFilterCategory}>
+                  <CategoryCircle color={color}></CategoryCircle>
+                  <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
+                    {text}
+                  </CategroyList>
+                </CategoryButton>
               </SwiperSlideWrapper>
             ))
           : dramaCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
-                <CategoryCircle color={color}></CategoryCircle>
-                <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
-                  {text}
-                </CategroyList>
+                <CategoryButton>
+                  <CategoryCircle color={color}></CategoryCircle>
+                  <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
+                    {text}
+                  </CategroyList>
+                </CategoryButton>
               </SwiperSlideWrapper>
             ))}
       </SwiperWrapper>
@@ -188,6 +222,15 @@ const CategoryCircle = styled.div`
   margin-bottom: 4px;
   margin: 4px auto;
 `
+
+const CategoryButton = styled.button`
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  cursor: pointer;
+`
+
 export const SwiperWrapper = styled(Swiper)`
   display: flex;
   flex-direction: column;

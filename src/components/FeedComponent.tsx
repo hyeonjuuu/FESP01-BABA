@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useUserStore } from '@/store/useUserStore'
 import userImage from '@/assets/userIcon.png'
+import { useGenresStore } from '@/store/useGenresStore'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -44,11 +45,13 @@ function FeedComponent() {
     useBookmarkStore()
   const { setProfileImg } = useUserStore()
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
+  const { movieGenresState, setMovieGenresState } = useGenresStore()
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const movieGenresStateId = movieGenresState[0]?.id
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -69,16 +72,14 @@ function FeedComponent() {
         const { data: reviewData, error: reviewError } = await supabase
           .from('reviews')
           .select()
+          .order('created_at', { ascending: false })
+          .or(`genre_ids.cs.${movieGenresStateId}`)
+        // .or(`genre_ids.in.${movieGenresStateId}`)
 
         if (reviewError) throw new Error()
 
-        const sortedReviewData = reviewData.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )
-
-        setReviews(sortedReviewData)
-        console.log(sortedReviewData)
+        setReviews(reviewData)
+        console.log('sort', reviewData)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -86,7 +87,7 @@ function FeedComponent() {
     }
 
     loadReviewData()
-  }, [])
+  }, [movieGenresState])
 
   const fetchAndRenderProfileImg = async () => {
     if (loginUserId) {
