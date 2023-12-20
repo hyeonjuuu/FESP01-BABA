@@ -11,6 +11,8 @@ import {
   addFavorite,
   addLike,
   deleteLikes,
+  getLikes,
+  getMyLikes,
   matchLike
 } from '@/api/getLikesData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -25,6 +27,11 @@ const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_KEY}`
 )
 
+interface IsLikedProps {
+  id: number
+  likes: string[]
+}
+
 interface PaddingProps {
   $padding?: string
 }
@@ -34,7 +41,7 @@ interface TextColorProps {
 }
 
 type LikeIconProps = {
-  islike?: string
+  $islike?: boolean
   disabled?: boolean
 }
 
@@ -46,7 +53,13 @@ function FeedComponent() {
   const [reviewsId, setReviewsId] = useState<string[]>([])
   const [reviewId, setReviewId] = useState<number>()
   const [usersId, setUsersId] = useState<string[]>([])
-  const [isDisabledLikebtn, setIsDisabledLikebtn] = useState<boolean>(false) // true는 본인
+  const [isDisabledLikeBtn, setIsDisabledLikeBtn] = useState<boolean>(false) // true는 본인
+  const [isLiked, setIsLiked] = useState<boolean>(false)
+  console.log('isLiked: ', isLiked)
+
+  const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
+  const [myLikesId, setMyLikesId] = useState<number[]>([])
+
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
@@ -54,14 +67,13 @@ function FeedComponent() {
     []
   )
 
-  console.log('reviews: ', reviews)
-  console.log('reviewId: ', reviewId)
+  // console.log('reviews: ', reviews)
+  // console.log('reviewId: ', reviewId)
   console.log('bookmarkList: ', bookmarkList)
   console.log('likesReview: ', likesReview)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
-  console.log('loginUserId: ', loginUserId)
 
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
@@ -79,6 +91,7 @@ function FeedComponent() {
     refetchOnWindowFocus: false
   })
 
+  //# 전체 리뷰 가져오기
   useEffect(() => {
     const loadReviewData = async () => {
       try {
@@ -93,20 +106,43 @@ function FeedComponent() {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setReviews(sortedReviewData)
+        // console.log('sortedReviewData: ', sortedReviewData)
+
+        // 내가 누른 좋아요
+        const myLikes: IsLikedProps[] = sortedReviewData
+          .map(item => ({
+            id: item.id,
+            likes: item.likes
+          }))
+          .filter(entry => {
+            const likesArray = entry.likes || []
+            const loginUserIdLiked = likesArray.includes(loginUserId)
+            return (
+              entry.likes !== null &&
+              Array.isArray(entry.likes) &&
+              loginUserIdLiked
+            )
+          })
+        setIsLikReviews(myLikes)
+        // console.log('myLikes: ', myLikes)
+
+        const myLikesIdArray = myLikes.map(item => item.id)
+        setMyLikesId(myLikesIdArray)
+        // console.log('myLikesIdArray: ', myLikesIdArray)
+
         const reviewsId = sortedReviewData.map(item => item.user_id)
         setReviewsId(reviewsId)
-        console.log('#reviewsId: ', reviewsId)
 
         const usersId = sortedReviewData.map(data => data.user_id)
         setUsersId(usersId)
       } catch (err) {
-        console.error('데이터 불러오기 실패')
+        console.error(err)
         return null
       }
     }
 
     loadReviewData()
-  }, [])
+  }, [isLiked])
 
   const fetchAndRenderProfileImg = async () => {
     if (loginUserId && usersId.length > 0) {
@@ -114,9 +150,6 @@ function FeedComponent() {
         const imgSrc = await Promise.all(
           usersId.map(async userId => await getProfileImgUrl(userId))
         )
-
-        console.log('imgSrc: ', imgSrc)
-
         setRenderProfileImg(imgSrc)
         // setRenderProfileImg(imgSrc as (string | null)[])
       } catch (error) {
@@ -180,6 +213,7 @@ function FeedComponent() {
   //   }
   // }
 
+  //# 좋아요
   const handleLikes = async (
     event: React.MouseEvent,
     item: ReviewsProps,
@@ -202,34 +236,47 @@ function FeedComponent() {
     const rating = item.rating
     const title = item.movie_title
     const id = item.id
-    console.log('item: ', item)
+    // console.log('item: ', item)
 
-    // const addLikes = async (reviewId: string) => {
-    //   // handleLikes 내용...
-    // }
+    const checkMyLikesId = myLikesId.filter(reviewId => reviewId === id)
+    // console.log('checkMyLikesId', checkMyLikesId)
 
-    // const handleClick = async () => {
-    //   // await handleLikes(loginUserId);
-    // }
+    if (checkMyLikesId.length !== 0 && loginUserId) {
+      const newBookmarkList = bookmarkList.filter(item => item !== loginUserId)
+      deleteBookmarkList(loginUserId)
 
-    // setBookmarkList([loginUserId])
-    // const newBookmarkList = [...bookmarkList, loginUserId]
-    const newBookmarkList = [...bookmarkList, loginUserId]
-    setBookmarkList(newBookmarkList)
+      console.log('중복: ', newBookmarkList)
 
-    console.log(newBookmarkList)
+      await addFavorite(
+        movieId,
+        userId,
+        text,
+        ott,
+        rating,
+        title,
+        id,
+        newBookmarkList
+      )
+    } else {
+      const newBookmarkList = [...bookmarkList, loginUserId]
+      setBookmarkList(newBookmarkList)
 
-    await addFavorite(
-      movieId,
-      userId,
-      text,
-      ott,
-      rating,
-      title,
-      id,
-      // bookmarkList
-      newBookmarkList
-    )
+      console.log('중복아님', newBookmarkList)
+
+      await addFavorite(
+        movieId,
+        userId,
+        text,
+        ott,
+        rating,
+        title,
+        id,
+        newBookmarkList,
+        loginUserId
+      )
+    }
+
+    setIsLiked(prevState => !prevState)
   }
 
   return (
@@ -245,7 +292,7 @@ function FeedComponent() {
                       ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg[index]}`
                       : userImage
                   }
-                  alt=""
+                  alt="프로필 이미지"
                 />
                 <TextColor $darkMode={$darkMode}>{item.nickname}</TextColor>
               </CommonDivWrapper>
@@ -258,30 +305,21 @@ function FeedComponent() {
                         ''
                       )}`
                 }
-                alt=""
+                alt={`${item.movie_title} 이미지`}
               />
 
               <ContentTitleWrapper>
-                {/* <ContentTitle>{item.movie_title || item.name}</ContentTitle> */}
                 <ContentTitle>{item.movie_title}</ContentTitle>
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
                   <LikeIcon
                     disabled={loginUserId === item.user_id}
-                    // onClick={() => handleLikes}
-                    // onClick={handleLikes}
-                    // onClick={handleLikes}
                     onClick={event => handleLikes(event, item, loginUserId!)}
+                    $islike={isLikeReviews?.some(
+                      (like: IsLikedProps | null) => like && like.id === item.id
+                    )}
                   />
-                  {/* {loginUserId === item.user_id ? (
-                    ''
-                  ) : (
-                    <LikeIcon
-                      onClick={() => handleLikes(item.user_id)}
-                      islike={bookmarkList.includes(item.id) ? 'true' : 'false'}
-                    />
-                  )} */}
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
@@ -321,9 +359,10 @@ export const StarIcon = styled.button`
 `
 
 const LikeIcon = styled(StarIcon)<LikeIconProps>`
-  background-image: ${({ islike }) =>
-    islike === 'true' ? `url(${likefill})` : `url(${like})`};
+  background-image: ${({ $islike }) =>
+    $islike === true ? `url(${likefill})` : `url(${like})`};
 `
+
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
   align-items: center;
