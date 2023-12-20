@@ -30,7 +30,6 @@ function Main() {
         let reviewData: ReviewData[] = []
         if (movieGenresStateId) {
           const genreReviewData = await getGenreReviewData(movieGenresStateId)
-          console.log('genreReviewData', genreReviewData)
 
           if (!genreReviewData) {
             throw new Error('해당 카테고리의 리뷰가 없습니다.')
@@ -54,8 +53,6 @@ function Main() {
     }
     loadReviewData()
   }, [movieGenresState])
-  console.log('review', reviews)
-  console.log(movieGenresStateId)
 
   return (
     <>

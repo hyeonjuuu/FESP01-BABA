@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabaseClient'
 
 // reviews의 데이터들을 가져옵니다.

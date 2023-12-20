@@ -7,7 +7,7 @@ import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
-import { movieGenres } from '@/utils/genresData'
+import { movieGenres, tvGenres } from '@/utils/genresData'
 import { useGenresStore } from '@/store/useGenresStore'
 
 export interface FontProps {
@@ -28,6 +28,7 @@ const movieCategories = [
   { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
   { color: '#FF99AF', text: '코미디' },
   { color: '#DF461F', text: '범죄' },
+  { color: '#496BF2', text: '다큐멘터리' },
   { color: '#77B1B9', text: '드라마' },
   { color: '#CEE319', text: '가족' },
   { color: '#69A7E7', text: '판타지' },
@@ -43,7 +44,8 @@ const movieCategories = [
   { color: '#857b15', text: '서부' }
 ]
 const dramaCategories = [
-  { color: '#F56A1E', text: '액션&어드벤쳐', fontSize: '12px' },
+  { color: '#8ee7e7', text: '전체' },
+  { color: '#F56A1E', text: '액션&어드벤쳐', fontSize: '11px' },
   { color: '#3FD6A6', text: '애니메이션', fontSize: '12px' },
   { color: '#FF99AF', text: '코미디' },
   { color: '#DF461F', text: '범죄' },
@@ -69,32 +71,32 @@ function CategoryComponent() {
     const select = e.currentTarget.value
     setSelectCategory(select)
   }
+  console.log('select', selectCategory)
+
   const handleFilterCategory = async (
-    e: React.ChangeEvent<HTMLButtonElement>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const selectCategoryButton =
       e.currentTarget.querySelectorAll('div')[1].textContent
+    console.log(selectCategoryButton)
+    if (selectCategory === '영화') {
+      const filterCategory = movieGenres.genres.filter(
+        item => item.name === selectCategoryButton
+      )
 
-    const filterCategory = movieGenres.genres.filter(
-      item => item.name === selectCategoryButton
-    )
+      setMovieGenresState(filterCategory)
+    } else {
+      const filterCategory = tvGenres.genres.filter(
+        item => item.name === selectCategoryButton
+      )
 
-    setMovieGenresState(filterCategory)
+      setMovieGenresState(filterCategory)
+    }
   }
 
   useEffect(() => {
     console.log(movieGenresState)
   }, [movieGenresState])
-  // const handleFilterCategory = (category: { name: string }) => {
-  //   const filterCategory = movieGenresState.filter(
-  //     item => item.name === category.name
-  //   )
-  //   setMovieGenresState(filterCategory)
-  // }
-
-  // useEffect(() => {
-  //   console.log(movieGenresState)
-  // }, [movieGenresState])
 
   return (
     <CategorySection>
@@ -154,7 +156,7 @@ function CategoryComponent() {
             ))
           : dramaCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
-                <CategoryButton>
+                <CategoryButton onClick={handleFilterCategory}>
                   <CategoryCircle color={color}></CategoryCircle>
                   <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
                     {text}

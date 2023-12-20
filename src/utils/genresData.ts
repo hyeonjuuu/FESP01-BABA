@@ -1,9 +1,5 @@
 export const movieGenres = {
   genres: [
-    // {
-    //   id: 0,
-    //   name: '전체'
-    // },
     {
       id: 28,
       name: '액션'
@@ -24,7 +20,10 @@ export const movieGenres = {
       id: 80,
       name: '범죄'
     },
-
+    {
+      id: 99,
+      name: '다큐'
+    },
     {
       id: 18,
       name: '드라마'
@@ -84,67 +83,67 @@ export const tvGenres = {
   genres: [
     {
       id: 10759,
-      name: 'Action & Adventure'
+      name: '액션&어드벤쳐'
     },
     {
       id: 16,
-      name: 'Animation'
+      name: '애니메이션'
     },
     {
       id: 35,
-      name: 'Comedy'
+      name: '코미디'
     },
     {
       id: 80,
-      name: 'Crime'
+      name: '범죄'
     },
     {
       id: 99,
-      name: 'Documentary'
+      name: '다큐'
     },
     {
       id: 18,
-      name: 'Drama'
+      name: '드라마'
     },
     {
       id: 10751,
-      name: 'Family'
+      name: '가족'
     },
     {
       id: 10762,
-      name: 'Kids'
+      name: '키즈'
     },
     {
       id: 9648,
-      name: 'Mystery'
+      name: '미스터리'
     },
     {
       id: 10763,
-      name: 'News'
+      name: '뉴스'
     },
     {
       id: 10764,
-      name: 'Reality'
+      name: '리얼리티'
     },
     {
       id: 10765,
-      name: 'Sci-Fi & Fantasy'
+      name: '판타지'
     },
     {
       id: 10766,
-      name: 'Soap'
+      name: '오페라'
     },
     {
       id: 10767,
-      name: 'Talk'
+      name: '토크'
     },
     {
       id: 10768,
-      name: 'War & Politics'
+      name: '전쟁&정치'
     },
     {
       id: 37,
-      name: 'Western'
+      name: '서부'
     }
   ]
 }

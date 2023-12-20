@@ -14,10 +14,6 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useUserStore } from '@/store/useUserStore'
 import userImage from '@/assets/userIcon.png'
-import { useGenresStore } from '@/store/useGenresStore'
-import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
-import { supabase } from '@/utils/supabaseClient'
-import SideBar from '@/layout/SideBar'
 
 interface PaddingProps {
   $padding?: string
@@ -41,15 +37,12 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { bookmarkList, setBookmarkList } = useBookmarkStore()
   const { setProfileImg } = useUserStore()
   const [renderProfileImg] = useState<string | null>(null)
-  // const { movieGenresState } = useGenresStore()
   const feedContentSectionRef = useRef<HTMLDivElement>(null)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
-  // const movieGenresStateId = movieGenresState[0]?.id
-  // console.log('genreid', movieGenresState)
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
