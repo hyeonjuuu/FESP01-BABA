@@ -20,6 +20,7 @@ import {
   addReview,
   addReviewWithImgUrl,
   uploadDefaultImage,
+  uploadFile,
   uploadImage
 } from '@/api/reviewApi'
 import { getNickname, getReviewDataWithUserInfo } from '@/api/getReviewData'
@@ -113,7 +114,6 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
-    console.log('selectedResult: ', selectedResult)
     setDefaultImg(selectedResult?.poster_path)
     setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
@@ -224,6 +224,8 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
+    // const defaultImgUrl = await uploadDefaultImage(defaultImg!)
+    const defaultImgUrl = await uploadFile(defaultImg!)
 
     if (
       !selectMovie ||
@@ -237,8 +239,6 @@ function Writing() {
 
     try {
       if (selectMovie && !imgSrc) {
-        const defaultImgUrl = await uploadDefaultImage(defaultImg!)
-
         await addReview(
           selectMovie.id,
           userEmail!,
@@ -248,11 +248,13 @@ function Writing() {
           selectMovie.title || selectMovie.name || 'Unknown Title',
           nickname,
           defaultImgUrl!,
+          null,
           selectMovie.genre_ids
         )
       } else if (selectMovie && imgSrc) {
         const imgUrl = await uploadImage(image!)
         await addReviewWithImgUrl(
+          // await addReview(
           selectMovie.id,
           userEmail!,
           text,
@@ -261,21 +263,18 @@ function Writing() {
           selectMovie.title || selectMovie.name || 'Unknown Title',
           imgUrl!,
           nickname,
+          defaultImgUrl!,
           selectMovie.genre_ids
-        )
-      } else if (selectMovie && isSelectImg === true) {
-        const filePath = await uploadFile(selectMovie.poster_path)
-
-        await addReview(
-          selectMovie.id,
-          userEmail!,
-          text,
-          selectedOtt,
-          rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title',
-          nickname,
-          selectMovie.genre_ids,
-          filePath
+          // selectMovie.id,
+          // userEmail!,
+          // text,
+          // selectedOtt,
+          // rating,
+          // selectMovie.title || selectMovie.name || 'Unknown Title',
+          // nickname,
+          // defaultImgUrl!,
+          // imgUrl!,
+          // selectMovie.genre_ids
         )
       }
       alert('리뷰가 등록되었습니다!😊')

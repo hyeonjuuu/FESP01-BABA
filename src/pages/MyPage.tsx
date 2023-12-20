@@ -46,9 +46,13 @@ function MyPage() {
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
   const [reviews, setReviews] = useState<ReviewProps[] | null>(null)
   const [reviewImgs, setReviewImgs] = useState<string[] | null>(null)
-  const [movieImgs, setMovieImgs] = useState<(string | undefined)[] | null>(
-    null
-  )
+  console.log('reviewImgs: ', reviewImgs)
+
+  const [defaultImgs, setDefaultImgs] = useState<string[]>([])
+  const [userImgs, setUserImgs] = useState<string[]>([])
+  console.log('defaultImgs: ', defaultImgs)
+  console.log('userImgs: ', userImgs)
+
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
 
   const [favoriteReviews, setFavoriteReviews] = useState<string[] | null>(null)
@@ -149,6 +153,7 @@ function MyPage() {
     // 리뷰
     const fetchUserReviews = async () => {
       const reviews = await getUserReviews(userId)
+      console.log('reviews: ', reviews)
 
       if (!reviews) {
         return
@@ -157,25 +162,13 @@ function MyPage() {
       const reviewImgs = reviews.map(review => review.img_url)
       const movieTitles = reviews.map(review => review.movie_title)
       const reviewId = reviews.map(review => review.movie_id)
-
-      // 기본 영화 포스터 찾기
-      const moviesArray = await Promise.all(
-        movieTitles.map(async title => {
-          const response = await getSearchMovies(title)
-          return response.results
-        })
-      )
-
-      const posterPath = moviesArray.map(
-        (movies: MovieProps[], index: number) => {
-          const movie = movies.find(m => m.id.toString() === reviewId[index])
-          return movie ? movie.poster_path : undefined
-        }
-      )
+      const defaultImg = reviews.map(review => review.default_img)
+      const userImg = reviews.map(review => review.img_url)
 
       setReviews(reviews)
       setReviewImgs(reviewImgs)
-      setMovieImgs(posterPath)
+      setDefaultImgs(defaultImg)
+      setUserImgs(userImg)
     }
 
     // 북마크
@@ -263,7 +256,9 @@ function MyPage() {
                       src={
                         review.img_url
                           ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                          : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                          : `https://image.tmdb.org/t/p/original/${defaultImgs[
+                              index
+                            ]?.replace('public/', '')}`
                       }
                       alt={`${review.movie_title} 포스터`}
                     />
@@ -295,35 +290,6 @@ function MyPage() {
             // 3. 좋아요 있을 때
             <PictureWrapper>
               <div>좋아요 있을 때</div>
-              {/* <Post key={review.id}>
-                  <HoverLink
-                    to={`/edit/${review.id}`}
-                    state={{
-                      review_id: review.id,
-                      user_id: userId,
-                      movie_id: review.movie_id
-                    }}
-                  >
-                    <PostImg
-                      src={
-                        review.img_url
-                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                          : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
-                      }
-                      alt={`${review.movie_title} 포스터`}
-                    />
-                    <HoverDiv>
-                      <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
-                      <RatingSpan>
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          style={{ color: '#FFC61A' }}
-                        />{' '}
-                        {review.rating}
-                      </RatingSpan>
-                    </HoverDiv>
-                  </HoverLink>
-                </Post> */}
             </PictureWrapper>
           ) : (
             // 4. 좋아요 없을 때

@@ -42,6 +42,9 @@ function FeedComponent() {
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
+  console.log('bookmarkList: ', bookmarkList)
+  console.log('likesReview: ', likesReview)
+
   const { setProfileImg } = useUserStore()
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
 
@@ -179,18 +182,10 @@ function FeedComponent() {
                 src={
                   item.img_url
                     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${item.img_url}`
-                    : undefined
-                }
-                alt=""
-              />
-
-              <FeedImage
-                src={
-                  item.img_url &&
-                  `https://image.tmdb.org/t/p/original/${item.img_url.replace(
-                    'public/',
-                    ''
-                  )}`
+                    : `https://image.tmdb.org/t/p/original/${item.default_img.replace(
+                        'public/',
+                        ''
+                      )}`
                 }
                 alt=""
               />

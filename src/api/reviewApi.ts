@@ -5,7 +5,7 @@ const supabaseAdmin = createClient(
   import.meta.env.VITE_SUPABASE_KEY
 )
 
-//# 기본이미지와 리뷰 등록
+//# 리뷰 등록
 export const addReview = async (
   movie_id: number,
   user_id: string,
@@ -14,7 +14,8 @@ export const addReview = async (
   rating: number,
   movie_title: string,
   nickname: string,
-  img_url: string,
+  default_img: string,
+  img_url: string | null,
   genre_ids?: number[]
 ) => {
   try {
@@ -27,6 +28,7 @@ export const addReview = async (
         rating,
         movie_title,
         nickname,
+        default_img,
         img_url,
         genre_ids
       }
@@ -44,39 +46,52 @@ export const addReview = async (
   }
 }
 
+//# 기본이미지와 리뷰 등록
+// export const addReview = async (
+//   movie_id: number,
+//   user_id: string,
+//   text: string,
+//   ott: string[],
+//   rating: number,
+//   movie_title: string,
+//   nickname: string,
+//   default_img: string,
+//   genre_ids?: number[]
+// ) => {
+//   try {
+//     const { data, error } = await supabaseAdmin.from('reviews').upsert([
+//       {
+//         movie_id,
+//         user_id,
+//         text,
+//         ott,
+//         rating,
+//         movie_title,
+//         nickname,
+//         default_img,
+//         genre_ids
+//       }
+//     ])
+
+//     if (error) {
+//       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+//       throw error // 에러를 다시 던져서 상위 함수에서 잡을 수 있게 함
+//     } else {
+//       console.log('Supabase 데이터 삽입 성공:', data)
+//     }
+//   } catch (error) {
+//     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+//     throw error
+//   }
+// }
+
 export const uploadDefaultImage = async (
   url: string
 ): Promise<string | null> => {
   try {
-    // const fileExt = file.name.split('.').pop()
-    // const newName = `${Date.now()}.${fileExt}`
-
     const { data, error } = await supabaseAdmin.storage
       .from('movieImage')
       .upload(`public/${url}`, url)
-
-    if (error) {
-      console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-      throw error
-    } else {
-      console.log('Supabase 이미지 삽입 성공:', data)
-      return data?.path ?? null
-    }
-  } catch (error) {
-    console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
-    throw error
-  }
-}
-
-// storage에 사용자 이미지 업로드
-export const uploadImage = async (file: File): Promise<string | null> => {
-  try {
-    const fileExt = file.name.split('.').pop()
-    const newName = `${Date.now()}.${fileExt}`
-
-    const { data, error } = await supabaseAdmin.storage
-      .from('movieImage')
-      .upload(`public/${newName}`, file)
 
     if (error) {
       console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
@@ -101,6 +116,8 @@ export const addReviewWithImgUrl = async (
   movie_title: string,
   img_url: string,
   nickname: string,
+  default_img: string,
+
   genre_ids?: number[]
 ) => {
   try {
@@ -123,6 +140,8 @@ export const addReviewWithImgUrl = async (
         movie_title,
         img_url,
         nickname,
+        default_img,
+
         genre_ids
       }
     ])
@@ -135,6 +154,29 @@ export const addReviewWithImgUrl = async (
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    throw error
+  }
+}
+
+// storage에 사용자 이미지 업로드
+export const uploadImage = async (file: File): Promise<string | null> => {
+  try {
+    const fileExt = file.name.split('.').pop()
+    const newName = `${Date.now()}.${fileExt}`
+
+    const { data, error } = await supabaseAdmin.storage
+      .from('movieImage')
+      .upload(`public/${newName}`, file)
+
+    if (error) {
+      console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+      throw error
+    } else {
+      console.log('Supabase 이미지 삽입 성공:', data)
+      return data?.path ?? null
+    }
+  } catch (error) {
+    console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
     throw error
   }
 }

@@ -52,6 +52,7 @@ function EditReview() {
   useEffect(() => {
     const fetchReviewdata = async () => {
       const reviewInfo = await getReviewDataForEdit(reviewId)
+      console.log('reviewInfo: ', reviewInfo)
 
       const addDate = reviewInfo[0]?.created_at
       const updateDate = reviewInfo[0]?.updated_at
@@ -61,20 +62,13 @@ function EditReview() {
       const rating = reviewInfo[0]?.rating
       const text = reviewInfo[0]?.text
 
-      // 기본 영화 포스터 찾기
-      const moviesArray = await getSearchMovies(title)
-
-      const posterPath = moviesArray.results
-        .filter((movie: MovieProps) => movie.id.toString() === movieId)
-        .map((movie: MovieProps) => movie.poster_path)
-
       setAddDate(convertDate(addDate))
       if (updateDate) {
         setUpdateDate(convertDate(updateDate))
       }
       setSelectedOtt(ott)
       setTitle(title)
-      setDefaultImg(posterPath)
+      setDefaultImg(reviewInfo[0]?.default_img)
       setUserImg(img)
       setRating(rating)
       setText(text)
@@ -361,7 +355,10 @@ function EditReview() {
             </>
           ) : (
             <MoviePoster
-              src={`https://image.tmdb.org/t/p/original/${defaultImg}`}
+              src={`https://image.tmdb.org/t/p/original/${defaultImg?.replace(
+                'public/',
+                ''
+              )}`}
               alt={`${title} 포스터`}
             />
           )}
