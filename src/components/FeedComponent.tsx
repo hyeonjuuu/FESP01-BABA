@@ -4,7 +4,6 @@ import like from '@/assets/HeartIcon.svg'
 import likefill from '@/assets/HeartIconFill.svg'
 import useThemeStore from '../store/useThemeStore'
 import { FontProps } from './CategoryComponent'
-import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
@@ -48,6 +47,7 @@ function FeedComponent() {
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
   const movieGenresStateId = movieGenresState[0]?.id
+  console.log(movieGenresState)
 
   const queryClient = useQueryClient()
   const queryKey = ['user_id', reviewId]
@@ -65,32 +65,27 @@ function FeedComponent() {
   useEffect(() => {
     const loadReviewData = async () => {
       try {
-        let reviewData: any
+        let reviewData: ReviewData[] = []
         if (movieGenresStateId) {
-          const { data: genreReviewData, error: genreReviewError } =
-            await supabase
-              .from('reviews')
-              .select()
-              .order('created_at', { ascending: false })
-              .or(`genre_ids.cs.${movieGenresStateId}`)
-
-          if (genreReviewError)
+          const genreReviewData = await getGenreReviewData(movieGenresStateId)
+          // if (genreReviewError || genreReviewData.length === 0)
+          //   throw new Error('해당 카테고리의 리뷰가 없습니다.')
+          if (!genreReviewData) {
             throw new Error('해당 카테고리의 리뷰가 없습니다.')
+          }
 
           reviewData = genreReviewData
-        } else if (movieGenresState === null || movieGenresStateId === 0) {
-          const { data: allReviewData, error: allReviewError } = await supabase
-            .from('reviews')
-            .select()
-            .order('created_at', { ascending: false })
-
-          if (allReviewError)
+        } else if ([] || movieGenresStateId === 0) {
+          const getAllReviewData = await getReviewData()
+          if (!getAllReviewData) {
             throw new Error('리뷰 데이터를 불러올 수 없습니다.')
+          }
 
-          reviewData = allReviewData
+          reviewData = getAllReviewData
         }
+        // setReviews(reviewData as ReviewData[]);
         setReviews(reviewData)
-        console.log('sort', reviewData)
+        console.log('sort', reviews)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
