@@ -13,7 +13,6 @@ import userInfoInLs from '@/utils/userInfoInLs'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
-import { useUserStore } from '@/store/useUserStore'
 import userImage from '@/assets/userIcon.png'
 
 const supabase = createClient(
@@ -37,16 +36,20 @@ type LikeIconProps = {
 
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
-  const [reviews, setReviews] = useState<ReviewData>([])
+  const [reviews, setReviews] = useState<ReviewsProps[]>([])
   const [reviewId, setReviewId] = useState<number>()
+  const [usersId, setUsersId] = useState<string[]>([])
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
+  const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
+    []
+  )
+
+  console.log('reviews: ', reviews)
+  console.log('reviewId: ', reviewId)
   console.log('bookmarkList: ', bookmarkList)
   console.log('likesReview: ', likesReview)
-
-  const { setProfileImg } = useUserStore()
-  const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -79,9 +82,10 @@ function FeedComponent() {
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
-
         setReviews(sortedReviewData)
-        console.log(sortedReviewData)
+
+        const usersId = sortedReviewData.map(data => data.user_id)
+        setUsersId(usersId)
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -92,12 +96,16 @@ function FeedComponent() {
   }, [])
 
   const fetchAndRenderProfileImg = async () => {
-    if (loginUserId) {
+    if (loginUserId && usersId.length > 0) {
       try {
-        const imgSrc = await getProfileImgUrl(loginUserId)
-        if (imgSrc) {
-          setProfileImg(imgSrc)
-        }
+        const imgSrc = await Promise.all(
+          usersId.map(async userId => await getProfileImgUrl(userId))
+        )
+
+        console.log('imgSrc: ', imgSrc)
+
+        setRenderProfileImg(imgSrc)
+        // setRenderProfileImg(imgSrc as (string | null)[])
       } catch (error) {
         console.error(error)
       }
@@ -105,10 +113,8 @@ function FeedComponent() {
   }
 
   useEffect(() => {
-    console.log('renderProfileImg updated:', renderProfileImg)
-
     fetchAndRenderProfileImg()
-  }, [loginUserId, renderProfileImg])
+  }, [loginUserId, usersId])
 
   useEffect(() => {
     const likeItemReviewId = likeItems?.map(item => item.review_id)
@@ -165,13 +171,13 @@ function FeedComponent() {
     <FeedSection>
       <FeedContent>
         <ContentWrapper>
-          {reviews?.map(item => (
+          {reviews?.map((item: ReviewsProps, index: number) => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
                 <UserImage
                   src={
-                    renderProfileImg
-                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg}`
+                    renderProfileImg[index]
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg[index]}`
                       : userImage
                   }
                   alt=""
@@ -182,7 +188,7 @@ function FeedComponent() {
                 src={
                   item.img_url
                     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${item.img_url}`
-                    : `https://image.tmdb.org/t/p/original/${item.default_img.replace(
+                    : `https://image.tmdb.org/t/p/original/${item?.default_img?.replace(
                         'public/',
                         ''
                       )}`
@@ -191,7 +197,8 @@ function FeedComponent() {
               />
 
               <ContentTitleWrapper>
-                <ContentTitle>{item.movie_title || item.name}</ContentTitle>
+                {/* <ContentTitle>{item.movie_title || item.name}</ContentTitle> */}
+                <ContentTitle>{item.movie_title}</ContentTitle>
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>

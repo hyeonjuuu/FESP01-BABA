@@ -35,21 +35,21 @@ interface MovieGenres {
   }[]
 }
 
-interface ReviewData {
-  map(
-    arg0: (item: any) => import('react/jsx-runtime').JSX.Element
-  ): React.ReactNode
-  [
-    movie_id: string,
-    user_id: string,
-    text: string,
-    created_at: string,
-    updated_at: string,
-    id: number,
-    ott: json,
-    image_id: number,
-    rating: number
-  ]
+interface ReviewsProps {
+  created_at: string
+  default_img: string | null
+  genre_ids: number[]
+  id: number
+  img_url: string | null
+  likes: string
+  movie_id: string
+  movie_title: string
+  nickname: string
+  ott: string[]
+  rating: number
+  text: string
+  updated_at: string | null
+  user_id: string
 }
 
 interface UserData {
