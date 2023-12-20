@@ -50,27 +50,19 @@ type LikeIconProps = {
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
   const [reviews, setReviews] = useState<ReviewsProps[]>([])
-  const [reviewsId, setReviewsId] = useState<string[]>([])
-  const [reviewId, setReviewId] = useState<number>()
+  const [, setReviewsId] = useState<string[]>([])
   const [usersId, setUsersId] = useState<string[]>([])
-  const [isDisabledLikeBtn, setIsDisabledLikeBtn] = useState<boolean>(false) // true는 본인
   const [isLiked, setIsLiked] = useState<boolean>(false)
   console.log('isLiked: ', isLiked)
 
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [myLikesId, setMyLikesId] = useState<number[]>([])
 
-  const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
   const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
     []
   )
-
-  // console.log('reviews: ', reviews)
-  // console.log('reviewId: ', reviewId)
-  console.log('bookmarkList: ', bookmarkList)
-  console.log('likesReview: ', likesReview)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -78,18 +70,18 @@ function FeedComponent() {
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
-  const queryClient = useQueryClient()
-  const queryKey = ['user_id', reviewId]
+  // const queryClient = useQueryClient()
+  // const queryKey = ['user_id', reviewId]
 
-  const { data: likeItems } = useQuery({
-    queryKey: queryKey,
-    queryFn: async () => {
-      const result = await matchLike(loginUserId)
-      return result
-    },
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false
-  })
+  // const { data: likeItems } = useQuery({
+  //   queryKey: queryKey,
+  //   queryFn: async () => {
+  //     const result = await matchLike(loginUserId)
+  //     return result
+  //   },
+  //   refetchOnReconnect: false,
+  //   refetchOnWindowFocus: false
+  // })
 
   //# 전체 리뷰 가져오기
   useEffect(() => {
@@ -106,7 +98,6 @@ function FeedComponent() {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setReviews(sortedReviewData)
-        // console.log('sortedReviewData: ', sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -124,11 +115,9 @@ function FeedComponent() {
             )
           })
         setIsLikReviews(myLikes)
-        // console.log('myLikes: ', myLikes)
 
         const myLikesIdArray = myLikes.map(item => item.id)
         setMyLikesId(myLikesIdArray)
-        // console.log('myLikesIdArray: ', myLikesIdArray)
 
         const reviewsId = sortedReviewData.map(item => item.user_id)
         setReviewsId(reviewsId)
@@ -151,7 +140,6 @@ function FeedComponent() {
           usersId.map(async userId => await getProfileImgUrl(userId))
         )
         setRenderProfileImg(imgSrc)
-        // setRenderProfileImg(imgSrc as (string | null)[])
       } catch (error) {
         console.error(error)
       }
@@ -162,63 +150,8 @@ function FeedComponent() {
     fetchAndRenderProfileImg()
   }, [loginUserId, usersId])
 
-  // useEffect(() => {
-  //   const likeItemReviewId = likeItems?.map(item => item.review_id)
-
-  //   if (likeItemReviewId) {
-  //     setBookmarkList(likeItemReviewId)
-  //   }
-  // }, [likeItems])
-
-  // const handleLikes = async (item: LikeData, itemId: number) => {
-  //   if (!isAuthenticated) {
-  //     const confirmed = window.confirm(
-  //       '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
-  //     )
-  //     if (confirmed) {
-  //       navigate('/login')
-  //     }
-  //     return
-  //   }
-  //   if (itemId) {
-  //     const newLikes: LikesType = {
-  //       user_id: loginUserId,
-  //       review_id: itemId
-  //     }
-  //     setReviewId(itemId)
-
-  //     const updatedLikesReview = {
-  //       ...likesReview,
-  //       [itemId]: !(likesReview[itemId] ?? false)
-  //     }
-
-  //     setLikesReview(updatedLikesReview)
-  //     const hasReviewId = likeItems?.some(
-  //       likeItem => likeItem.review_id === itemId
-  //     )
-
-  //     try {
-  //       if (hasReviewId) {
-  //         await deleteLikes(itemId)
-  //       } else {
-  //         await addLike(newLikes, itemId)
-  //       }
-  //       queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
-
-  //       setLikesReview(prev => ({ ...prev, [itemId]: !hasReviewId }))
-  //     } catch (error) {
-  //       setLikesReview(prev => ({ ...prev, [itemId]: !prev[itemId] }))
-  //       console.error('북마크 에러 발생:', error)
-  //     }
-  //   }
-  // }
-
   //# 좋아요
-  const handleLikes = async (
-    event: React.MouseEvent,
-    item: ReviewsProps,
-    loginUserId: string
-  ) => {
+  const handleLikes = async (item: ReviewsProps, loginUserId: string) => {
     if (!isAuthenticated) {
       const confirmed = window.confirm(
         '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
@@ -236,10 +169,8 @@ function FeedComponent() {
     const rating = item.rating
     const title = item.movie_title
     const id = item.id
-    // console.log('item: ', item)
 
     const checkMyLikesId = myLikesId.filter(reviewId => reviewId === id)
-    // console.log('checkMyLikesId', checkMyLikesId)
 
     if (checkMyLikesId.length !== 0 && loginUserId) {
       const newBookmarkList = bookmarkList.filter(item => item !== loginUserId)
@@ -315,7 +246,7 @@ function FeedComponent() {
                   <span>{item.rating}</span>
                   <LikeIcon
                     disabled={loginUserId === item.user_id}
-                    onClick={event => handleLikes(event, item, loginUserId!)}
+                    onClick={() => handleLikes(item, loginUserId!)}
                     $islike={isLikeReviews?.some(
                       (like: IsLikedProps | null) => like && like.id === item.id
                     )}

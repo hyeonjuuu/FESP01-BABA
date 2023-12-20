@@ -37,8 +37,6 @@ export const addReview = async (
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error // 에러를 다시 던져서 상위 함수에서 잡을 수 있게 함
-    } else {
-      console.log('Supabase 데이터 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
@@ -47,44 +45,6 @@ export const addReview = async (
 }
 
 //# 기본이미지와 리뷰 등록
-// export const addReview = async (
-//   movie_id: number,
-//   user_id: string,
-//   text: string,
-//   ott: string[],
-//   rating: number,
-//   movie_title: string,
-//   nickname: string,
-//   default_img: string,
-//   genre_ids?: number[]
-// ) => {
-//   try {
-//     const { data, error } = await supabaseAdmin.from('reviews').upsert([
-//       {
-//         movie_id,
-//         user_id,
-//         text,
-//         ott,
-//         rating,
-//         movie_title,
-//         nickname,
-//         default_img,
-//         genre_ids
-//       }
-//     ])
-
-//     if (error) {
-//       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-//       throw error // 에러를 다시 던져서 상위 함수에서 잡을 수 있게 함
-//     } else {
-//       console.log('Supabase 데이터 삽입 성공:', data)
-//     }
-//   } catch (error) {
-//     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
-//     throw error
-//   }
-// }
-
 export const uploadDefaultImage = async (
   url: string
 ): Promise<string | null> => {
@@ -97,7 +57,6 @@ export const uploadDefaultImage = async (
       console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
     } else {
-      console.log('Supabase 이미지 삽입 성공:', data)
       return data?.path ?? null
     }
   } catch (error) {
@@ -149,8 +108,6 @@ export const addReviewWithImgUrl = async (
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
-    } else {
-      console.log('Supabase 리뷰와 이미지 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
@@ -172,7 +129,6 @@ export const uploadImage = async (file: File): Promise<string | null> => {
       console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
     } else {
-      console.log('Supabase 이미지 삽입 성공:', data)
       return data?.path ?? null
     }
   } catch (error) {
@@ -193,7 +149,6 @@ export const getImgUrl = async (id: number): Promise<string | null> => {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
     } else {
-      console.log('Supabase 이미지 가져오기 성공:', data)
       return data && data.length > 0 ? data[0].img_url : null
     }
   } catch (error) {
@@ -210,7 +165,6 @@ export const getUserReviews = async (id: string) => {
     .eq('user_id', id)
 
   if (data) {
-    console.log('data: ', data)
     return data
   } else {
     console.log(error)
@@ -245,8 +199,6 @@ export const editReview = async (
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
-    } else {
-      console.log('Supabase 데이터 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
@@ -292,8 +244,6 @@ export const editReviewWithImgUrl = async (
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
-    } else {
-      console.log('Supabase 리뷰와 이미지 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
@@ -314,8 +264,6 @@ export const getMovieImgUrl = async (id: string): Promise<string | null> => {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       return null
     } else {
-      console.log('Supabase 이미지 가져오기 성공:', data)
-
       return data && data.length > 0 ? data[0].img_url : null
     }
   } catch (error) {
@@ -355,13 +303,9 @@ export async function uploadFile(poster: any) {
         upsert: true
       })
 
-    console.log(data)
-    console.log(poster)
-
     if (error) {
       console.error('에러 발생:', error.message)
     } else {
-      console.log('성공:', data)
       const filePath = data.path
       return filePath
     }
@@ -383,7 +327,6 @@ export const getLikeReviews = async (id: string) => {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       return null
     } else {
-      console.log('Supabase 이미지 가져오기 성공:', data)
       return data
     }
   } catch (error) {

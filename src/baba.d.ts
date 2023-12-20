@@ -75,11 +75,7 @@ interface LikesType {
   user_id: string | null
   review_id: number
 }
-// interface BookmarkStore {
-//   bookmarkList: number[]
-//   setBookmarkList: (itemIds: number[]) => void
-//   deleteBookmarkList: (itemId: number) => void
-// }
+
 interface BookmarkStore {
   bookmarkList: string[]
   setBookmarkList: (itemIds: string[]) => void
