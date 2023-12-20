@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import { getNickname, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -29,6 +30,7 @@ function Writing() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [nickname, setNickname] = useState<string>('')
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [isSearched, setIsSearched] = useState(false) // 검색이 수행되었는지 나타내는 상태
@@ -60,6 +62,14 @@ function Writing() {
   useEffect(() => {
     const userIdInLs = userInfoInLs()
     setUserEmail(userIdInLs.userId) // local storage의 id = user Table의 email
+
+    const fetchNickname = async () => {
+      const nickname = await getNickname(userIdInLs.userId!)
+      console.log('닉네임: ', nickname[0].username)
+
+      setNickname(nickname[0].username)
+    }
+    fetchNickname()
   }, [])
 
   //# 검색
@@ -80,7 +90,8 @@ function Writing() {
           media_type: result.media_type,
           title: result.title,
           name: result.name,
-          poster_path: result.poster_path
+          poster_path: result.poster_path,
+          genre_ids: result?.genre_ids
         })
       )
       setSearchList(searchResults)
@@ -222,7 +233,9 @@ function Writing() {
           text,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          nickname,
+          selectMovie.genre_ids
         )
       } else if (selectMovie && imgSrc) {
         const imgUrl = await uploadImage(image!)
@@ -233,7 +246,9 @@ function Writing() {
           selectedOtt,
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
-          imgUrl!
+          imgUrl!,
+          nickname,
+          selectMovie.genre_ids
         )
       }
       alert('리뷰가 등록되었습니다!😊')
