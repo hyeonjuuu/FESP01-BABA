@@ -200,7 +200,6 @@ const FeedSection = styled.section`
   display: flex;
   flex-flow: column;
   margin-top: 26px;
-  background-color: red;
 `
 
 export const StarIcon = styled.button`

@@ -37,7 +37,7 @@ function Main() {
           }
 
           reviewData = genreReviewData
-        } else {
+        } else if (movieGenresStateId === undefined) {
           const getAllReviewData = await getReviewData()
           if (!getAllReviewData) {
             throw new Error('리뷰 데이터를 불러올 수 없습니다.')
@@ -54,6 +54,8 @@ function Main() {
     }
     loadReviewData()
   }, [movieGenresState])
+  console.log('review', reviews)
+  console.log(movieGenresStateId)
 
   return (
     <>
@@ -61,10 +63,12 @@ function Main() {
       <Wrapper>
         <CategoryComponent />
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
-        {movieGenresStateId ? (
+        {movieGenresStateId === undefined || reviews.length > 0 ? (
           <FeedComponent reviews={reviews} />
         ) : (
-          <div>안녕방구</div>
+          <NoDataNotice>
+            선택한 카테고리에 해당하는 리뷰가 없습니다.😢
+          </NoDataNotice>
         )}
       </Wrapper>
     </>
@@ -89,4 +93,10 @@ const MainPageTitle = styled.h1`
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+`
+const NoDataNotice = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
 `

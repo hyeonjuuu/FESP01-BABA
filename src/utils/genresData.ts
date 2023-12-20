@@ -24,10 +24,7 @@ export const movieGenres = {
       id: 80,
       name: '범죄'
     },
-    {
-      id: 99,
-      name: '다큐멘터리'
-    },
+
     {
       id: 18,
       name: '드라마'
