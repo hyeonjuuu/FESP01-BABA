@@ -5,7 +5,7 @@ const supabaseAdmin = createClient(
   import.meta.env.VITE_SUPABASE_KEY
 )
 
-//# 리뷰 등록
+//# 기본이미지와 리뷰 등록
 export const addReview = async (
   movie_id: number,
   user_id: string,
@@ -14,6 +14,7 @@ export const addReview = async (
   rating: number,
   movie_title: string,
   nickname: string,
+  img_url: string,
   genre_ids?: number[]
 ) => {
   try {
@@ -26,6 +27,7 @@ export const addReview = async (
         rating,
         movie_title,
         nickname,
+        img_url,
         genre_ids
       }
     ])
@@ -42,7 +44,31 @@ export const addReview = async (
   }
 }
 
-// storage에 이미지 업로드
+export const uploadDefaultImage = async (
+  url: string
+): Promise<string | null> => {
+  try {
+    // const fileExt = file.name.split('.').pop()
+    // const newName = `${Date.now()}.${fileExt}`
+
+    const { data, error } = await supabaseAdmin.storage
+      .from('movieImage')
+      .upload(`public/${url}`, url)
+
+    if (error) {
+      console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+      throw error
+    } else {
+      console.log('Supabase 이미지 삽입 성공:', data)
+      return data?.path ?? null
+    }
+  } catch (error) {
+    console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    throw error
+  }
+}
+
+// storage에 사용자 이미지 업로드
 export const uploadImage = async (file: File): Promise<string | null> => {
   try {
     const fileExt = file.name.split('.').pop()
@@ -280,18 +306,22 @@ export const deleteReview = async (id: string, user_id: string) => {
 }
 
 //# 북마크 가져오기
-// export const getLikeReviews = async (id: string) => {
-//   const { data, error } = await supabaseAdmin
-//     .from('reviews')
-//     .select('*')
-//     // .eq('user_id', id)
-//     .eq('user_id', id)
+export const getLikeReviews = async (id: string) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('reviews')
+      .select('*')
+      .eq('likes', id)
 
-//   if (data) {
-//     console.log('data: ', data)
-//     return data
-//   } else {
-//     console.log(error)
-//     return null
-//   }
-// }
+    if (error) {
+      console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
+      return null
+    } else {
+      console.log('Supabase 이미지 가져오기 성공:', data)
+      return data
+    }
+  } catch (error) {
+    console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
+    return null
+  }
+}

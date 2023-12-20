@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import { Link, useNavigate } from 'react-router-dom'
-import { getUserReviews } from '@/api/reviewApi'
+import { getLikeReviews, getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
 import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -51,7 +51,7 @@ function MyPage() {
   )
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
 
-  const [favoriteReviews, setFavoriteReviews] = useState<number | null>(null)
+  const [favoriteReviews, setFavoriteReviews] = useState<string[] | null>(null)
 
   console.log('reviews: ', reviews)
   console.log('profileImg: ', profileImg)
@@ -73,60 +73,6 @@ function MyPage() {
       }
     }
   }, [isAuthenticated])
-
-  //# 리뷰 가져오기
-  useEffect(() => {
-    const userInfo = userInfoInLs()
-    setUserId(userInfo.userId) // users의 user_email = revews의 user_id
-    setUserEmail(userInfo.userEmail) // local storage의 email
-
-    if (!userId) {
-      return
-    }
-
-    const fetchUserReviews = async () => {
-      const reviews = await getUserReviews(userId)
-
-      if (!reviews) {
-        return
-      }
-
-      const reviewImgs = reviews.map(review => review.img_url)
-      const movieTitles = reviews.map(review => review.movie_title)
-      const reviewId = reviews.map(review => review.movie_id)
-
-      // 기본 영화 포스터 찾기
-      const moviesArray = await Promise.all(
-        movieTitles.map(async title => {
-          const response = await getSearchMovies(title)
-          return response.results
-        })
-      )
-
-      const posterPath = moviesArray.map(
-        (movies: MovieProps[], index: number) => {
-          const movie = movies.find(m => m.id.toString() === reviewId[index])
-          return movie ? movie.poster_path : undefined
-        }
-      )
-
-      setReviews(reviews)
-      setReviewImgs(reviewImgs)
-      setMovieImgs(posterPath)
-    }
-
-    // const fetchFavoriteReviews = async (userId: string) => {
-    //   const favorite = await favoriteReviews: ReviewProps[] | null(userId)
-    // }
-    const fetchFavoriteReviews = async () => {
-      const favorite = await matchLike(userId)
-      setFavoriteReviews(favorite?.length || 0)
-      console.log('like: ', favorite)
-    }
-
-    fetchUserReviews()
-    fetchFavoriteReviews()
-  }, [userId])
 
   //# 프로필 이미지
   // 프로필 이미지 선택
@@ -190,7 +136,58 @@ function MyPage() {
     setIsShowReviews(false)
   }
 
-  //# 북마크 가져오기
+  //# 데이터 가져오기
+  useEffect(() => {
+    const userInfo = userInfoInLs()
+    setUserId(userInfo.userId) // users의 user_email = revews의 user_id
+    setUserEmail(userInfo.userEmail) // local storage의 email
+
+    if (!userId) {
+      return
+    }
+
+    // 리뷰
+    const fetchUserReviews = async () => {
+      const reviews = await getUserReviews(userId)
+
+      if (!reviews) {
+        return
+      }
+
+      const reviewImgs = reviews.map(review => review.img_url)
+      const movieTitles = reviews.map(review => review.movie_title)
+      const reviewId = reviews.map(review => review.movie_id)
+
+      // 기본 영화 포스터 찾기
+      const moviesArray = await Promise.all(
+        movieTitles.map(async title => {
+          const response = await getSearchMovies(title)
+          return response.results
+        })
+      )
+
+      const posterPath = moviesArray.map(
+        (movies: MovieProps[], index: number) => {
+          const movie = movies.find(m => m.id.toString() === reviewId[index])
+          return movie ? movie.poster_path : undefined
+        }
+      )
+
+      setReviews(reviews)
+      setReviewImgs(reviewImgs)
+      setMovieImgs(posterPath)
+    }
+
+    // 북마크
+    // const fetchFavoriteReviews = async () => {
+    //   const favorites = await getLikeReviews(userId!)
+    //   setFavoriteReviews(favorites)
+    //   console.log('favorites: ', favorites)
+    // }
+
+    fetchUserReviews()
+    // fetchFavoriteReviews()
+  }, [userId])
 
   return (
     <Box>
@@ -294,7 +291,7 @@ function MyPage() {
                 <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
               </PictureWrapper>
             )
-          ) : favoriteReviews && favoriteReviews > 0 ? (
+          ) : favoriteReviews && favoriteReviews.length > 0 ? (
             // 3. 좋아요 있을 때
             <PictureWrapper>
               <div>좋아요 있을 때</div>

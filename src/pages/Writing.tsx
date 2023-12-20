@@ -16,7 +16,12 @@ import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  uploadDefaultImage,
+  uploadImage
+} from '@/api/reviewApi'
 import { getNickname, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 interface ResultBarContainProps {
@@ -37,6 +42,7 @@ function Writing() {
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [imgSrc, setImgSrc]: any = useState(null)
+  const [defaultImg, setDefaultImg] = useState<string | null>('')
   const [image, setImage] = useState<File | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
@@ -107,6 +113,8 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
+    console.log('selectedResult: ', selectedResult)
+    setDefaultImg(selectedResult?.poster_path)
     setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
 
@@ -227,6 +235,8 @@ function Writing() {
 
     try {
       if (selectMovie && !imgSrc) {
+        const defaultImgUrl = await uploadDefaultImage(defaultImg!)
+
         await addReview(
           selectMovie.id,
           userEmail!,
@@ -235,6 +245,7 @@ function Writing() {
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
           nickname,
+          defaultImgUrl!,
           selectMovie.genre_ids
         )
       } else if (selectMovie && imgSrc) {
