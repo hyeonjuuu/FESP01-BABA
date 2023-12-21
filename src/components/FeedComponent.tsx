@@ -31,7 +31,6 @@ type LikeIconProps = {
 
 function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  // const [reviews, setReviews] = useState<ReviewData>([])
   const [reviewId, setReviewId] = useState<number>()
   const [likesReview, setLikesReview] = useState<Record<number, boolean>>({})
   const { bookmarkList, setBookmarkList } = useBookmarkStore()

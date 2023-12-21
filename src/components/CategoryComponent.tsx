@@ -71,14 +71,12 @@ function CategoryComponent() {
     const select = e.currentTarget.value
     setSelectCategory(select)
   }
-  console.log('select', selectCategory)
 
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const selectCategoryButton =
       e.currentTarget.querySelectorAll('div')[1].textContent
-    console.log(selectCategoryButton)
     if (selectCategory === '영화') {
       const filterCategory = movieGenres.genres.filter(
         item => item.name === selectCategoryButton
@@ -94,9 +92,7 @@ function CategoryComponent() {
     }
   }
 
-  useEffect(() => {
-    console.log(movieGenresState)
-  }, [movieGenresState])
+  useEffect(() => {}, [movieGenresState])
 
   return (
     <CategorySection>
