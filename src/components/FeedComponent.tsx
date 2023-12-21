@@ -90,7 +90,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
               loginUserIdLiked
             )
           })
-        console.log('myLikes: ', myLikes)
 
         setIsLikReviews(myLikes)
 

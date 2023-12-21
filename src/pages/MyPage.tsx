@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import { Link, useNavigate } from 'react-router-dom'
-import { getLikeReviews, getUserReviews } from '@/api/reviewApi'
+import { getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
-import { SetStateAction, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import {
   addImgUrlToUsers,
@@ -15,22 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
-import { getMyLikes, getfavorites, matchLike } from '@/api/getLikesData'
-
-interface ReviewProps {
-  created_at: string
-  id: number
-  img_url: string | null
-  movie_id: string
-  movie_title: string
-  ott: string[]
-  rating: number
-  text: string
-  updated_at: string | null
-  user_id: string
-  like: string | null
-  likes: string | null
-}
+import { getMyLikes } from '@/api/getLikesData'
 
 interface PostProps {
   key: number
@@ -43,14 +28,12 @@ function MyPage() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
-  const [reviews, setReviews] = useState<ReviewProps[] | null>(null)
-  const [reviewImgs, setReviewImgs] = useState<string[] | null>(null)
-  const [defaultImgs, setDefaultImgs] = useState<string[]>([])
-  const [userImgs, setUserImgs] = useState<string[]>([])
+  const [reviews, setReviews] = useState<ReviewsProps[] | null>(null)
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
+  const [popularReviews, setPopularReviews] = useState<ReviewsProps[] | null>(
+    null
+  )
   const [myLikes, setMyLikes] = useState<any[]>([])
-  // const prevMyLikesRef = useRef<any[] | undefined>() // myLikes의 이전 상태를 추적하는 ref를 추가합니다.
-  const [isRerender, setIsRerender] = useState<boolean>(false)
 
   console.log('reviews: ', reviews)
 
@@ -59,10 +42,6 @@ function MyPage() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
   useEffect(() => {
-    // const userInfo = userInfoInLs()
-    // setUserId(userInfo.userId) // users의 user_email = revews의 user_id
-    // setUserEmail(userInfo.userEmail) // local storage의 email
-
     if (!isAuthenticated) {
       const confirmed = window.confirm(
         '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
@@ -138,8 +117,8 @@ function MyPage() {
   //# 작성 글과 좋아요 가져오기
   useEffect(() => {
     const userInfo = userInfoInLs()
-    setUserId(userInfo.userId) // users의 user_email = revews의 user_id
-    setUserEmail(userInfo.userEmail) // local storage의 email
+    setUserId(userInfo.userId)
+    setUserEmail(userInfo.userEmail)
 
     if (!userId) {
       return
@@ -153,16 +132,49 @@ function MyPage() {
         return
       }
 
-      const reviewImgs = reviews.map(review => review.img_url)
-      const movieTitles = reviews.map(review => review.movie_title)
-      const reviewId = reviews.map(review => review.movie_id)
-      const defaultImg = reviews.map(review => review.default_img)
-      const userImg = reviews.map(review => review.img_url)
+      const sortedReviews = reviews.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0).getTime()
+        const dateB = new Date(b.created_at || 0).getTime()
+        return dateB - dateA
+      })
 
-      setReviews(reviews)
-      setReviewImgs(reviewImgs!)
-      setDefaultImgs(defaultImg!)
-      setUserImgs(userImg!)
+      setReviews(sortedReviews)
+
+      // 좋아요 많이 받은 글
+      const sortedPopularReviews = Array.from(reviews)
+        //   .sort((a, b) => {
+        //     const lengthComparison =
+        //       (b.likes?.length || 0) - (a.likes?.length || 0)
+
+        //     if (lengthComparison === 0) {
+        //       const dateA = new Date(a.created_at || 0).getTime()
+        //       const dateB = new Date(b.created_at || 0).getTime()
+        //       return dateB - dateA
+        //     }
+
+        //     return lengthComparison
+        //   })
+        //   .map(review => review.likes)
+        //   .slice(0, 4)
+        // const sortedPopularReviews = reviews
+        .sort((a, b) => {
+          const lengthComparison =
+            (b.likes?.length || 0) - (a.likes?.length || 0)
+
+          if (lengthComparison === 0) {
+            const dateA = new Date(a.created_at || 0).getTime()
+            const dateB = new Date(b.created_at || 0).getTime()
+            return dateB - dateA
+          }
+
+          return lengthComparison
+        })
+        // .map(review => review.likes)
+        .slice(0, 4)
+      // .slice(0, 10)
+
+      setPopularReviews(sortedPopularReviews)
+      console.log('popularReviews: ', sortedPopularReviews)
     }
 
     // 북마크 가져오기
@@ -174,8 +186,6 @@ function MyPage() {
           return
         }
 
-        console.log('getLikes: ', getLikes)
-
         const myLikes = getLikes?.data
           ?.map(item => ({
             id: item.id,
@@ -184,7 +194,8 @@ function MyPage() {
             imgUrl: item.img_url,
             rating: item.rating,
             title: item.movie_title,
-            movieId: item.movie_id
+            movieId: item.movie_id,
+            created: item.created_at
           }))
           .filter(item => {
             const likesArray = item.likes || []
@@ -193,9 +204,13 @@ function MyPage() {
               item.likes !== null && Array.isArray(item.likes) && userIdLikes
             )
           })
+          .sort((a, b) => {
+            const dateA = new Date(a.created || 0).getTime()
+            const dateB = new Date(b.created || 0).getTime()
+            return dateB - dateA
+          })
 
         setMyLikes(myLikes!)
-        console.log('myLikes: ', myLikes)
       } catch (error) {
         console.error(error)
       }
@@ -204,45 +219,6 @@ function MyPage() {
     fetchUserReviews()
     fetchFavoriteReviews()
   }, [userId])
-
-  //# 북마크 가져오기
-  // const fetchFavoriteReviews = async () => {
-  //   try {
-  //     const getLikes = await getMyLikes([userId!])
-
-  //     if (!getLikes) {
-  //       return
-  //     }
-
-  //     console.log('getLikes: ', getLikes)
-
-  //     const myLikes = getLikes?.data
-  //       ?.map(item => ({
-  //         id: item.id,
-  //         likes: item.likes,
-  //         defaultImg: item.default_img,
-  //         imgUrl: item.img_url,
-  //         rating: item.rating,
-  //         title: item.title,
-  //         movieId: item.movie_id
-  //       }))
-  //       .filter(item => {
-  //         const likesArray = item.likes || []
-  //         const userIdLikes = likesArray.includes(userId) // true는 좋아요 누른 것
-  //         return item.likes !== null && Array.isArray(item.likes) && userIdLikes
-  //       })
-
-  //     setMyLikes(myLikes!)
-  //     console.log('myLikes: ', myLikes)
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchFavoriteReviews()
-  //   setIsRerender(true) // myLikes 가져오기 위함
-  // }, [isRerender])
 
   return (
     <Box>
@@ -283,10 +259,11 @@ function MyPage() {
         </ProfileContain>
 
         <Container>
-          <FavRing />
-          <FavRing />
-          <FavRing />
-          <FavRing />
+          {popularReviews
+            ? popularReviews.map(popular => (
+                <FavRing key={popular.id} review={popular} />
+              ))
+            : null}
         </Container>
 
         <MarginContainer>
@@ -305,7 +282,7 @@ function MyPage() {
           {isShowReviews ? (
             reviews && reviews.length > 0 ? (
               // 1. 리뷰 있을 때
-              reviews.map((review, index) => (
+              reviews.map(review => (
                 <Post key={review.id}>
                   <HoverLink
                     to={`/edit/${review.id}`}
@@ -318,10 +295,11 @@ function MyPage() {
                     <PostImg
                       src={
                         review.img_url
-                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                          : `https://image.tmdb.org/t/p/original/${defaultImgs[
-                              index
-                            ]?.replace('public/', '')}`
+                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
+                          : `https://image.tmdb.org/t/p/original/${review.default_img?.replace(
+                              'public/',
+                              ''
+                            )}`
                       }
                       alt={`${review.movie_title} 포스터`}
                     />
@@ -495,7 +473,7 @@ const Post = styled.div<PostProps>`
   background-color: #0282d1;
 `
 
-const HoverLink = styled(Link)`
+export const HoverLink = styled(Link)`
   width: 100%;
   height: 100%;
   display: block; /* Link는 inline 요소이므로 block으로 변경 */
@@ -513,7 +491,7 @@ const HoverLink = styled(Link)`
   }
 `
 
-const HoverDiv = styled.div`
+export const HoverDiv = styled.div`
   width: 100px;
   position: absolute;
   top: 50%;
@@ -523,7 +501,7 @@ const HoverDiv = styled.div`
   visibility: hidden;
 `
 
-const MovieTitleSpan = styled.span`
+export const MovieTitleSpan = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
