@@ -41,19 +41,20 @@ type LikeIconProps = {
 
 function FeedComponent() {
   const { $darkMode } = useThemeStore()
+  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
+    useBookmarkStore()
   const [reviews, setReviews] = useState<ReviewsProps[]>([])
   const [, setReviewsId] = useState<string[]>([])
   const [usersId, setUsersId] = useState<string[]>([])
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [myLikesId, setMyLikesId] = useState<number[]>([])
-
-  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
-    useBookmarkStore()
-
   const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
     []
   )
+  const [renderProfile, setRenderProfile] = useState<{
+    [key: string]: { imgSrc?: string | null }
+  }>({})
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -115,9 +116,22 @@ function FeedComponent() {
     if (loginUserId && usersId.length > 0) {
       try {
         const imgSrc = await Promise.all(
-          usersId.map(async userId => await getProfileImgUrl(userId))
+          reviews.map(async item => await getProfileImgUrl(item.user_id))
         )
         setRenderProfileImg(imgSrc)
+
+        const makeObj = imgSrc.map((item, index) => ({
+          imgSrc: item,
+          userId: usersId[index]
+        }))
+
+        setRenderProfile(prevProfile => ({
+          ...prevProfile,
+          ...makeObj.reduce(
+            (acc, { userId, imgSrc }) => ({ ...acc, [userId]: { imgSrc } }),
+            {}
+          )
+        }))
       } catch (error) {
         console.error(error)
       }
@@ -196,19 +210,20 @@ function FeedComponent() {
 
     setIsLiked(prevState => !prevState)
   }
-  console.log('최초 bookmarkList: ', bookmarkList)
 
   return (
     <FeedSection>
       <FeedContent>
         <ContentWrapper>
-          {reviews?.map((item: ReviewsProps, index: number) => (
+          {reviews?.map((item: ReviewsProps) => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
                 <UserImage
                   src={
-                    renderProfileImg[index]
-                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg[index]}`
+                    renderProfile[item.user_id]?.imgSrc
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${
+                          renderProfile[item.user_id]!.imgSrc
+                        }`
                       : userImage
                   }
                   alt="프로필 이미지"

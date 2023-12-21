@@ -13,7 +13,7 @@ interface PopularDataItem {
 interface SearchListProps {
   id: number
   media_type: string
-  ganre_ids?: number[]
+  genre_ids?: number[]
   title?: string
   name?: string
   poster_path: string | null

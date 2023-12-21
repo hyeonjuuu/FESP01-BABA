@@ -28,19 +28,17 @@ export const deleteLikes = async (itemId?: number) => {
 }
 
 // 내가 누른 좋아요
-export const getMyLikes = async (id: string) => {
+export const getMyLikes = async (id: string[]) => {
   try {
     const { data, error } = await supabase
       .from('reviews')
-      .select('likes, id, movie_title')
-      .eq('user_id', id)
-    // .match({ user_id: id })
+      .select('*')
+      .contains('likes', id)
 
     if (error) {
       console.error(error.message)
       return { error }
     } else {
-      console.log('likes 가져오기 성공: ', data)
       return { data }
     }
   } catch (error) {
@@ -139,6 +137,8 @@ export const getfavorites = async (userId: string) => {
   const { data } = await supabase
     .from('reviews')
     .select('likes_id')
+    // .select('*')
+    // .eq('likes', userId)
     .match({ likes_id: userId })
 
   return data
