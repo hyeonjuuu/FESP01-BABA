@@ -74,7 +74,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setFeeds(sortedReviewData)
-        console.log('sort data', sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData

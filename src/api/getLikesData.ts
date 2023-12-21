@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabaseClient'
 
 export const fetchAllLikes = async () => {
@@ -92,16 +91,11 @@ export const addFavorite = async (
 
     const existingLikes = (await existingData?.likes) || []
 
-    // 새로운 사용자 id 추가
-    let updatedLikes
+    let updatedLikes = existingLikes.includes(loginUserId)
+      ? existingLikes.filter((item: string) => item !== loginUserId)
+      : [...existingLikes, loginUserId]
 
-    if (existingLikes.includes(loginUserId)) {
-      updatedLikes = existingLikes.filter(
-        (item: string) => item !== loginUserId
-      )
-    } else {
-      updatedLikes = [...existingLikes, loginUserId]
-    }
+    updatedLikes = updatedLikes.length === 0 ? null : updatedLikes
 
     // 업서트
     const { data, error } = await supabase.from('reviews').upsert([
