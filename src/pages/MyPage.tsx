@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import userImage from '@/assets/userIcon.png'
 import { Link, useNavigate } from 'react-router-dom'
-import { getUserReviews } from '@/api/reviewApi'
+import { getLikeReviews, getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
 import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -46,12 +46,16 @@ function MyPage() {
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
   const [reviews, setReviews] = useState<ReviewProps[] | null>(null)
   const [reviewImgs, setReviewImgs] = useState<string[] | null>(null)
-  const [movieImgs, setMovieImgs] = useState<(string | undefined)[] | null>(
-    null
-  )
+  console.log('reviewImgs: ', reviewImgs)
+
+  const [defaultImgs, setDefaultImgs] = useState<string[]>([])
+  const [userImgs, setUserImgs] = useState<string[]>([])
+  console.log('defaultImgs: ', defaultImgs)
+  console.log('userImgs: ', userImgs)
+
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
 
-  const [favoriteReviews, setFavoriteReviews] = useState<number | null>(null)
+  const [favoriteReviews, setFavoriteReviews] = useState<string[] | null>(null)
 
   console.log('reviews: ', reviews)
   console.log('profileImg: ', profileImg)
@@ -73,60 +77,6 @@ function MyPage() {
       }
     }
   }, [isAuthenticated])
-
-  //# 리뷰 가져오기
-  useEffect(() => {
-    const userInfo = userInfoInLs()
-    setUserId(userInfo.userId) // users의 user_email = revews의 user_id
-    setUserEmail(userInfo.userEmail) // local storage의 email
-
-    if (!userId) {
-      return
-    }
-
-    const fetchUserReviews = async () => {
-      const reviews = await getUserReviews(userId)
-
-      if (!reviews) {
-        return
-      }
-
-      const reviewImgs = reviews.map(review => review.img_url)
-      const movieTitles = reviews.map(review => review.movie_title)
-      const reviewId = reviews.map(review => review.movie_id)
-
-      // 기본 영화 포스터 찾기
-      const moviesArray = await Promise.all(
-        movieTitles.map(async title => {
-          const response = await getSearchMovies(title)
-          return response.results
-        })
-      )
-
-      const posterPath = moviesArray.map(
-        (movies: MovieProps[], index: number) => {
-          const movie = movies.find(m => m.id.toString() === reviewId[index])
-          return movie ? movie.poster_path : undefined
-        }
-      )
-
-      setReviews(reviews)
-      setReviewImgs(reviewImgs)
-      setMovieImgs(posterPath)
-    }
-
-    // const fetchFavoriteReviews = async (userId: string) => {
-    //   const favorite = await favoriteReviews: ReviewProps[] | null(userId)
-    // }
-    const fetchFavoriteReviews = async () => {
-      const favorite = await matchLike(userId)
-      setFavoriteReviews(favorite?.length || 0)
-      console.log('like: ', favorite)
-    }
-
-    fetchUserReviews()
-    fetchFavoriteReviews()
-  }, [userId])
 
   //# 프로필 이미지
   // 프로필 이미지 선택
@@ -190,7 +140,47 @@ function MyPage() {
     setIsShowReviews(false)
   }
 
-  //# 북마크 가져오기
+  //# 데이터 가져오기
+  useEffect(() => {
+    const userInfo = userInfoInLs()
+    setUserId(userInfo.userId) // users의 user_email = revews의 user_id
+    setUserEmail(userInfo.userEmail) // local storage의 email
+
+    if (!userId) {
+      return
+    }
+
+    // 리뷰
+    const fetchUserReviews = async () => {
+      const reviews = await getUserReviews(userId)
+      console.log('reviews: ', reviews)
+
+      if (!reviews) {
+        return
+      }
+
+      const reviewImgs = reviews.map(review => review.img_url)
+      const movieTitles = reviews.map(review => review.movie_title)
+      const reviewId = reviews.map(review => review.movie_id)
+      const defaultImg = reviews.map(review => review.default_img)
+      const userImg = reviews.map(review => review.img_url)
+
+      setReviews(reviews)
+      setReviewImgs(reviewImgs)
+      setDefaultImgs(defaultImg)
+      setUserImgs(userImg)
+    }
+
+    // 북마크
+    // const fetchFavoriteReviews = async () => {
+    //   const favorites = await getLikeReviews(userId!)
+    //   setFavoriteReviews(favorites)
+    //   console.log('favorites: ', favorites)
+    // }
+
+    fetchUserReviews()
+    // fetchFavoriteReviews()
+  }, [userId])
 
   return (
     <Box>
@@ -266,7 +256,9 @@ function MyPage() {
                       src={
                         review.img_url
                           ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                          : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
+                          : `https://image.tmdb.org/t/p/original/${defaultImgs[
+                              index
+                            ]?.replace('public/', '')}`
                       }
                       alt={`${review.movie_title} 포스터`}
                     />
@@ -294,39 +286,10 @@ function MyPage() {
                 <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
               </PictureWrapper>
             )
-          ) : favoriteReviews && favoriteReviews > 0 ? (
+          ) : favoriteReviews && favoriteReviews.length > 0 ? (
             // 3. 좋아요 있을 때
             <PictureWrapper>
               <div>좋아요 있을 때</div>
-              {/* <Post key={review.id}>
-                  <HoverLink
-                    to={`/edit/${review.id}`}
-                    state={{
-                      review_id: review.id,
-                      user_id: userId,
-                      movie_id: review.movie_id
-                    }}
-                  >
-                    <PostImg
-                      src={
-                        review.img_url
-                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${reviewImgs?.[index]}`
-                          : `https://image.tmdb.org/t/p/original${movieImgs?.[index]}`
-                      }
-                      alt={`${review.movie_title} 포스터`}
-                    />
-                    <HoverDiv>
-                      <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
-                      <RatingSpan>
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          style={{ color: '#FFC61A' }}
-                        />{' '}
-                        {review.rating}
-                      </RatingSpan>
-                    </HoverDiv>
-                  </HoverLink>
-                </Post> */}
             </PictureWrapper>
           ) : (
             // 4. 좋아요 없을 때
