@@ -35,8 +35,6 @@ function MyPage() {
   )
   const [myLikes, setMyLikes] = useState<any[]>([])
 
-  console.log('reviews: ', reviews)
-
   //# 로그인 여부 확인
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
@@ -174,7 +172,6 @@ function MyPage() {
       // .slice(0, 10)
 
       setPopularReviews(sortedPopularReviews)
-      console.log('popularReviews: ', sortedPopularReviews)
     }
 
     // 북마크 가져오기

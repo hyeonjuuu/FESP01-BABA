@@ -117,7 +117,6 @@ function EditReview() {
         await supabase.storage
           .from('movieImage')
           .remove([`public/${oldImgName}`])
-        console.log('스토리지에서 제거 후 url: ', oldImgUrl)
       }
 
       setUserImg(null)

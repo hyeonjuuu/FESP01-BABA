@@ -55,7 +55,6 @@ export const getLikes = async (id: number) => {
       console.error(error.message)
       return { error }
     } else {
-      console.log('likes 가져오기 성공: ', data)
       return { data }
     }
   } catch (error) {
@@ -114,8 +113,6 @@ export const addFavorite = async (
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
-    } else {
-      console.log('Supabase 데이터 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)

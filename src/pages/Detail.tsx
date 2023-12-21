@@ -58,8 +58,6 @@ function Detail() {
     fetchData()
   }, [])
 
-  console.log(movieCreditData)
-
   return (
     <Container>
       {isLoading ? (
