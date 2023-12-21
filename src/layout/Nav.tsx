@@ -10,8 +10,11 @@ import useThemeStore from '@/store/useThemeStore'
 import searchImage from '@/assets/icon/Search.png'
 import styled, { ThemeProvider } from 'styled-components'
 import DarkModeToggleIcon from '@/components/DarkModeIcon'
+import { useAuthStore } from '@/store/useAuthStore'
+import AddUserIcon from '@/components/mypage/AddUserIcon'
 
 function Nav() {
+  const { isAuthenticated } = useAuthStore()
   const { $darkMode, toggleDarkMode } = useThemeStore()
 
   return (
@@ -64,7 +67,12 @@ function Nav() {
             <Item>
               <StyledLink to="/mypage">
                 <Btn>
-                  <Image src={UserIcon} alt="프로필 페이지" />
+                  {isAuthenticated ? (
+                    <AddUserIcon />
+                  ) : (
+                    // <Image src={UserIcon} alt="프로필 페이지" />
+                    <AddUserIcon />
+                  )}
                   <ItemName>프로필</ItemName>
                 </Btn>
               </StyledLink>
@@ -131,7 +139,8 @@ const NavContain = styled.nav<{ theme: { bgColor: string } }>`
     gap: 200px;
   }
   @media (min-width: 701px) and (max-width: 1260px) {
-    width: 45px;
+    width: 57px;
+    padding-left: 10px;
   }
 `
 
@@ -170,8 +179,8 @@ const MainLogo = styled.h1`
 `
 
 const Image = styled.img`
-  width: 24px;
-  height: 24px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
 `
 

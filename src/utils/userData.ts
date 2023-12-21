@@ -78,7 +78,6 @@ export const userLogin = async (userloginData: UserloginData) => {
     if (data) {
       // 사용자의 정보를 로컬스토리지에 저장합니다.
       localStorage.setItem('userData', JSON.stringify(data))
-      console.log('로그인 성공:', data)
       return
     } else if (error) {
       console.error('로그인 실패:', error.message)
@@ -89,8 +88,10 @@ export const userLogin = async (userloginData: UserloginData) => {
 }
 
 // 현재 로그인한 사용자의 정보 가져오기
-export const getMetaData = async () => {
-  const { data, error } = await supabase.auth.getUser('hori04@gmail.com')
+export const getMetaData = async (
+  eamil: string | undefined
+): Promise<any | undefined> => {
+  const { data, error } = await supabase.auth.getUser(eamil)
 
   if (data) {
     // 사용자 메타데이터 확인

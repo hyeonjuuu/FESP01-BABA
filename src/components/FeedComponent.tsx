@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
+import { useEffect, useState } from 'react'
 import { FontProps } from './CategoryComponent'
 import useThemeStore from '../store/useThemeStore'
 import { createClient } from '@supabase/supabase-js'
-import { useEffect, useState } from 'react'
+import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
 
@@ -79,13 +80,12 @@ function FeedComponent() {
   const { data: likeItems } = useQuery({
     queryKey: queryKey,
     queryFn: async () => {
-      const result = await matchLike(userId)
+      const result = await matchLike(userId as string)
       return result
     },
     refetchOnReconnect: false,
     refetchOnWindowFocus: false
   })
-  console.log('likeItems', likeItems)
 
   useEffect(() => {
     const loadReviewData = async () => {
@@ -94,9 +94,20 @@ function FeedComponent() {
           .from('reviews')
           .select()
         if (reviewError) throw new Error()
+        else if (reviewData) {
+          // setReviews(reviewData)
+          const updatedReviewData = await Promise.all(
+            reviewData.map(async review => {
+              const profileImgUrl = await getProfileImgUrl(review.user_id)
+              return {
+                ...review,
+                profileImgUrl
+              }
+            })
+          )
 
-        setReviews(reviewData)
-        console.log('리뷰데이터', reviewData)
+          setReviews(updatedReviewData)
+        }
       } catch (err) {
         console.error('데이터 불러오기 실패')
         return null
@@ -133,6 +144,9 @@ function FeedComponent() {
     }
   }
 
+  // console.log(reviews[0].user_id)
+  // console.log(reviews)
+
   return (
     <FeedSection>
       <FeedContent>
@@ -140,7 +154,10 @@ function FeedComponent() {
           {reviews?.map(item => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
-                <UserImage src="" alt="" />
+                <UserImage
+                  src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${item.profileImgUrl}`}
+                  alt=""
+                />
                 <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
               </CommonDivWrapper>
               <FeedImage

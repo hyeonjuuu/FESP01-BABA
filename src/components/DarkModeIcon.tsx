@@ -44,6 +44,11 @@ const Wrapper = styled.div<{ $isDarkMode: boolean }>`
   border-radius: 50%;
   cursor: pointer;
 
+  @media (min-width: 701px) and (max-width: 1260px) {
+    width: 60px;
+    height: 60px;
+  }
+
   background-color: ${props => (props.$isDarkMode ? '#1E1E1E' : '#FFF')};
   box-shadow:
     -1px -3px 15px rgba(255, 255, 255, 0.5),
@@ -70,11 +75,20 @@ const ButtonText = styled.span`
   margin-top: 5px;
   font-size: 12px;
   font-weight: 600;
+  @media (min-width: 701px) and (max-width: 1260px) {
+    display: none;
+  }
 `
 
 const Img = styled.img<{ $isDarkMode: boolean }>`
   width: 30px;
   height: 30px;
+
+  @media (min-width: 701px) and (max-width: 1260px) {
+    width: 27px;
+    height: 27px;
+  }
+
   filter: ${props =>
     props.$isDarkMode
       ? 'invert(85%) sepia(1) saturate(1000%) hue-rotate(295deg) brightness(110%) contrast(100%)'

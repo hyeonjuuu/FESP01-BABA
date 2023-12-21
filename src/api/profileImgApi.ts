@@ -82,7 +82,7 @@ export const getProfileImgUrl = async (id: string): Promise<string | null> => {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       return null
     } else {
-      console.log('Supabase 이미지 가져오기 성공:', data)
+      // console.log('Supabase 이미지 가져오기 성공:', data)
 
       // 첫 번째 객체의 img_url 반환
       return data && data.length > 0 ? data[0].profile_img : null

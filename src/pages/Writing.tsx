@@ -1,21 +1,20 @@
 import { motion } from 'framer-motion'
-import styled from 'styled-components'
-import debounce from '@/utils/debounce'
 import Button from '@/components/Button'
 import ottIcons from '@/utils/ottIconImage'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 import { useNavigate } from 'react-router-dom'
+import userInfoInLs from '@/utils/userInfoInLs'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
-import { ottIconNames } from '@/utils/ottIconImage'
-import { useEffect, useRef, useState } from 'react'
-import getSearchMovies from '@/api/getSearchMovies'
 import { Icon, Image, Input } from './SearchPage'
+import { ottIconNames } from '@/utils/ottIconImage'
+import getSearchMovies from '@/api/getSearchMovies'
+import { useEffect, useRef, useState } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
+import styled, { keyframes } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { useAuthStore } from '@/store/useAuthStore'
-import userInfoInLs from '@/utils/userInfoInLs'
+import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -37,6 +36,7 @@ function Writing() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
+  const [isSearched, setIsSearched] = useState(false)
 
   //# 로그인 여부 확인
   const navigate = useNavigate()
@@ -61,9 +61,16 @@ function Writing() {
   }, [])
 
   //# 검색
-  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.target.value = e.target.value.toLowerCase()
-    setIsSearchBtnDisabled(e.target.value.length === 0) // input value가 변경될 때마다 검색 버튼의 활성화 상태 갱신
+  // const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   e.target.value = e.target.value.toLowerCase()
+  //   setIsSearchBtnDisabled(e.target.value.length === 0) // input value가 변경될 때마다 검색 버튼의 활성화 상태 갱신
+  // }
+
+  // TitleDiv를 클릭했을 때 inputRef로 포커스 이동합니다.
+  const handleTitleClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
   }
 
   const handleSearchBtn = async (e: React.MouseEvent) => {
@@ -81,11 +88,13 @@ function Writing() {
         })
       )
       setSearchList(searchResults)
+      setIsSearched(true)
+      setIsSearchBtnDisabled(true)
     } catch (error) {
       console.error(error)
     } finally {
       inputRef.current!.value = ''
-      setIsSearchBtnDisabled(true) // 검색 후에는 검색 버튼을 다시 비활성화
+      // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
 
@@ -93,6 +102,9 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
+    // console.log('클릭')
+    setIsSearched(false)
+    setIsSearchBtnDisabled(false)
   }
 
   //# 이미지 선택
@@ -139,19 +151,19 @@ function Writing() {
     })
   }
 
-  const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputOtt = event.target.value
+  // const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const inputOtt = event.target.value
 
-    setSelectedOtt(prevSelectedOtt => {
-      if (prevSelectedOtt.length === 0) {
-        return [inputOtt]
-      } else {
-        const newSelectedOtt = [...prevSelectedOtt]
-        newSelectedOtt[newSelectedOtt.length - 1] = inputOtt
-        return newSelectedOtt
-      }
-    })
-  }
+  //   setSelectedOtt(prevSelectedOtt => {
+  //     if (prevSelectedOtt.length === 0) {
+  //       return [inputOtt]
+  //     } else {
+  //       const newSelectedOtt = [...prevSelectedOtt]
+  //       newSelectedOtt[newSelectedOtt.length - 1] = inputOtt
+  //       return newSelectedOtt
+  //     }
+  //   })
+  // }
 
   //# 별점
   const handleRatingChange = (newRating: number) => {
@@ -171,12 +183,12 @@ function Writing() {
   }
 
   //# 내용 작성
-  const handleInputChange = debounce(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setText(e.target.value)
-    },
-    500
-  )
+  // const handleInputChange = debounce(
+  //   (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //     setText(e.target.value)
+  //   },
+  //   500
+  // )
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -236,153 +248,159 @@ function Writing() {
   return (
     <Container>
       <FormStyle encType="multipart/form-data">
-        <SearchBarWrapper>
-          <SearchBar>
-            <Icon>
-              <FontAwesomeIcon icon={faMagnifyingGlass} />
-            </Icon>
-            <Input
-              type="text"
-              placeholder="리뷰하고싶은 영화를 이곳에서 찾으세요!"
-              onChange={handleSearchInput}
-              ref={inputRef}
-            />
-          </SearchBar>
-          <Btn onClick={handleSearchBtn} disabled={isSearchBtnDisabled}>
-            검색
-          </Btn>
-        </SearchBarWrapper>
+        <SearchContainerWrapper>
+          <FlexContainer>
+            <SearchBarWrapper isSearchBtnDisabled={isSearchBtnDisabled}>
+              <SearchBar>
+                <Icon>
+                  <FontAwesomeIcon icon={faMagnifyingGlass} />
+                </Icon>
+                <Input
+                  type="text"
+                  placeholder="리뷰하고싶은 영화를 이곳에서 찾으세요!"
+                  // onChange={handleSearchInput}
+                  ref={inputRef}
+                />
+              </SearchBar>
+              <Btn onClick={handleSearchBtn}>검색</Btn>
+            </SearchBarWrapper>
 
-        <ResultWrapper>
-          {searchList.map(result => (
-            <ResultBarContain
-              key={result.id}
-              onClick={() => handleSelectMovie(result)}
-              $darkMode={$darkMode}
+            <ResultWrapper
+              isSearched={isSearched}
+              isSearchBtnDisabled={isSearchBtnDisabled}
             >
-              <Contain>
-                <Image
-                  src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                  alt={`${result.title} 이미지`}
-                />
-                <Warppaer>
-                  <ResultBar>
-                    {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
-                    {result.media_type === 'movie' ? result.title : result.name}
-                  </ResultBar>
-                </Warppaer>
-              </Contain>
-            </ResultBarContain>
-          ))}
-        </ResultWrapper>
+              <SearchContainer>
+                {searchList.map(result => (
+                  <ResultBarContain
+                    key={result.id}
+                    onClick={() => handleSelectMovie(result)}
+                    $darkMode={$darkMode}
+                  >
+                    <Contain>
+                      <Image
+                        src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                        alt={`${result.title} 이미지`}
+                      />
+                      <Warppaer>
+                        <ResultBar>
+                          {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                          {result.media_type === 'movie'
+                            ? result.title
+                            : result.name}
+                        </ResultBar>
+                      </Warppaer>
+                    </Contain>
+                  </ResultBarContain>
+                ))}
+              </SearchContainer>
+            </ResultWrapper>
+          </FlexContainer>
+        </SearchContainerWrapper>
 
-        <Wrapper>
-          {ottIcons.map((icon, index) => (
-            <OttWrapper key={index}>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <IconBox>
-                  <OttIcon
-                    src={icon}
-                    alt={ottIconNames[index]}
-                    title={ottIconNames[index]}
-                  />
-                  <OttLabel htmlFor={`ott${index}`}> ott</OttLabel>
-                  <OttInput
-                    type="checkbox"
-                    name={`ott${index}`}
-                    id={`ott${index}`}
-                    checked={selectedOtt.includes(ottIconNames[index])}
-                    onChange={() => handleCheck(ottIconNames[index])}
-                  />
-                </IconBox>
-              </motion.div>
-            </OttWrapper>
-          ))}
-          <OthersOTT>
-            <label htmlFor="othersOttText">ott</label>
-            <OthersOttText
-              type="text"
-              name="othersOtt"
-              id="othersOttText"
-              placeholder="직접 입력"
-              value={
-                selectedOtt.length > 0
-                  ? selectedOtt[selectedOtt.length - 1]
-                  : ''
-              }
-              onChange={handleInputOtt}
-            ></OthersOttText>
-          </OthersOTT>
-        </Wrapper>
-
-        <TitleDiv>
-          {!selectMovie && `영화 또는 드라마 제목을 검색해주세요`}
-          {(selectMovie && selectMovie.title) || selectMovie?.name}
-        </TitleDiv>
-
-        <BtnWrapper onClick={handleSelectImg}>
-          <ImgSelectBtn
-            color={isSelectImg ? '#3797EF' : ''}
-            $hasBorder
-            onClick={handleSelectDefaultIimg}
-          >
-            기본 이미지
-          </ImgSelectBtn>
-          <ImgSelectBtn
-            color={isSelectImg ? '' : '#3797EF'}
-            onClick={handleSelectUserIimg}
-          >
-            사용자 이미지
-          </ImgSelectBtn>
-        </BtnWrapper>
-        <OriginalImage>
-          {selectMovie && isSelectImg ? (
-            <MoviePoster
-              src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
-              alt={`${selectMovie.title || selectMovie.name} 포스터`}
-            />
-          ) : (
-            selectMovie && (
-              <>
+        <WebComtainer>
+          <ImageBox>
+            <BtnWrapper onClick={handleSelectImg}>
+              <ImgSelectBtn
+                color={isSelectImg ? '#3797EF' : ''}
+                $hasBorder
+                onClick={handleSelectDefaultIimg}
+              >
+                기본 이미지
+              </ImgSelectBtn>
+              <ImgSelectBtn
+                color={isSelectImg ? '' : '#3797EF'}
+                onClick={handleSelectUserIimg}
+              >
+                사용자 이미지
+              </ImgSelectBtn>
+            </BtnWrapper>
+            <OriginalImage>
+              {selectMovie && isSelectImg ? (
                 <MoviePoster
-                  src={imgSrc}
-                  alt={`${selectMovie.title || selectMovie.name} 관련 이미지`}
+                  src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
+                  alt={`${selectMovie.title || selectMovie.name} 포스터`}
                 />
-                <div>
-                  <label htmlFor="photo">사진</label>
-                  <input
-                    type="file"
-                    accept=".jpg, .jpeg, .png"
-                    name="photo"
-                    id="photo"
-                    onChange={handleUpload}
-                  ></input>
-                </div>
-              </>
-            )
-          )}
-        </OriginalImage>
+              ) : (
+                selectMovie && (
+                  <>
+                    <MoviePoster
+                      src={imgSrc}
+                      alt={`${
+                        selectMovie.title || selectMovie.name
+                      } 관련 이미지`}
+                    />
+                    <div>
+                      <label htmlFor="photo">사진</label>
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        name="photo"
+                        id="photo"
+                        onChange={handleUpload}
+                      ></input>
+                    </div>
+                  </>
+                )
+              )}
+            </OriginalImage>
+          </ImageBox>
 
-        <StarContainer>
-          평점을 선택해주세요 <StarRating onRatingChange={handleRatingChange} />
-        </StarContainer>
+          <Description>
+            <TitleDiv onClick={handleTitleClick}>
+              {!selectMovie && `컨텐츠의 제목을 검색해주세요 🔎`}
+              {(selectMovie && selectMovie.title) || selectMovie?.name}
+            </TitleDiv>
 
-        <FeedText
-          ref={textareaRef}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder="이 컨텐츠에 대한 생각을 자유롭게 공유해보세요!🎬✨"
-          onChange={handleInputChange}
-        ></FeedText>
+            <OttTitle>시청하신 OTT를 선택해주세요 🙋‍♂️</OttTitle>
+            <Wrapper>
+              {ottIcons.map((icon, index) => (
+                <OttWrapper key={index}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Style>
+                      <OttIcon
+                        src={icon}
+                        alt={ottIconNames[index]}
+                        title={ottIconNames[index]}
+                      />
+                    </Style>
+                    <OttLabel htmlFor={`ott${index}`}></OttLabel>
+                    <OttInput
+                      type="checkbox"
+                      name={`ott${index}`}
+                      id={`ott${index}`}
+                      checked={selectedOtt.includes(ottIconNames[index])}
+                      onChange={() => handleCheck(ottIconNames[index])}
+                    />
+                  </motion.div>
+                </OttWrapper>
+              ))}
+            </Wrapper>
 
-        <Button
-          $bgcolor={'#3797EF'}
-          text={'작성하기'}
-          type={'submit'}
-          color={'white'}
-          width={'390px'}
-          onClick={handleSubmit}
-        />
+            <StarContainer>
+              <p>⭐️ 이 컨텐츠의 점수를 표시해주세요! ✨💫</p>
+              <StarRating onRatingChange={handleRatingChange} />
+            </StarContainer>
+
+            <FeedText
+              ref={textareaRef}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              placeholder="이 컨텐츠에 대한 생각을 자유롭게 공유해보세요!🎬✨"
+              // onChange={handleInputChange}
+            ></FeedText>
+
+            <Button
+              $bgcolor={'#3797EF'}
+              text={'작성하기'}
+              type={'submit'}
+              color={'white'}
+              onClick={handleSubmit}
+            />
+          </Description>
+        </WebComtainer>
       </FormStyle>
     </Container>
   )
@@ -395,29 +413,80 @@ const Container = styled.section`
   flex-direction: column;
   align-items: center;
   margin: 30px 0;
+  margin-bottom: 80px;
 `
 
 const FormStyle = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
-  gap: 10px;
-  max-width: 800px;
-  width: 80%;
+  gap: 20px;
+  width: 90%;
+
+  @media (min-width: 1031px) {
+    justify-content: space-between;
+  }
 `
 
-const SearchBarWrapper = styled.div`
-  display: flex;
-  align-items: center;
+const ImageBox = styled.div`
   width: 100%;
+  margin: 0 auto;
+
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 701px) {
+  }
+`
+const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+
+  border-bottom-left-radius: ${props =>
+    props.isSearchBtnDisabled ? 'none' : '8px'};
+
+  border-bottom-right-radius: ${props =>
+    props.isSearchBtnDisabled ? 'none' : '8px'};
+
+  background-color: #e8e8e8;
+
+  @media (min-width: 701px) {
+    flex-direction: row;
+  }
+`
+
+const WebComtainer = styled.div`
+  width: 100%;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  /* flex-direction: column; */
+  align-items: center;
+  gap: 20px;
+
+  @media (min-width: 1031px) {
+    flex-direction: row;
+
+    /* width: 100%; */
+  }
 `
 
 const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: 97%;
+  padding: 0 10px;
+  border-radius: 8px;
+  cursor: pointer;
+
   &:hover {
     background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
   }
@@ -425,21 +494,23 @@ const ResultBarContain = styled.div<ResultBarContainProps>`
 
 const SearchBar = styled.div`
   display: flex;
-  justify-content: space-between;
+
   align-items: center;
   height: 30px;
   padding: 10px;
-  background-color: #e8e8e8;
+
   border-radius: 8px;
-  width: 90%;
+  width: 86%;
 `
 
-const ResultWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+const ResultWrapper = styled.div<{
+  isSearched: boolean
+  isSearchBtnDisabled: boolean
+}>`
   width: 100%;
+  position: absolute;
+  z-index: 101;
+  top: 50px;
 `
 
 const Contain = styled.div`
@@ -451,45 +522,53 @@ const Contain = styled.div`
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  height: 60px;
-  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (min-width: 1031px) {
+    overflow-x: scroll;
+  }
+`
+
+const Description = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  @media (min-width: 1031px) {
+    width: 40%;
+    height: 97%;
+    gap: 47px;
+  }
 `
 
 const OttWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin: 0 8px;
+  justify-content: center;
+  width: 40%;
+  height: 40%;
+  flex: 1;
+  margin: 10px 8px;
 `
 
-const IconBox = styled.div`
-  width: 28px;
-  height: 28px;
-  position: relative;
-`
 const OttLabel = styled.label``
 
 const OttInput = styled.input`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 0;
+  height: 0;
   opacity: 0;
   cursor: pointer;
+  pointer-events: none;
 `
 
-const OthersOTT = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  align-items: center;
-  font-size: 14px;
-  padding: 0px 8px;
-  gap: 3px;
-`
-
-const OthersOttText = styled.input`
-  width: 100%;
+const Style = styled.div`
+  width: 60px;
+  height: 60px;
 `
 
 const OttIcon = styled.img`
@@ -504,16 +583,21 @@ const TitleDiv = styled.div`
   justify-content: center;
   align-items: start;
   width: 100%;
-  height: 50px;
-  font-size: 20px;
+  height: 80px;
+  font-size: 28px;
   font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+
+  @media (min-width: 1031px) {
+    font-size: 23px;
+  }
 `
 
 const BtnWrapper = styled.div`
   display: flex;
-  gap: 10px;
-  width: 100%;
   justify-content: center;
+  margin-top: 10px;
 `
 
 const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
@@ -521,19 +605,36 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
   height: 44px;
   color: black;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: ${props => props.color || 'white'};
-  ${props =>
-    props.$hasBorder &&
-    `
-      border: 1px solid black;
-    `}
+  background-color: ${({ color }) => color || 'white'};
+  transition: background-color 0.3s ease-in-out;
+
+  /* Add some styling for closer appearance */
+  &:first-child {
+    border-top-left-radius: 8px;
+  }
+
+  &:last-child {
+    border-top-right-radius: 8px;
+  }
+
+  &.selected {
+    background-color: ${({ color }) => color || 'white'};
+    cursor: default; /* Disable hover effect for selected button */
+  }
+
+  &:not(.selected):hover {
+    background-color: #3797ef;
+  }
 `
 
 const OriginalImage = styled.div`
   width: 100%;
-  height: 500px;
+  height: 700px;
   background-color: #d9d9d9;
   position: relative;
+
+  /* Replace border with box-shadow */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `
 
 const MoviePoster = styled.img`
@@ -545,31 +646,51 @@ const MoviePoster = styled.img`
 
 const StarContainer = styled.div`
   width: 100%;
-  padding: 30px 10px 10px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 5px;
+  font-size: 20px;
+
+  @media (min-width: 1031px) {
+    flex-direction: column;
+  }
 `
 
 const FeedText = styled.textarea`
-  width: 100%;
-  overflow: hidden;
-  border: none;
-  box-sizing: border-box;
+  width: 99%;
+  border: 2px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  transition: border-color 0.3s ease-in-out;
   resize: none;
-  padding: 10px;
+  margin-bottom: 30px;
+
+  &:hover {
+    border-color: #3797ef;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #2674c6;
+  }
+`
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 `
 
 const Btn = styled.button`
   width: 10%;
-  height: 100%;
-  border: 1px solid black;
-  border-radius: 5px;
+  height: 46px;
+  border-radius: 8px;
   background-color: #3797ef;
-  color: white;
+  /* color: white; */
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
@@ -583,4 +704,39 @@ const Btn = styled.button`
     color: #a1a1a1;
     cursor: not-allowed;
   }
+
+  animation: ${fadeIn} 0.5s ease-in-out;
+`
+
+const OttTitle = styled.div`
+  font-size: 20px;
+  font-weight: 600;
+`
+
+const SearchContainer = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+
+  background-color: #e8e8e8;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  z-index: 1;
+  flex: 1;
+`
+
+const SearchContainerWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`
+
+const FlexContainer = styled.div`
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: stretch;
 `

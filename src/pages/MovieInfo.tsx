@@ -45,8 +45,8 @@ function MovieInfo() {
           setMovieInfoData(data)
           setMovieCreditData(director)
 
-          const trailerData = await getTrailer(`${data.title} 예고편`)
-          setTrailers(trailerData)
+          // const trailerData = await getTrailer(`${data.title} 예고편`)
+          // setTrailers(trailerData)
         }
       } catch (error) {
         console.error(
@@ -64,8 +64,11 @@ function MovieInfo() {
         setIsLoading(true)
         const data = await getReviewData()
         const nicknameData = await getReviewDataWithUserInfo()
-        setReviewData(data)
-        setNicknames(nicknameData)
+
+        if (data) {
+          setReviewData(data)
+          setNicknames(nicknameData)
+        }
       } catch (error) {
         console.error(error)
       } finally {
@@ -91,7 +94,6 @@ function MovieInfo() {
   }, [movieID])
 
   // 감독정보 & 로딩구현
-  // console.log(movieinfoData?.title)
 
   return (
     <ThemeProvider
@@ -105,7 +107,7 @@ function MovieInfo() {
           <Wrapper>
             <Img
               src={`https://image.tmdb.org/t/p/original${movieinfoData?.poster_path}`}
-              alt="미드나잇 인 파리"
+              alt={movieinfoData?.title}
             />
             <GradientOverlay />
             <InfoContainer>
@@ -167,6 +169,7 @@ function MovieInfo() {
               return (
                 <DetailReview
                   key={`${reviewItem.user_id}-${index}`}
+                  userId={reviewItem.user_id}
                   nickname={matchingNicknames?.[0] || 'Default Nickname'}
                   rating={reviewItem.rating}
                   text={reviewItem.text}

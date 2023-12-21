@@ -1,7 +1,8 @@
 import styled from 'styled-components'
+import { useEffect, useState } from 'react'
 import useThemeStore from '@/store/useThemeStore'
 import { renderStars } from './movieInfo/renderStars'
-import { useEffect, useState } from 'react'
+import { getProfileImgUrl } from '@/api/profileImgApi'
 
 interface ReviewContentProps {
   $darkMode: boolean
@@ -11,20 +12,35 @@ interface DetailReviewProps {
   nickname?: string
   rating?: string
   text: string
+  userId: string
 }
 
-function DetailReview({ nickname, rating, text }: DetailReviewProps) {
+function DetailReview({ nickname, rating, text, userId }: DetailReviewProps) {
   const { $darkMode } = useThemeStore()
+
+  const [userProfileIcon, setUserProfileIcon] = useState<string | null>('')
   const [gradeStar, setGradeStar] = useState<JSX.Element[] | null>(null)
 
   useEffect(() => {
     const stars = renderStars(rating as string)
     setGradeStar(stars)
+
+    const getUserIcon = async () => {
+      if (userId) {
+        const userIcon = await getProfileImgUrl(userId)
+        setUserProfileIcon(userIcon)
+      }
+    }
+
+    getUserIcon()
   }, [rating])
 
   return (
     <DetailReviewDivWrapper>
-      <Img src="https://picsum.photos/id/237/200/300" alt=""></Img>
+      <Img
+        src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${userProfileIcon}`}
+        alt=""
+      ></Img>
 
       <DetailReviewDiv>
         <NameStartDiv>
