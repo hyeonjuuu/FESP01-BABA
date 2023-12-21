@@ -5,7 +5,6 @@ import { getLikeReviews, getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
 import { SetStateAction, useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
-import getSearchMovies from '@/api/getSearchMovies'
 import {
   addImgUrlToUsers,
   deleteProfileImg,
@@ -49,8 +48,9 @@ function MyPage() {
   const [defaultImgs, setDefaultImgs] = useState<string[]>([])
   const [userImgs, setUserImgs] = useState<string[]>([])
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
-  // const [favoriteReviews, setFavoriteReviews] = useState<string[] | null>(null)
-  const [favoriteReviews, setFavoriteReviews] = useState<any[] | null>(null)
+  const [myLikes, setMyLikes] = useState<any[]>([])
+  // const prevMyLikesRef = useRef<any[] | undefined>() // myLikes의 이전 상태를 추적하는 ref를 추가합니다.
+  const [isRerender, setIsRerender] = useState<boolean>(false)
 
   console.log('reviews: ', reviews)
 
@@ -59,6 +59,10 @@ function MyPage() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
   useEffect(() => {
+    // const userInfo = userInfoInLs()
+    // setUserId(userInfo.userId) // users의 user_email = revews의 user_id
+    // setUserEmail(userInfo.userEmail) // local storage의 email
+
     if (!isAuthenticated) {
       const confirmed = window.confirm(
         '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
@@ -131,7 +135,7 @@ function MyPage() {
     setIsShowReviews(false)
   }
 
-  //# 리뷰 가져오기
+  //# 작성 글과 좋아요 가져오기
   useEffect(() => {
     const userInfo = userInfoInLs()
     setUserId(userInfo.userId) // users의 user_email = revews의 user_id
@@ -141,6 +145,7 @@ function MyPage() {
       return
     }
 
+    // 리뷰 가져오기
     const fetchUserReviews = async () => {
       const reviews = await getUserReviews(userId!)
 
@@ -160,38 +165,84 @@ function MyPage() {
       setUserImgs(userImg!)
     }
 
+    // 북마크 가져오기
+    const fetchFavoriteReviews = async () => {
+      try {
+        const getLikes = await getMyLikes([userId!])
+
+        if (!getLikes) {
+          return
+        }
+
+        console.log('getLikes: ', getLikes)
+
+        const myLikes = getLikes?.data
+          ?.map(item => ({
+            id: item.id,
+            likes: item.likes,
+            defaultImg: item.default_img,
+            imgUrl: item.img_url,
+            rating: item.rating,
+            title: item.movie_title,
+            movieId: item.movie_id
+          }))
+          .filter(item => {
+            const likesArray = item.likes || []
+            const userIdLikes = likesArray.includes(userId) // true는 좋아요 누른 것
+            return (
+              item.likes !== null && Array.isArray(item.likes) && userIdLikes
+            )
+          })
+
+        setMyLikes(myLikes!)
+        console.log('myLikes: ', myLikes)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
     fetchUserReviews()
+    fetchFavoriteReviews()
   }, [userId])
 
   //# 북마크 가져오기
-  useEffect(() => {
-    const fetchFavoriteReviews = async () => {
-      const getLikes = await getMyLikes([userId!])
+  // const fetchFavoriteReviews = async () => {
+  //   try {
+  //     const getLikes = await getMyLikes([userId!])
 
-      if (!getLikes) {
-        return
-      }
+  //     if (!getLikes) {
+  //       return
+  //     }
 
-      console.log('좋아요 가져오기: ', getLikes)
+  //     console.log('getLikes: ', getLikes)
 
-      const likesArray = getLikes?.data?.map(item => {
-        item.likes, item.id
-      })
-      console.log('likesArray: ', likesArray)
+  //     const myLikes = getLikes?.data
+  //       ?.map(item => ({
+  //         id: item.id,
+  //         likes: item.likes,
+  //         defaultImg: item.default_img,
+  //         imgUrl: item.img_url,
+  //         rating: item.rating,
+  //         title: item.title,
+  //         movieId: item.movie_id
+  //       }))
+  //       .filter(item => {
+  //         const likesArray = item.likes || []
+  //         const userIdLikes = likesArray.includes(userId) // true는 좋아요 누른 것
+  //         return item.likes !== null && Array.isArray(item.likes) && userIdLikes
+  //       })
 
-      // const userLikes = likesArray?.filter(item => item.includes(userId))
-      // console.log('userLikes: ', userLikes)
+  //     setMyLikes(myLikes!)
+  //     console.log('myLikes: ', myLikes)
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
-      // const userLikes = getLikes?.data?.filter(like => likes === userId);
-
-      setFavoriteReviews(getLikes.data || null)
-      console.log('getLikes.data: ', getLikes.data)
-    }
-
-    fetchFavoriteReviews()
-  }, [])
-
-  console.log('favoriteReviews: ', favoriteReviews)
+  // useEffect(() => {
+  //   fetchFavoriteReviews()
+  //   setIsRerender(true) // myLikes 가져오기 위함
+  // }, [isRerender])
 
   return (
     <Box>
@@ -246,10 +297,10 @@ function MyPage() {
 
           <Wrapper onClick={handleShowLikes}>
             <StyledP>좋아요</StyledP>
-            <span>{favoriteReviews?.length}</span>
-            {/* <span>{favoriteReviews ? favoriteReviews.length : 0}</span> */}
+            <span>{myLikes?.length}</span>
           </Wrapper>
         </MarginContainer>
+
         <PostsContain>
           {isShowReviews ? (
             reviews && reviews.length > 0 ? (
@@ -298,15 +349,35 @@ function MyPage() {
                 <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
               </PictureWrapper>
             )
-          ) : //  favoriteReviews && favoriteReviews.length > 0 ? (
-          favoriteReviews && favoriteReviews.length > 0 ? (
-            // {isShowLikes && favoriteReviews && favoriteReviews.length > 0 ? (
-            // isShowLikes && favoriteReviews && favoriteReviews.length > 0 ? (
-
+          ) : myLikes && myLikes.length > 0 ? (
             // 3. 좋아요 있을 때
-            <PictureWrapper>
-              <div>좋아요 있을 때</div>
-            </PictureWrapper>
+            myLikes.map(like => (
+              <Post key={like.id}>
+                <HoverLink to={`/detail/${like.id}`}>
+                  <PostImg
+                    src={
+                      like.imgUrl
+                        ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${like.imgUrl}`
+                        : `https://image.tmdb.org/t/p/original/${like.defaultImg?.replace(
+                            'public/',
+                            ''
+                          )}`
+                    }
+                    alt={`${like.title} 포스터`}
+                  />
+                  <HoverDiv>
+                    <MovieTitleSpan>{like.title}</MovieTitleSpan>
+                    <RatingSpan>
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        style={{ color: '#FFC61A' }}
+                      />{' '}
+                      {like.rating}
+                    </RatingSpan>
+                  </HoverDiv>
+                </HoverLink>
+              </Post>
+            ))
           ) : (
             // 4. 좋아요 없을 때
             <PictureWrapper>
