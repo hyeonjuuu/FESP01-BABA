@@ -146,17 +146,23 @@ function CategoryComponent() {
           ? movieCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
                 <CategoryButton onClick={handleFilterCategory}>
-                  <motion.div
+                  <motion.button
                     whileHover={{
                       rotate: 360,
-                      transition: { duration: 1 },
-                      onStart: { rotate: 0 } // 사용자가 호버를 시작할 때 rotate를 0으로 설정
+                      transition: { duration: 1 }
                     }}
                     initial={{ rotate: 0 }}
                     animate={{ rotate: 0 }}
+                    style={{
+                      boxSizing: 'border-box',
+                      border: 'none',
+                      outline: 'none',
+                      backgroundColor: 'inherit',
+                      cursor: 'pointer'
+                    }}
                   >
                     <CategoryCircle color={color}></CategoryCircle>
-                  </motion.div>
+                  </motion.button>
                   <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
                     {text}
                   </CategroyList>
