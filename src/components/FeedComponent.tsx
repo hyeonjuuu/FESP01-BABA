@@ -36,23 +36,22 @@ type LikeIconProps = {
 
 function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  const [feeds, setFeeds] = useState<ReviewData[]>([])
+  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
+    useBookmarkStore()
+  const [feeds, setFeeds] = useState<ReviewsProps[]>([])
   const [, setReviewsId] = useState<string[]>([])
   const [usersId, setUsersId] = useState<string[]>([])
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [myLikesId, setMyLikesId] = useState<number[]>([])
-  const [renderProfile, setRenderProfile] = useState<{
-    [key: string]: { imgSrc?: string | null }
-  }>({})
-
-  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
-    useBookmarkStore()
 
   const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
     []
   )
   const feedContentSectionRef = useRef<HTMLDivElement>(null)
+  const [renderProfile, setRenderProfile] = useState<{
+    [key: string]: { imgSrc?: string | null }
+  }>({})
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -119,10 +118,12 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
         )
 
         setRenderProfileImg(imgSrc)
+
         const makeObj = imgSrc.map((item, index) => ({
           imgSrc: item,
           userId: usersId[index]
         }))
+
         setRenderProfile(prevProfile => ({
           ...prevProfile,
           ...makeObj.reduce(
@@ -130,7 +131,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
             {}
           )
         }))
-        console.log('makeObj: ', makeObj)
       } catch (error) {
         console.error(error)
       }
@@ -209,7 +209,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     setIsLiked(prevState => !prevState)
   }
-  console.log('최초 bookmarkList: ', bookmarkList)
 
   return (
     <FeedSection>

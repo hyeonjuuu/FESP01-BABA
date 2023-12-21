@@ -3,7 +3,7 @@ import userImage from '@/assets/userIcon.png'
 import { Link, useNavigate } from 'react-router-dom'
 import { getLikeReviews, getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
-import { useEffect, useRef, useState } from 'react'
+import { SetStateAction, useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import {
@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
-import { matchLike } from '@/api/getLikesData'
+import { getMyLikes, getfavorites, matchLike } from '@/api/getLikesData'
 
 interface ReviewProps {
   created_at: string
@@ -46,20 +46,13 @@ function MyPage() {
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
   const [reviews, setReviews] = useState<ReviewProps[] | null>(null)
   const [reviewImgs, setReviewImgs] = useState<string[] | null>(null)
-  console.log('reviewImgs: ', reviewImgs)
-
   const [defaultImgs, setDefaultImgs] = useState<string[]>([])
   const [userImgs, setUserImgs] = useState<string[]>([])
-  console.log('defaultImgs: ', defaultImgs)
-  console.log('userImgs: ', userImgs)
-
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
-
-  const [favoriteReviews, setFavoriteReviews] = useState<string[] | null>(null)
+  // const [favoriteReviews, setFavoriteReviews] = useState<string[] | null>(null)
+  const [favoriteReviews, setFavoriteReviews] = useState<any[] | null>(null)
 
   console.log('reviews: ', reviews)
-  console.log('profileImg: ', profileImg)
-  console.log('renderProfileImg: ', renderProfileImg)
 
   //# 로그인 여부 확인
   const navigate = useNavigate()
@@ -127,8 +120,6 @@ function MyPage() {
   }
 
   useEffect(() => {
-    console.log('renderProfileImg updated:', renderProfileImg)
-
     fetchAndRenderProfileImg()
   }, [userId, renderProfileImg])
 
@@ -140,7 +131,7 @@ function MyPage() {
     setIsShowReviews(false)
   }
 
-  //# 데이터 가져오기
+  //# 리뷰 가져오기
   useEffect(() => {
     const userInfo = userInfoInLs()
     setUserId(userInfo.userId) // users의 user_email = revews의 user_id
@@ -150,10 +141,8 @@ function MyPage() {
       return
     }
 
-    // 리뷰
     const fetchUserReviews = async () => {
-      const reviews = await getUserReviews(userId)
-      console.log('reviews: ', reviews)
+      const reviews = await getUserReviews(userId!)
 
       if (!reviews) {
         return
@@ -166,21 +155,43 @@ function MyPage() {
       const userImg = reviews.map(review => review.img_url)
 
       setReviews(reviews)
-      setReviewImgs(reviewImgs)
-      setDefaultImgs(defaultImg)
-      setUserImgs(userImg)
+      setReviewImgs(reviewImgs!)
+      setDefaultImgs(defaultImg!)
+      setUserImgs(userImg!)
     }
 
-    // 북마크
-    // const fetchFavoriteReviews = async () => {
-    //   const favorites = await getLikeReviews(userId!)
-    //   setFavoriteReviews(favorites)
-    //   console.log('favorites: ', favorites)
-    // }
-
     fetchUserReviews()
-    // fetchFavoriteReviews()
   }, [userId])
+
+  //# 북마크 가져오기
+  useEffect(() => {
+    const fetchFavoriteReviews = async () => {
+      const getLikes = await getMyLikes([userId!])
+
+      if (!getLikes) {
+        return
+      }
+
+      console.log('좋아요 가져오기: ', getLikes)
+
+      const likesArray = getLikes?.data?.map(item => {
+        item.likes, item.id
+      })
+      console.log('likesArray: ', likesArray)
+
+      // const userLikes = likesArray?.filter(item => item.includes(userId))
+      // console.log('userLikes: ', userLikes)
+
+      // const userLikes = getLikes?.data?.filter(like => likes === userId);
+
+      setFavoriteReviews(getLikes.data || null)
+      console.log('getLikes.data: ', getLikes.data)
+    }
+
+    fetchFavoriteReviews()
+  }, [])
+
+  console.log('favoriteReviews: ', favoriteReviews)
 
   return (
     <Box>
@@ -235,7 +246,8 @@ function MyPage() {
 
           <Wrapper onClick={handleShowLikes}>
             <StyledP>좋아요</StyledP>
-            <span>{favoriteReviews}</span>
+            <span>{favoriteReviews?.length}</span>
+            {/* <span>{favoriteReviews ? favoriteReviews.length : 0}</span> */}
           </Wrapper>
         </MarginContainer>
         <PostsContain>
@@ -286,7 +298,11 @@ function MyPage() {
                 <PictureLink to={'/writing'}>첫 리뷰 공유하기</PictureLink>
               </PictureWrapper>
             )
-          ) : favoriteReviews && favoriteReviews.length > 0 ? (
+          ) : //  favoriteReviews && favoriteReviews.length > 0 ? (
+          favoriteReviews && favoriteReviews.length > 0 ? (
+            // {isShowLikes && favoriteReviews && favoriteReviews.length > 0 ? (
+            // isShowLikes && favoriteReviews && favoriteReviews.length > 0 ? (
+
             // 3. 좋아요 있을 때
             <PictureWrapper>
               <div>좋아요 있을 때</div>
