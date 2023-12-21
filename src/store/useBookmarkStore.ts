@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export const useBookmarkStore = create<BookmarkStore>(set => ({
   bookmarkList: [],
 
-  setBookmarkList: itemIds =>
+  setBookmarkList: (itemIds: string[]) =>
     set(state => ({
       bookmarkList: itemIds
     })),

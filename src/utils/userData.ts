@@ -99,15 +99,10 @@ export const getMetaData = async (email: string) => {
   if (data) {
     // 사용자 메타데이터 확인
     const metadata = data.user?.user_metadata
-    console.log('User Metadata:', metadata)
 
     if (metadata) {
-      // const { username, nickname } = metadata
-      const { username, nickname, user_email } = metadata
-      console.log(
-        `Username: ${username}, Nickname: ${nickname}, Email: ${user_email}`
-        // `Username: ${username}, Nickname: ${nickname}`
-      )
+      const { username, nickname } = metadata
+      console.log(`Username: ${username}, Nickname: ${nickname}`)
       return metadata
     } else {
       console.log('사용자 메타데이터가 없습니다.')

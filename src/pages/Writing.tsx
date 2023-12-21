@@ -19,6 +19,7 @@ import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import {
   addReview,
   addReviewWithImgUrl,
+  uploadDefaultImage,
   uploadFile,
   uploadImage
 } from '@/api/reviewApi'
@@ -42,6 +43,7 @@ function Writing() {
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [imgSrc, setImgSrc]: any = useState(null)
+  const [defaultImg, setDefaultImg] = useState<string | null>('')
   const [image, setImage] = useState<File | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
@@ -112,6 +114,7 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
+    setDefaultImg(selectedResult?.poster_path)
     setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
 
@@ -221,6 +224,8 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
+    // const defaultImgUrl = await uploadDefaultImage(defaultImg!)
+    const defaultImgUrl = await uploadFile(defaultImg!)
 
     if (
       !selectMovie ||
@@ -232,34 +237,8 @@ function Writing() {
       return
     }
 
-    // if (selectMovie && !imgSrc) {
-    //   await addReview(
-    //     selectMovie.id,
-    //     userEmail!,
-    //     text,
-    //     selectedOtt,
-    //     rating,
-    //     selectMovie.title || selectMovie.name || 'Unknown Title'
-    //   )
-    //   }
-
     try {
-      if (selectMovie && imgSrc) {
-        const imgUrl = await uploadImage(image!)
-        await addReviewWithImgUrl(
-          selectMovie.id,
-          userEmail!,
-          text,
-          selectedOtt,
-          rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title',
-          imgUrl!,
-          nickname,
-          selectMovie.genre_ids
-        )
-      } else if (selectMovie && isSelectImg === true) {
-        const filePath = await uploadFile(selectMovie.poster_path)
-
+      if (selectMovie && !imgSrc) {
         await addReview(
           selectMovie.id,
           userEmail!,
@@ -268,8 +247,34 @@ function Writing() {
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
           nickname,
-          selectMovie.genre_ids,
-          filePath
+          defaultImgUrl!,
+          null,
+          selectMovie.genre_ids
+        )
+      } else if (selectMovie && imgSrc) {
+        const imgUrl = await uploadImage(image!)
+        await addReviewWithImgUrl(
+          // await addReview(
+          selectMovie.id,
+          userEmail!,
+          text,
+          selectedOtt,
+          rating,
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          imgUrl!,
+          nickname,
+          defaultImgUrl!,
+          selectMovie.genre_ids
+          // selectMovie.id,
+          // userEmail!,
+          // text,
+          // selectedOtt,
+          // rating,
+          // selectMovie.title || selectMovie.name || 'Unknown Title',
+          // nickname,
+          // defaultImgUrl!,
+          // imgUrl!,
+          // selectMovie.genre_ids
         )
       }
       alert('리뷰가 등록되었습니다!😊')

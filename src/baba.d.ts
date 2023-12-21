@@ -35,50 +35,21 @@ interface MovieGenres {
   }[]
 }
 
-// interface ReviewData {
-//   map(
-//     arg0: (item: any) => import('react/jsx-runtime').JSX.Element
-//   ): React.ReactNode
-//   [
-//     movie_id: string,
-//     user_id: string,
-//     text: string,
-//     created_at: string,
-//     updated_at: string,
-//     id: number,
-//     ott: json,
-//     image_id: number,
-//     rating: number
-//   ]
-// }
-interface ReviewData {
-  movie_id: string
-  user_id: string
-  text: string
+interface ReviewsProps {
   created_at: string
-  updated_at: string
+  default_img: string | null
+  genre_ids: number[]
   id: number
-  ott: any
-  image_id: number
-  rating: number
-  img_url?: string
-  movie_title?: string
+  img_url: string | null
+  likes: string
+  movie_id: string
+  movie_title: string
   nickname: string
-  name: string
-  map(
-    arg0: (item: any) => import('react/jsx-runtime').JSX.Element
-  ): React.ReactNode
-  [
-    movie_id: string,
-    user_id: string,
-    text: string,
-    created_at: string,
-    updated_at: string,
-    id: number,
-    ott: json,
-    image_id: number,
-    rating: number
-  ]
+  ott: string[]
+  rating: number
+  text: string
+  updated_at: string | null
+  user_id: string
 }
 interface ReviewDataType {
   [
@@ -118,10 +89,11 @@ interface LikesType {
   user_id: string | null
   review_id: number
 }
+
 interface BookmarkStore {
-  bookmarkList: number[]
-  setBookmarkList: (itemIds: number[]) => void
-  deleteBookmarkList: (itemId: number) => void
+  bookmarkList: string[]
+  setBookmarkList: (itemIds: string[]) => void
+  deleteBookmarkList: (itemId: string) => void
 }
 
 interface MovieProps {

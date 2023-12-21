@@ -1,12 +1,17 @@
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 import ottIcons from '@/utils/ottIconImage'
+import { PlzSelectImgDiv } from './Writing'
+import convertDate from '@/utils/convertDate'
 import StarRating from '@/components/StarRating'
-import getSearchMovies from '@/api/getSearchMovies'
+import { supabase } from '@/utils/supabaseClient'
+import useThemeStore from '@/store/useThemeStore'
 import { ottIconNames } from '@/utils/ottIconImage'
 import { useEffect, useRef, useState } from 'react'
 import { getReviewDataForEdit } from '@/api/getReviewData'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   deleteReview,
   editReview,
@@ -14,12 +19,6 @@ import {
   getMovieImgUrl,
   uploadImage
 } from '@/api/reviewApi'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImage } from '@fortawesome/free-regular-svg-icons'
-import { PlzSelectImgDiv } from './Writing'
-import { supabase } from '@/utils/supabaseClient'
-import useThemeStore from '@/store/useThemeStore'
-import convertDate from '@/utils/convertDate'
 
 interface DateWrapperProps {
   $darkMode: boolean
@@ -41,17 +40,18 @@ function EditReview() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [title, setTitle] = useState<string | null>(null)
   const [defaultImg, setDefaultImg] = useState<string | null>(null)
-  const [userImg, setUserImg] = useState<string | null>(null) // 리뷰의 현재 이미지 URL
-  const [isSelectImg, setIsSelectImg] = useState<boolean>(false) // false가 기본 이미지
-  const [image, setImage] = useState<File | null>(null) // 사용자가 새로 선택한 이미지 파일
-  const [imgSrc, setImgSrc]: any = useState(null) // 새로 선택한 이미지의 미리보기 URL을 저장
-  const [isImageDeleted, setImageDeleted] = useState(false) // 이미지가 삭제되었음을 나타냄
+  const [userImg, setUserImg] = useState<string | null>(null)
+  const [isSelectImg, setIsSelectImg] = useState<boolean>(false)
+  const [image, setImage] = useState<File | null>(null)
+  const [imgSrc, setImgSrc]: any = useState(null)
+  const [isImageDeleted, setImageDeleted] = useState(false)
   const [rating, setRating] = useState<number>(0)
   const [text, setText] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchReviewdata = async () => {
       const reviewInfo = await getReviewDataForEdit(reviewId)
+      console.log('reviewInfo: ', reviewInfo)
 
       const addDate = reviewInfo[0]?.created_at
       const updateDate = reviewInfo[0]?.updated_at
@@ -61,20 +61,13 @@ function EditReview() {
       const rating = reviewInfo[0]?.rating
       const text = reviewInfo[0]?.text
 
-      // 기본 영화 포스터 찾기
-      const moviesArray = await getSearchMovies(title)
-
-      const posterPath = moviesArray.results
-        .filter((movie: MovieProps) => movie.id.toString() === movieId)
-        .map((movie: MovieProps) => movie.poster_path)
-
       setAddDate(convertDate(addDate))
       if (updateDate) {
         setUpdateDate(convertDate(updateDate))
       }
       setSelectedOtt(ott)
       setTitle(title)
-      setDefaultImg(posterPath)
+      setDefaultImg(reviewInfo[0]?.default_img)
       setUserImg(img)
       setRating(rating)
       setText(text)
@@ -191,7 +184,6 @@ function EditReview() {
   //# 리뷰 수정
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    // e && e.preventDefault()
 
     const ottValue = selectedOtt
     const textValue = text
@@ -361,7 +353,10 @@ function EditReview() {
             </>
           ) : (
             <MoviePoster
-              src={`https://image.tmdb.org/t/p/original/${defaultImg}`}
+              src={`https://image.tmdb.org/t/p/original/${defaultImg?.replace(
+                'public/',
+                ''
+              )}`}
               alt={`${title} 포스터`}
             />
           )}
