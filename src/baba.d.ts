@@ -13,7 +13,7 @@ interface PopularDataItem {
 interface SearchListProps {
   id: number
   media_type: string
-  ganre_ids?: number[]
+  genre_ids?: number[]
   title?: string
   name?: string
   poster_path: string | null
@@ -51,6 +51,25 @@ interface ReviewsProps {
   updated_at: string | null
   user_id: string
 }
+interface ReviewData {
+  created_at: string
+  default_img: string | null // 추가
+  genre_ids: number[] // 추가
+  id: number
+  img_url: string | null
+  likes: string // 추가
+  movie_id: string
+  movie_title: string
+  nickname: string
+  ott: string[]
+  rating: number
+  text: string
+  updated_at: string | null
+  user_id: string
+  image_id: number
+  name: string
+}
+
 interface ReviewDataType {
   [
     movie_id: string,
@@ -101,3 +120,33 @@ interface MovieProps {
   title: string
   poster_path: string
 }
+// interface ReviewData {
+//   movie_id: string
+//   user_id: string
+//   text: string
+//   created_at: string
+//   updated_at: string
+//   id: number
+//   ott: any
+//   image_id: number
+//   rating: number
+//   img_url?: string
+//   movie_title?: string
+//   nickname: string
+//   name: string
+
+//   map(
+//     arg0: (item: any) => import('react/jsx-runtime').JSX.Element
+//   ): React.ReactNode
+//   [
+//     movie_id: string,
+//     user_id: string,
+//     text: string,
+//     created_at: string,
+//     updated_at: string,
+//     id: number,
+//     ott: json,
+//     image_id: number,
+//     rating: number
+//   ]
+// }

@@ -1,24 +1,18 @@
 import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
-import { useEffect, useState } from 'react'
 import userImage from '@/assets/userIcon.png'
-import { useNavigate } from 'react-router-dom'
-import { FontProps } from './CategoryComponent'
-import userInfoInLs from '@/utils/userInfoInLs'
 import { addFavorite } from '@/api/getLikesData'
 import likefill from '@/assets/HeartIconFill.svg'
 import useThemeStore from '../store/useThemeStore'
 import { FontProps } from './CategoryComponent'
 import { useEffect, useRef, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
-import { useBookmarkStore } from '@/store/useBookmarkStore'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { supabase } from '@/utils/supabaseClient'
 
 interface IsLikedProps {
   id: number
@@ -42,7 +36,7 @@ type LikeIconProps = {
 
 function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  const [reviews, setReviews] = useState<ReviewsProps[]>([])
+  const [feeds, setFeeds] = useState<ReviewData[]>([])
   const [, setReviewsId] = useState<string[]>([])
   const [usersId, setUsersId] = useState<string[]>([])
   const [isLiked, setIsLiked] = useState<boolean>(false)
@@ -77,7 +71,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
-        setReviews(sortedReviewData)
+        setFeeds(sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -310,7 +304,7 @@ const TextColor = styled.span<TextColorProps>`
 `
 const FeedImage = styled.img`
   width: 310px;
-  border: 1px solid black;
+  border: 1px solid #dedede;
   display: block;
 `
 const FeedContent = styled.div`

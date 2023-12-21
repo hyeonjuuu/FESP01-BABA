@@ -53,6 +53,7 @@ function Main() {
     }
     loadReviewData()
   }, [movieGenresState])
+  console.log('리뷰', reviews)
 
   return (
     <>

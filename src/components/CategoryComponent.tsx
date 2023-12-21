@@ -28,7 +28,7 @@ const movieCategories = [
   { color: '#3FD6A6', text: '애니메이션', fontSize: '11px' },
   { color: '#FF99AF', text: '코미디' },
   { color: '#DF461F', text: '범죄' },
-  { color: '#496BF2', text: '다큐멘터리' },
+  { color: '#496BF2', text: '다큐' },
   { color: '#77B1B9', text: '드라마' },
   { color: '#CEE319', text: '가족' },
   { color: '#69A7E7', text: '판타지' },
