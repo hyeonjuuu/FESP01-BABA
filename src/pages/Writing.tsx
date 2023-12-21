@@ -5,16 +5,24 @@ import { useNavigate } from 'react-router-dom'
 import userInfoInLs from '@/utils/userInfoInLs'
 import StarRating from '@/components/StarRating'
 import useThemeStore from '@/store/useThemeStore'
-import { Icon, Image, Input } from './SearchPage'
 import { ottIconNames } from '@/utils/ottIconImage'
-import getSearchMovies from '@/api/getSearchMovies'
 import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
-import styled, { keyframes } from 'styled-components'
+import getSearchMovies from '@/api/getSearchMovies'
+import { Icon, Image, Input } from './SearchPage'
+// import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
-import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import {
+  addReview,
+  addReviewWithImgUrl,
+  uploadDefaultImage,
+  uploadFile,
+  uploadImage
+} from '@/api/reviewApi'
+import { getNickname, getReviewDataWithUserInfo } from '@/api/getReviewData'
+import styled, { keyframes } from 'styled-components'
 import debounce from '@/utils/debounce'
 
 interface ResultBarContainProps {
@@ -28,16 +36,18 @@ function Writing() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [nickname, setNickname] = useState<string>('')
   const [searchList, setSearchList] = useState<SearchListProps[]>([])
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
+  const [isSearched, setIsSearched] = useState(false) // 검색이 수행되었는지 나타내는 상태
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
   const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [imgSrc, setImgSrc]: any = useState(null)
+  const [defaultImg, setDefaultImg] = useState<string | null>('')
   const [image, setImage] = useState<File | null>(null)
   const [selectedOtt, setSelectedOtt] = useState<string[]>([])
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
-  const [isSearched, setIsSearched] = useState(false)
 
   //# 로그인 여부 확인
   const navigate = useNavigate()
@@ -59,6 +69,14 @@ function Writing() {
   useEffect(() => {
     const userIdInLs = userInfoInLs()
     setUserEmail(userIdInLs.userId) // local storage의 id = user Table의 email
+
+    const fetchNickname = async () => {
+      const nickname = await getNickname(userIdInLs.userId!)
+      console.log('닉네임: ', nickname[0].username)
+
+      setNickname(nickname[0].username)
+    }
+    fetchNickname()
   }, [])
 
   //# 검색
@@ -76,6 +94,7 @@ function Writing() {
 
   const handleSearchBtn = async (e: React.MouseEvent) => {
     e.preventDefault()
+    setIsSearched(true) // 검색 버튼을 클릭하면 검색이 수행되었다고 상태를 갱신
 
     try {
       const searchData = await getSearchMovies(inputRef.current?.value || '')
@@ -85,7 +104,8 @@ function Writing() {
           media_type: result.media_type,
           title: result.title,
           name: result.name,
-          poster_path: result.poster_path
+          poster_path: result.poster_path,
+          genre_ids: result?.genre_ids
         })
       )
       setSearchList(searchResults)
@@ -103,8 +123,10 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
-    setIsSearched(false)
+
     setIsSearchBtnDisabled(false)
+    setDefaultImg(selectedResult?.poster_path)
+    setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
 
   //# 이미지 선택
@@ -112,17 +134,19 @@ function Writing() {
     e.preventDefault()
   }
 
-  // 기본 이미지
-  const handleSelectDefaultIimg = () => {
+  const handleSelectDefaultImg = () => {
     setIsSelectImg(true)
   }
 
-  // 사용자 이미지
-  const handleSelectUserIimg = () => {
+  const handleSelectUserImg = () => {
+    if (!selectMovie) {
+      alert('제목을 먼저 선택해주세요')
+      return
+    }
     setIsSelectImg(false)
   }
 
-  // 사용자 이미지 미리보기
+  // 이미지 미리보기
   const handleUpload = (e: any) => {
     const file = e.target.files[0]
 
@@ -136,6 +160,14 @@ function Writing() {
         resolve()
       }
     })
+  }
+
+  const handleDeleteImg = () => {
+    const confirmed = window.confirm('이미지를 삭제하시겠습니까?')
+    if (confirmed) {
+      setImage(null)
+      setImgSrc(null)
+    }
   }
 
   //# OTT 선택
@@ -188,6 +220,8 @@ function Writing() {
     500
   )
 
+  console.log(selectMovie)
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = '100px'
@@ -201,7 +235,8 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
-    // const reviewContentInfo = searchListf
+    // const defaultImgUrl = await uploadDefaultImage(defaultImg!)
+    const defaultImgUrl = await uploadFile(defaultImg!)
 
     if (
       !selectMovie ||
@@ -221,25 +256,43 @@ function Writing() {
           text,
           selectedOtt,
           rating,
-          selectMovie.title || selectMovie.name || 'Unknown Title'
+          selectMovie.title || selectMovie.name || 'Unknown Title',
+          nickname,
+          defaultImgUrl!,
+          null,
+          selectMovie.genre_ids
         )
       } else if (selectMovie && imgSrc) {
         const imgUrl = await uploadImage(image!)
         await addReviewWithImgUrl(
+          // await addReview(
           selectMovie.id,
           userEmail!,
           text,
           selectedOtt,
           rating,
           selectMovie.title || selectMovie.name || 'Unknown Title',
-          imgUrl!
+          imgUrl!,
+          nickname,
+          defaultImgUrl!,
+          selectMovie.genre_ids
+          // selectMovie.id,
+          // userEmail!,
+          // text,
+          // selectedOtt,
+          // rating,
+          // selectMovie.title || selectMovie.name || 'Unknown Title',
+          // nickname,
+          // defaultImgUrl!,
+          // imgUrl!,
+          // selectMovie.genre_ids
         )
       }
-      alert('리뷰가 등록되었습니다!')
-
+      alert('리뷰가 등록되었습니다!😊')
       naviagte('/main')
     } catch (error) {
       console.error(error)
+      alert('리뷰 등록에 실패했습니다..😭')
     }
   }
 
@@ -301,13 +354,13 @@ function Writing() {
               <ImgSelectBtn
                 color={isSelectImg ? '#3797EF' : ''}
                 $hasBorder
-                onClick={handleSelectDefaultIimg}
+                // onClick={handleSelectDefaultIimg}
               >
                 기본 이미지
               </ImgSelectBtn>
               <ImgSelectBtn
                 color={isSelectImg ? '' : '#3797EF'}
-                onClick={handleSelectUserIimg}
+                // onClick={handleSelectUserIimg}
               >
                 사용자 이미지
               </ImgSelectBtn>
@@ -511,6 +564,14 @@ const ResultWrapper = styled.div<{
   top: 50px;
 `
 
+const NoResultsMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+`
+
 const Contain = styled.div`
   display: flex;
   align-items: center;
@@ -644,6 +705,15 @@ const MoviePoster = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`
+
+export const PlzSelectImgDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
 `
 
 const StarContainer = styled.div`

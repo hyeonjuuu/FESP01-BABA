@@ -13,6 +13,7 @@ import { userLogin, gitHubLogin } from '@/utils/userData'
 import { faEye } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
+import { useUserStore } from '@/store/useUserStore'
 
 interface PasswordInputProps extends HTMLAttributes<HTMLDivElement> {
   $inputColor?: boolean
@@ -93,6 +94,7 @@ function Login() {
             .select(`username, nickname, profile_img`)
             .eq('user_email', user.id)
             .single()
+          console.log('data', data)
 
           if (!ignore) {
             if (error) {
@@ -101,6 +103,9 @@ function Login() {
               setUsername(data.username)
               setNickname(data.nickname)
               setProfileImg(data.profile_img)
+              useUserStore
+                .getState()
+                .setUserData(data.username, data.nickname, data.profile_img)
             }
           }
         }

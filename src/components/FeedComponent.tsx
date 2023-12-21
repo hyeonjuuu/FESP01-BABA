@@ -1,18 +1,23 @@
 import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
-import { useEffect, useState } from 'react'
+import userImage from '@/assets/userIcon.png'
+import { useNavigate } from 'react-router-dom'
+import userInfoInLs from '@/utils/userInfoInLs'
 import { FontProps } from './CategoryComponent'
+import { addFavorite } from '@/api/getLikesData'
+import likefill from '@/assets/HeartIconFill.svg'
+import { supabase } from '@/utils/supabaseClient'
 import useThemeStore from '../store/useThemeStore'
-import { createClient } from '@supabase/supabase-js'
+import { useEffect, useRef, useState } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { addLike, deleteLikes, matchLike } from '@/api/getLikesData'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
-const supabase = createClient(
-  `${import.meta.env.VITE_SUPABASE_URL}`,
-  `${import.meta.env.VITE_SUPABASE_KEY}`
-)
+interface IsLikedProps {
+  id: number
+  likes: string[]
+}
 
 interface PaddingProps {
   $padding?: string
@@ -22,154 +27,216 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-interface LikeIconProps {
-  isBookMark: boolean
-  onClick?: () => void
-}
-
-const fetchReviewData = async (userId: string[] | undefined) => {
-  try {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select()
-      .containedBy('likes', [userId] || [])
-    console.log('fetchingData', data)
-
-    if (!data) {
-      return []
-    }
-    return data
-  } catch (error) {
-    console.error('데이터를 불러오는 중 에러 발생:', error)
-    throw error
-  }
+type LikeIconProps = {
+  $islike?: boolean
+  disabled?: boolean
 }
 
 /* -------------------------------------------------------------------------- */
 
-function FeedComponent() {
+function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  const [reviews, setReviews] = useState<ReviewData>([])
-  const [userId, setUserId] = useState<string | undefined>()
-  const [reviewId, setReviewId] = useState<number>()
-  const [likesReview, setLikesReview] = useState<boolean>()
+  const { bookmarkList, setBookmarkList, deleteBookmarkList } =
+    useBookmarkStore()
 
-  const getuserData = localStorage.getItem('userData')
-  const loginUserData = getuserData ? JSON.parse(getuserData) : null
-  const loginUserId = loginUserData.user.id
+  const [, setReviewsId] = useState<string[]>([])
+  const [usersId, setUsersId] = useState<string[]>([])
+  const [feeds, setFeeds] = useState<ReviewData[]>([])
+  const [isLiked, setIsLiked] = useState<boolean>(false)
+  const [myLikesId, setMyLikesId] = useState<number[]>([])
+  const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
+  const [renderProfile, setRenderProfile] = useState<{
+    [key: string]: { imgSrc?: string | null }
+  }>({})
 
-  useEffect(() => {
-    const userData = async () => {
-      try {
-        const { data } = await supabase.auth.getUser()
-        const userData: UserData | null = {
-          email: data?.user?.email || undefined,
-          id: data?.user?.id || undefined
-        }
-        setUserId(userData?.id ? userData.id : undefined)
-      } catch (error) {
-        console.error('에러가 발생했습니다.', error)
-      }
-    }
-    userData()
-  }, [])
+  const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
+    []
+  )
+  const feedContentSectionRef = useRef<HTMLDivElement>(null)
 
-  const queryClient = useQueryClient()
-  const queryKey = ['user_id', reviewId]
+  const getuserData = userInfoInLs()
+  const loginUserId = getuserData.userId
 
-  const { data: likeItems } = useQuery({
-    queryKey: queryKey,
-    queryFn: async () => {
-      const result = await matchLike(userId as string)
-      return result
-    },
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false
-  })
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
+  //# 전체 리뷰 가져오기
   useEffect(() => {
     const loadReviewData = async () => {
       try {
         const { data: reviewData, error: reviewError } = await supabase
           .from('reviews')
           .select()
-        if (reviewError) throw new Error()
-        else if (reviewData) {
-          // setReviews(reviewData)
-          const updatedReviewData = await Promise.all(
-            reviewData.map(async review => {
-              const profileImgUrl = await getProfileImgUrl(review.user_id)
-              return {
-                ...review,
-                profileImgUrl
-              }
-            })
-          )
 
-          setReviews(updatedReviewData)
-        }
+        if (reviewError) throw new Error()
+
+        const sortedReviewData = reviewData.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+        setFeeds(sortedReviewData)
+
+        // 내가 누른 좋아요
+        const myLikes: IsLikedProps[] = sortedReviewData
+          .map(item => ({
+            id: item.id,
+            likes: item.likes
+          }))
+          .filter(entry => {
+            const likesArray = entry.likes || []
+            const loginUserIdLiked = likesArray.includes(loginUserId)
+            return (
+              entry.likes !== null &&
+              Array.isArray(entry.likes) &&
+              loginUserIdLiked
+            )
+          })
+        setIsLikReviews(myLikes)
+
+        const myLikesIdArray = myLikes.map(item => item.id)
+        setMyLikesId(myLikesIdArray)
+
+        const reviewsId = sortedReviewData.map(item => item.user_id)
+        setReviewsId(reviewsId)
+
+        const usersId = sortedReviewData.map(data => data.user_id)
+        setUsersId(usersId)
       } catch (err) {
-        console.error('데이터 불러오기 실패')
+        console.error(err)
         return null
       }
     }
 
     loadReviewData()
-  }, [])
+  }, [isLiked])
 
-  const handleLikes = async (item: LikeData) => {
-    const newLikes: LikesType = {
-      user_id: loginUserId,
-      review_id: item.id
-    }
-    setReviewId(item.id)
+  const fetchAndRenderProfileImg = async () => {
+    if (loginUserId && usersId.length > 0) {
+      try {
+        const imgSrc = await Promise.all(
+          reviews.map(async item => await getProfileImgUrl(item.user_id))
+        )
 
-    const hasReviewId = likeItems?.some(
-      likeItem => likeItem.review_id === item.id
-    )
-    try {
-      if (hasReviewId) {
-        await deleteLikes(item.id)
-        console.log('delete')
-        setLikesReview(false)
-      } else {
-        await addLike(newLikes)
-
-        console.log('add')
-        setLikesReview(true)
+        setRenderProfileImg(imgSrc)
+        const makeObj = imgSrc.map((item, index) => ({
+          imgSrc: item,
+          userId: usersId[index]
+        }))
+        setRenderProfile(prevProfile => ({
+          ...prevProfile,
+          ...makeObj.reduce(
+            (acc, { userId, imgSrc }) => ({ ...acc, [userId]: { imgSrc } }),
+            {}
+          )
+        }))
+      } catch (error) {
+        console.error(error)
       }
-      queryClient.invalidateQueries({ queryKey: ['user_id', reviewId] })
-    } catch (error) {
-      console.error('북마크 에러 발생:', error)
     }
   }
 
-  // console.log(reviews[0].user_id)
-  // console.log(reviews)
+  useEffect(() => {
+    fetchAndRenderProfileImg()
+  }, [loginUserId, usersId])
+
+  //# 좋아요
+  const handleLikes = async (item: ReviewsProps, loginUserId: string) => {
+    if (!isAuthenticated) {
+      const confirmed = window.confirm(
+        '로그인 후 사용 할 수 있습니다. 로그인 페이지로 이동하시겠습니까?'
+      )
+      if (confirmed) {
+        navigate('/login')
+      }
+      return
+    }
+
+    const movieId = item.movie_id
+    const userId = item.user_id
+    const text = item.text
+    const ott = item.ott
+    const rating = item.rating
+    const title = item.movie_title
+    const id = item.id // 리뷰 아이디
+
+    const checkMyLikesId = myLikesId.filter(reviewId => reviewId === id)
+
+    const targetLikes = isLikeReviews
+      ?.filter(item => checkMyLikesId.includes(item.id))
+      .map(item => item.likes)
+
+    // 2차원 배열을 1차원 배열로 만듭니다
+    if (targetLikes) {
+      const likesArray = setBookmarkList(targetLikes.flat())
+      console.log('likesArray: ', likesArray)
+    }
+
+    if (checkMyLikesId.length !== 0 && loginUserId) {
+      const newBookmarkList = bookmarkList.filter(item => item !== loginUserId)
+      deleteBookmarkList(loginUserId)
+
+      await addFavorite(
+        movieId,
+        userId,
+        text,
+        ott,
+        rating,
+        title,
+        id,
+        newBookmarkList,
+        loginUserId
+      )
+    } else {
+      const newBookmarkList = [...bookmarkList, loginUserId]
+      setBookmarkList(newBookmarkList)
+
+      console.log('중복아님', newBookmarkList)
+
+      await addFavorite(
+        movieId,
+        userId,
+        text,
+        ott,
+        rating,
+        title,
+        id,
+        newBookmarkList,
+        loginUserId
+      )
+    }
+
+    setIsLiked(prevState => !prevState)
+  }
 
   return (
     <FeedSection>
-      <FeedContent>
+      <FeedContent ref={feedContentSectionRef}>
         <ContentWrapper>
-          {reviews?.map(item => (
+          {reviews?.map((item: ReviewsProps) => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
                 <UserImage
-                  src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${item.profileImgUrl}`}
-                  alt=""
+                  src={
+                    renderProfile[item.user_id]?.imgSrc
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${
+                          renderProfile[item.user_id]!.imgSrc
+                        }`
+                      : userImage
+                  }
+                  alt="프로필 이미지"
                 />
-                <TextColor $darkMode={$darkMode}>{item.user_id}</TextColor>
+                <TextColor $darkMode={$darkMode}>{item.nickname}</TextColor>
               </CommonDivWrapper>
               <FeedImage
-                // src={reviewImage}
                 src={
-                  item.img_url &&
-                  `https://image.tmdb.org/t/p/original/${item.img_url.replace(
-                    'public/',
-                    ''
-                  )}`
+                  item.img_url
+                    ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${item.img_url}`
+                    : `https://image.tmdb.org/t/p/original/${item?.default_img?.replace(
+                        'public/',
+                        ''
+                      )}`
                 }
-                alt=""
+                alt={`${item.movie_title} 이미지`}
               />
 
               <ContentTitleWrapper>
@@ -177,10 +244,17 @@ function FeedComponent() {
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
-                  <LikeIcon
-                    onClick={() => handleLikes(item)}
-                    isBookMark={likesReview}
-                  />
+
+                  {loginUserId === item.user_id ? null : (
+                    <LikeIcon
+                      disabled={loginUserId === item.user_id}
+                      onClick={() => handleLikes(item, loginUserId!)}
+                      $islike={isLikeReviews?.some(
+                        (like: IsLikedProps | null) =>
+                          like && like.id === item.id
+                      )}
+                    />
+                  )}
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
@@ -218,12 +292,12 @@ export const StarIcon = styled.button`
   display: flex;
   padding: 0;
 `
-const LikeIcon = styled(({ isBookMark, ...rest }: LikeIconProps) => (
-  <StarIcon {...rest} />
-))`
-  background-image: url(${like});
-  background-color: ${({ isBookMark }) => (isBookMark ? '#ed6161' : '#4fe69f')};
+
+const LikeIcon = styled(StarIcon)<LikeIconProps>`
+  background-image: ${({ $islike }) =>
+    $islike === true ? `url(${likefill})` : `url(${like})`};
 `
+
 const CommonDivWrapper = styled.div<PaddingProps>`
   display: flex;
   align-items: center;
@@ -246,7 +320,7 @@ const TextColor = styled.span<TextColorProps>`
 `
 const FeedImage = styled.img`
   width: 310px;
-  border: 1px solid black;
+  border: 1px solid #dedede;
   display: block;
 `
 const FeedContent = styled.div`

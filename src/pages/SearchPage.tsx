@@ -158,29 +158,38 @@ function SearchPage() {
             <LoadingSpinner src={loadingSpinner} alt="로딩 중" />
           </LodingWrapper>
         ) : isSearched ? (
-          searchDataList.map(result => (
-            <StyledLink key={result.id} to={`/info/${result.id}`}>
-              <Container $darkMode={$darkMode}>
-                <Contain>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
-                    alt={
-                      result.media_type === 'movie' ? result.title : result.name
-                    }
-                  />
-                  <Warppaer>
-                    <ResultBar>
-                      {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
-                      {result.media_type === 'movie'
-                        ? result.title
-                        : result.name}
-                    </ResultBar>
-                  </Warppaer>
-                </Contain>
-              </Container>
-            </StyledLink>
-          ))
-        ) : (
+          searchDataList.length > 0 ? (
+            // Case 1: searchResults에 값이 있는 경우
+            searchDataList.map(result => (
+              <StyledLink key={result.id} to={`/detail/${result.id}`}>
+                <Container $darkMode={$darkMode}>
+                  <Contain>
+                    <Image
+                      src={`https://image.tmdb.org/t/p/original${result.poster_path}`}
+                      alt={
+                        result.media_type === 'movie'
+                          ? result.title
+                          : result.name
+                      }
+                    />
+                    <Warppaer>
+                      <ResultBar>
+                        {result.media_type === 'movie' ? '영화' : 'TV'} -{' '}
+                        {result.media_type === 'movie'
+                          ? result.title
+                          : result.name}
+                      </ResultBar>
+                    </Warppaer>
+                  </Contain>
+                </Container>
+              </StyledLink>
+            ))
+          ) : (
+            // Case 2: searchResults가 빈 배열인 경우
+            <NoResultsMessage>검색 결과가 없습니다.</NoResultsMessage>
+          )
+        ) : oldSearchRecordList?.length > 0 ? (
+          // Case 3: OldSearchRecordList 값이 있는 경우
           oldSearchRecordList?.map(item => (
             <SearchResultBar
               key={item}
@@ -190,6 +199,9 @@ function SearchPage() {
               onSearch={handleSearchBtn}
             />
           ))
+        ) : (
+          // Case 4: OldSearchRecordList 값이 없는 경우
+          <NoResultsMessage>최근 검색어가 없습니다.</NoResultsMessage>
         )}
       </ResultWrapper>
       <GoingUpBtn />
@@ -364,4 +376,9 @@ const Container = styled.div<ResultBarContainProps>`
       background: ${({ $darkMode }) => ($darkMode ? '#28C7C7' : '#fffc9f')};
     }
   }
+`
+
+const NoResultsMessage = styled.div`
+  height: 100px;
+  line-height: 100px;
 `

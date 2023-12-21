@@ -1,11 +1,14 @@
 import { create } from 'zustand'
 
 interface GenreDataState {
-  movieGenres: MovieGenres | null
-  setMovieGenres: (data: MovieGenres) => void
+  movieGenresState: {
+    id: number
+    name: string
+  }[]
+  setMovieGenresState: (data: { id: number; name: string }[]) => void
 }
 
 export const useGenresStore = create<GenreDataState>(set => ({
-  movieGenres: null,
-  setMovieGenres: (response: MovieGenres) => set({ movieGenres: response })
+  movieGenresState: [],
+  setMovieGenresState: data => set({ movieGenresState: data })
 }))
