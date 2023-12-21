@@ -71,6 +71,7 @@ export const getLikes = async (id: number) => {
   }
 }
 
+//# 좋아요
 export const addFavorite = async (
   movie_id: string,
   user_id: string,
@@ -95,36 +96,18 @@ export const addFavorite = async (
       throw existingError
     }
 
-    const existingLikes = existingData?.likes || []
-    // const existingLikes = existingData
-    //   ? existingData.likes.filter((item: string) => item !== loginUserId)
-    //   : []
-    console.log('existingLikes: ', existingLikes)
+    const existingLikes = (await existingData?.likes) || []
 
     // 새로운 사용자 id 추가
-    const updatedLikes = [...existingLikes, loginUserId]
+    let updatedLikes
 
-    // let updatedLikes
-    // if (existingLikes.includes(loginUserId)) {
-    //   updatedLikes = existingLikes.filter(
-    //     (item: string) => item !== loginUserId
-    //   )
-    // } else {
-    //   updatedLikes = [...existingLikes, loginUserId]
-    // }
-    // if (loginUserId) {
-    //   // loginUserId가 valid한 경우에만 로직 수행
-    //   if (existingLikes.includes(loginUserId)) {
-    //     updatedLikes = existingLikes.filter(
-    //       (item: string) => item !== loginUserId
-    //     )
-    //   } else {
-    //     updatedLikes = [...existingLikes, loginUserId]
-    //   }
-    // } else {
-    //   updatedLikes = existingLikes // loginUserId가 invalid한 경우 existingLikes를 그대로 사용
-    // }
-    console.log('updatedLikes: ', updatedLikes)
+    if (existingLikes.includes(loginUserId)) {
+      updatedLikes = existingLikes.filter(
+        (item: string) => item !== loginUserId
+      )
+    } else {
+      updatedLikes = [...existingLikes, loginUserId]
+    }
 
     // 업서트
     const { data, error } = await supabase.from('reviews').upsert([
@@ -137,7 +120,6 @@ export const addFavorite = async (
         movie_title,
         id,
         likes: updatedLikes // 갱신된 likes 배열 사용
-        // likes
       }
     ])
 

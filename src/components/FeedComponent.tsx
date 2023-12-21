@@ -1,26 +1,18 @@
 import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
+import { useEffect, useState } from 'react'
+import userImage from '@/assets/userIcon.png'
+import { useNavigate } from 'react-router-dom'
+import { FontProps } from './CategoryComponent'
+import userInfoInLs from '@/utils/userInfoInLs'
+import { addFavorite } from '@/api/getLikesData'
 import likefill from '@/assets/HeartIconFill.svg'
 import useThemeStore from '../store/useThemeStore'
-import { FontProps } from './CategoryComponent'
 import { createClient } from '@supabase/supabase-js'
-import React, { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  addFavorite,
-  addLike,
-  deleteLikes,
-  getLikes,
-  getMyLikes,
-  matchLike
-} from '@/api/getLikesData'
-import { useBookmarkStore } from '@/store/useBookmarkStore'
-import userInfoInLs from '@/utils/userInfoInLs'
-import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
-import userImage from '@/assets/userIcon.png'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 const supabase = createClient(
   `${import.meta.env.VITE_SUPABASE_URL}`,
@@ -53,13 +45,12 @@ function FeedComponent() {
   const [, setReviewsId] = useState<string[]>([])
   const [usersId, setUsersId] = useState<string[]>([])
   const [isLiked, setIsLiked] = useState<boolean>(false)
-  console.log('isLiked: ', isLiked)
-
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [myLikesId, setMyLikesId] = useState<number[]>([])
 
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
+
   const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
     []
   )
@@ -69,19 +60,6 @@ function FeedComponent() {
 
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
-
-  // const queryClient = useQueryClient()
-  // const queryKey = ['user_id', reviewId]
-
-  // const { data: likeItems } = useQuery({
-  //   queryKey: queryKey,
-  //   queryFn: async () => {
-  //     const result = await matchLike(loginUserId)
-  //     return result
-  //   },
-  //   refetchOnReconnect: false,
-  //   refetchOnWindowFocus: false
-  // })
 
   //# 전체 리뷰 가져오기
   useEffect(() => {
@@ -168,15 +146,23 @@ function FeedComponent() {
     const ott = item.ott
     const rating = item.rating
     const title = item.movie_title
-    const id = item.id
+    const id = item.id // 리뷰 아이디
 
     const checkMyLikesId = myLikesId.filter(reviewId => reviewId === id)
+
+    const targetLikes = isLikeReviews
+      ?.filter(item => checkMyLikesId.includes(item.id))
+      .map(item => item.likes)
+
+    // 2차원 배열을 1차원 배열로 만듭니다
+    if (targetLikes) {
+      const likesArray = setBookmarkList(targetLikes.flat())
+      console.log('likesArray: ', likesArray)
+    }
 
     if (checkMyLikesId.length !== 0 && loginUserId) {
       const newBookmarkList = bookmarkList.filter(item => item !== loginUserId)
       deleteBookmarkList(loginUserId)
-
-      console.log('중복: ', newBookmarkList)
 
       await addFavorite(
         movieId,
@@ -186,7 +172,8 @@ function FeedComponent() {
         rating,
         title,
         id,
-        newBookmarkList
+        newBookmarkList,
+        loginUserId
       )
     } else {
       const newBookmarkList = [...bookmarkList, loginUserId]
@@ -209,6 +196,7 @@ function FeedComponent() {
 
     setIsLiked(prevState => !prevState)
   }
+  console.log('최초 bookmarkList: ', bookmarkList)
 
   return (
     <FeedSection>
@@ -244,13 +232,17 @@ function FeedComponent() {
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
-                  <LikeIcon
-                    disabled={loginUserId === item.user_id}
-                    onClick={() => handleLikes(item, loginUserId!)}
-                    $islike={isLikeReviews?.some(
-                      (like: IsLikedProps | null) => like && like.id === item.id
-                    )}
-                  />
+
+                  {loginUserId === item.user_id ? null : (
+                    <LikeIcon
+                      disabled={loginUserId === item.user_id}
+                      onClick={() => handleLikes(item, loginUserId!)}
+                      $islike={isLikeReviews?.some(
+                        (like: IsLikedProps | null) =>
+                          like && like.id === item.id
+                      )}
+                    />
+                  )}
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
