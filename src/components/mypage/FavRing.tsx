@@ -53,7 +53,8 @@ const Contain = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 40px 0;
-  overflow: visible; // overflow를 visible로 설정합니다.
+  overflow: visible;
+  padding: 0 10px 0 15px;
 `
 
 const Wrapper = styled.div`

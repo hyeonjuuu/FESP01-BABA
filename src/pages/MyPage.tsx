@@ -16,6 +16,9 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import { Pagination, Scrollbar } from 'swiper/modules'
 
 interface PostProps {
   key: number
@@ -140,21 +143,6 @@ function MyPage() {
 
       // 좋아요 많이 받은 글
       const sortedPopularReviews = Array.from(reviews)
-        //   .sort((a, b) => {
-        //     const lengthComparison =
-        //       (b.likes?.length || 0) - (a.likes?.length || 0)
-
-        //     if (lengthComparison === 0) {
-        //       const dateA = new Date(a.created_at || 0).getTime()
-        //       const dateB = new Date(b.created_at || 0).getTime()
-        //       return dateB - dateA
-        //     }
-
-        //     return lengthComparison
-        //   })
-        //   .map(review => review.likes)
-        //   .slice(0, 4)
-        // const sortedPopularReviews = reviews
         .sort((a, b) => {
           const lengthComparison =
             (b.likes?.length || 0) - (a.likes?.length || 0)
@@ -167,9 +155,7 @@ function MyPage() {
 
           return lengthComparison
         })
-        // .map(review => review.likes)
-        .slice(0, 4)
-      // .slice(0, 10)
+        .slice(0, 10)
 
       setPopularReviews(sortedPopularReviews)
     }
@@ -256,11 +242,24 @@ function MyPage() {
         </ProfileContain>
 
         <Container>
-          {popularReviews
-            ? popularReviews.map(popular => (
-                <FavRing key={popular.id} review={popular} />
-              ))
-            : null}
+          <Swiper
+            className="mySwiper"
+            scrollbar={{
+              hide: true
+            }}
+            slidesPerView={4}
+            spaceBetween={1}
+            loop={true}
+            modules={[Pagination, Scrollbar]}
+          >
+            {popularReviews
+              ? popularReviews.map(popular => (
+                  <SwiperSlide key={popular.id}>
+                    <FavRing review={popular} />
+                  </SwiperSlide>
+                ))
+              : null}
+          </Swiper>
         </Container>
 
         <MarginContainer>
