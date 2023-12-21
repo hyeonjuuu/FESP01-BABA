@@ -1,13 +1,11 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_KEY as string
-)
+import { supabase } from '@/utils/supabaseClient'
 
 // reviews의 데이터들을 가져옵니다.
-export const getReviewData = async () => {
-  const { data, error } = await supabase.from('reviews').select('*')
+export const getReviewData = async (): Promise<ReviewData[] | null> => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   if (data) {
     return data
@@ -54,7 +52,7 @@ export const getReviewDataForEdit = async (
     .eq('id', reviewId)
 
   if (data) {
-    console.log('data: ', data)
+    console.log('getReviewDataForEdit: ', data)
     return data
   } else {
     console.error(error)
@@ -70,7 +68,25 @@ export const getNickname = async (reviewId: string): Promise<any | null> => {
     .eq('user_email', reviewId)
 
   if (data) {
-    console.log('data: ', data)
+    console.log('getNickname: ', data)
+    return data
+  } else {
+    console.error(error)
+    return null
+  }
+}
+
+export const getGenreReviewData = async (
+  genreId: number
+): Promise<ReviewData[] | null> => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select()
+    .order('created_at', { ascending: false })
+    .or(`genre_ids.cs.${genreId}`)
+
+  if (data) {
+    console.log('getGenreReviewData: ', data)
     return data
   } else {
     console.error(error)
