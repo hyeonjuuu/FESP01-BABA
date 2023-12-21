@@ -42,6 +42,9 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [myLikesId, setMyLikesId] = useState<number[]>([])
+  const [renderProfile, setRenderProfile] = useState<{
+    [key: string]: { imgSrc?: string | null }
+  }>({})
 
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
@@ -72,6 +75,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setFeeds(sortedReviewData)
+        console.log('sort data', sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -111,9 +115,22 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     if (loginUserId && usersId.length > 0) {
       try {
         const imgSrc = await Promise.all(
-          usersId.map(async userId => await getProfileImgUrl(userId))
+          reviews.map(async item => await getProfileImgUrl(item.user_id))
         )
+
         setRenderProfileImg(imgSrc)
+        const makeObj = imgSrc.map((item, index) => ({
+          imgSrc: item,
+          userId: usersId[index]
+        }))
+        setRenderProfile(prevProfile => ({
+          ...prevProfile,
+          ...makeObj.reduce(
+            (acc, { userId, imgSrc }) => ({ ...acc, [userId]: { imgSrc } }),
+            {}
+          )
+        }))
+        console.log('makeObj: ', makeObj)
       } catch (error) {
         console.error(error)
       }
@@ -198,13 +215,15 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     <FeedSection>
       <FeedContent ref={feedContentSectionRef}>
         <ContentWrapper>
-          {reviews?.map((item: ReviewsProps, index: number) => (
+          {reviews?.map((item: ReviewsProps) => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
                 <UserImage
                   src={
-                    renderProfileImg[index]
-                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg[index]}`
+                    renderProfile[item.user_id]?.imgSrc
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${
+                          renderProfile[item.user_id]!.imgSrc
+                        }`
                       : userImage
                   }
                   alt="프로필 이미지"

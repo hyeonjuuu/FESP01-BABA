@@ -9,6 +9,8 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import { movieGenres, tvGenres } from '@/utils/genresData'
 import { useGenresStore } from '@/store/useGenresStore'
+import { motion, useTime, useTransform, animate } from 'framer-motion'
+import { faPause } from '@fortawesome/free-solid-svg-icons'
 
 export interface FontProps {
   fontSize?: string
@@ -77,6 +79,7 @@ function CategoryComponent() {
   ) => {
     const selectCategoryButton =
       e.currentTarget.querySelectorAll('div')[1].textContent
+
     if (selectCategory === '영화') {
       const filterCategory = movieGenres.genres.filter(
         item => item.name === selectCategoryButton
@@ -143,7 +146,17 @@ function CategoryComponent() {
           ? movieCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
                 <CategoryButton onClick={handleFilterCategory}>
-                  <CategoryCircle color={color}></CategoryCircle>
+                  <motion.div
+                    whileHover={{
+                      rotate: 360,
+                      transition: { duration: 1 },
+                      onStart: { rotate: 0 } // 사용자가 호버를 시작할 때 rotate를 0으로 설정
+                    }}
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 0 }}
+                  >
+                    <CategoryCircle color={color}></CategoryCircle>
+                  </motion.div>
                   <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
                     {text}
                   </CategroyList>
@@ -210,11 +223,12 @@ const CategroyList = styled.div<FontProps>`
   text-align: center;
   font-weight: 300;
   font-size: ${props => (props.fontSize ? props.fontSize : '14px')};
+  margin-top: 10px;
 `
 const CategoryCircle = styled.div`
-  height: 56px;
-  width: 56px;
-  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  border-radius: 20%;
   background-color: ${({ color }) => color};
   align-self: center;
   margin-bottom: 4px;
