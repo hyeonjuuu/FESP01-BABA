@@ -1,23 +1,18 @@
 import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
-import { useEffect, useState } from 'react'
 import userImage from '@/assets/userIcon.png'
-import { useNavigate } from 'react-router-dom'
-import { FontProps } from './CategoryComponent'
-import userInfoInLs from '@/utils/userInfoInLs'
 import { addFavorite } from '@/api/getLikesData'
 import likefill from '@/assets/HeartIconFill.svg'
 import useThemeStore from '../store/useThemeStore'
-import { createClient } from '@supabase/supabase-js'
+import { FontProps } from './CategoryComponent'
+import { useEffect, useRef, useState } from 'react'
+import userInfoInLs from '@/utils/userInfoInLs'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-
-const supabase = createClient(
-  `${import.meta.env.VITE_SUPABASE_URL}`,
-  `${import.meta.env.VITE_SUPABASE_KEY}`
-)
+import { supabase } from '@/utils/supabaseClient'
 
 interface IsLikedProps {
   id: number
@@ -39,14 +34,17 @@ type LikeIconProps = {
 
 /* -------------------------------------------------------------------------- */
 
-function FeedComponent() {
+function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  const [reviews, setReviews] = useState<ReviewsProps[]>([])
+  const [feeds, setFeeds] = useState<ReviewData[]>([])
   const [, setReviewsId] = useState<string[]>([])
   const [usersId, setUsersId] = useState<string[]>([])
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [myLikesId, setMyLikesId] = useState<number[]>([])
+  const [renderProfile, setRenderProfile] = useState<{
+    [key: string]: { imgSrc?: string | null }
+  }>({})
 
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
@@ -54,6 +52,7 @@ function FeedComponent() {
   const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
     []
   )
+  const feedContentSectionRef = useRef<HTMLDivElement>(null)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -75,7 +74,8 @@ function FeedComponent() {
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
-        setReviews(sortedReviewData)
+        setFeeds(sortedReviewData)
+        console.log('sort data', sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -115,9 +115,22 @@ function FeedComponent() {
     if (loginUserId && usersId.length > 0) {
       try {
         const imgSrc = await Promise.all(
-          usersId.map(async userId => await getProfileImgUrl(userId))
+          reviews.map(async item => await getProfileImgUrl(item.user_id))
         )
+
         setRenderProfileImg(imgSrc)
+        const makeObj = imgSrc.map((item, index) => ({
+          imgSrc: item,
+          userId: usersId[index]
+        }))
+        setRenderProfile(prevProfile => ({
+          ...prevProfile,
+          ...makeObj.reduce(
+            (acc, { userId, imgSrc }) => ({ ...acc, [userId]: { imgSrc } }),
+            {}
+          )
+        }))
+        console.log('makeObj: ', makeObj)
       } catch (error) {
         console.error(error)
       }
@@ -200,15 +213,17 @@ function FeedComponent() {
 
   return (
     <FeedSection>
-      <FeedContent>
+      <FeedContent ref={feedContentSectionRef}>
         <ContentWrapper>
-          {reviews?.map((item: ReviewsProps, index: number) => (
+          {reviews?.map((item: ReviewsProps) => (
             <FeedContentSection key={item.id}>
               <CommonDivWrapper $padding="10px">
                 <UserImage
                   src={
-                    renderProfileImg[index]
-                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg[index]}`
+                    renderProfile[item.user_id]?.imgSrc
+                      ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${
+                          renderProfile[item.user_id]!.imgSrc
+                        }`
                       : userImage
                   }
                   alt="프로필 이미지"
@@ -308,7 +323,7 @@ const TextColor = styled.span<TextColorProps>`
 `
 const FeedImage = styled.img`
   width: 310px;
-  border: 1px solid black;
+  border: 1px solid #dedede;
   display: block;
 `
 const FeedContent = styled.div`

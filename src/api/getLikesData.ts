@@ -1,9 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  `${import.meta.env.VITE_SUPABASE_URL}`,
-  `${import.meta.env.VITE_SUPABASE_KEY}`
-)
+import { supabase } from '@/utils/supabaseClient'
 
 export const fetchAllLikes = async () => {
   const { data } = await supabase.from('likes').select('*')
