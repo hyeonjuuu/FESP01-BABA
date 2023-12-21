@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import { addReview, addReviewWithImgUrl, uploadImage } from '@/api/reviewApi'
+import debounce from '@/utils/debounce'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -102,7 +103,6 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
-    // console.log('클릭')
     setIsSearched(false)
     setIsSearchBtnDisabled(false)
   }
@@ -142,11 +142,9 @@ function Writing() {
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
       if (prevSelectedOtt.includes(iconName)) {
-        // 이미 선택된 OTT인 경우, 해당 OTT를 배열에서 제거하여 체크를 해제합니다.
         return prevSelectedOtt.filter(ott => ott !== iconName)
       } else {
-        // Select the new OTT
-        return [iconName]
+        return [...prevSelectedOtt, iconName]
       }
     })
   }
@@ -183,12 +181,12 @@ function Writing() {
   }
 
   //# 내용 작성
-  // const handleInputChange = debounce(
-  //   (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //     setText(e.target.value)
-  //   },
-  //   500
-  // )
+  const handleInputChange = debounce(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setText(e.target.value)
+    },
+    500
+  )
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -203,7 +201,7 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
-    // const reviewContentInfo = searchList
+    // const reviewContentInfo = searchListf
 
     if (
       !selectMovie ||
@@ -364,6 +362,8 @@ function Writing() {
                         src={icon}
                         alt={ottIconNames[index]}
                         title={ottIconNames[index]}
+                        isSelected={selectedOtt.includes(ottIconNames[index])}
+                        onClick={() => handleCheck(ottIconNames[index])}
                       />
                     </Style>
                     <OttLabel htmlFor={`ott${index}`}></OttLabel>
@@ -372,7 +372,7 @@ function Writing() {
                       name={`ott${index}`}
                       id={`ott${index}`}
                       checked={selectedOtt.includes(ottIconNames[index])}
-                      onChange={() => handleCheck(ottIconNames[index])}
+                      // onChange={() => handleCheck(ottIconNames[index])}
                     />
                   </motion.div>
                 </OttWrapper>
@@ -389,7 +389,7 @@ function Writing() {
               onFocus={handleFocus}
               onBlur={handleBlur}
               placeholder="이 컨텐츠에 대한 생각을 자유롭게 공유해보세요!🎬✨"
-              // onChange={handleInputChange}
+              onChange={handleInputChange}
             ></FeedText>
 
             <Button
@@ -447,13 +447,14 @@ const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
   border-bottom-left-radius: ${props =>
-    props.isSearchBtnDisabled ? 'none' : '8px'};
+    props.isSearchBtnDisabled ? '8px' : 'none'};
 
   border-bottom-right-radius: ${props =>
-    props.isSearchBtnDisabled ? 'none' : '8px'};
+    props.isSearchBtnDisabled ? '8px' : 'none'};
 
   background-color: #e8e8e8;
 
@@ -467,14 +468,11 @@ const WebComtainer = styled.div`
   gap: 10px;
   display: flex;
   flex-direction: column;
-  /* flex-direction: column; */
   align-items: center;
   gap: 20px;
 
   @media (min-width: 1031px) {
     flex-direction: row;
-
-    /* width: 100%; */
   }
 `
 
@@ -538,7 +536,7 @@ const Description = styled.div`
 
   @media (min-width: 1031px) {
     width: 40%;
-    height: 97%;
+    height: 970px;
     gap: 47px;
   }
 `
@@ -571,10 +569,16 @@ const Style = styled.div`
   height: 60px;
 `
 
-const OttIcon = styled.img`
+const OttIcon = styled.img<{ isSelected: boolean }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
+  border: ${({ isSelected }) => (isSelected ? '2px solid #3797EF' : 'none')};
+
+  &:hover {
+    transform: scale(1.1);
+  }
 `
 
 const TitleDiv = styled.div`
@@ -608,7 +612,6 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
   background-color: ${({ color }) => color || 'white'};
   transition: background-color 0.3s ease-in-out;
 
-  /* Add some styling for closer appearance */
   &:first-child {
     border-top-left-radius: 8px;
   }
@@ -619,7 +622,7 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
 
   &.selected {
     background-color: ${({ color }) => color || 'white'};
-    cursor: default; /* Disable hover effect for selected button */
+    cursor: default;
   }
 
   &:not(.selected):hover {
@@ -629,11 +632,10 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
 
 const OriginalImage = styled.div`
   width: 100%;
-  height: 700px;
+  height: 980px;
   background-color: #d9d9d9;
   position: relative;
 
-  /* Replace border with box-shadow */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `
 
@@ -690,7 +692,6 @@ const Btn = styled.button`
   height: 46px;
   border-radius: 8px;
   background-color: #3797ef;
-  /* color: white; */
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;

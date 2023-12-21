@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import useThemeStore from '../store/useThemeStore'
-import DarkModeToggle from '@/components/DarkModeToggle'
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import DarkModeToggleIcon from '@/components/DarkModeIcon'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import logo from '../assets/logo.svg'
 
 interface HeaderDivProps {
   $darkMode: boolean
@@ -13,8 +14,8 @@ interface ArrowDivProps {
   $isHome: boolean
 }
 
-function Header({ isHome }: { isHome: boolean }) {
-  const { $darkMode } = useThemeStore()
+const Header = ({ isHome }: { isHome: boolean }) => {
+  const { $darkMode, toggleDarkMode } = useThemeStore()
   const navigate = useNavigate()
 
   const handleGoBack = () => {
@@ -22,42 +23,51 @@ function Header({ isHome }: { isHome: boolean }) {
   }
 
   return (
-    <HeaderWrappderDiv>
-      <HeaderDiv $darkMode={$darkMode}>
-        <ArrowDiv $isHome={isHome} onClick={handleGoBack}>
-          <StyledFontAwesomeIcon icon={faAngleLeft} />
-        </ArrowDiv>
-        <DarkModeToggle />
-      </HeaderDiv>
-    </HeaderWrappderDiv>
+    <>
+      <HeaderContainer $darkMode={$darkMode}>
+        <BackButton $isHome={isHome} onClick={handleGoBack}>
+          <StyledFontAwesomeIcon icon={faArrowLeft} />
+        </BackButton>
+        <Logo src={logo} alt="" />
+        <DarkModeToggleIcon
+          $isDarkMode={$darkMode}
+          toggleDarkModeAni={toggleDarkMode}
+        />
+      </HeaderContainer>
+    </>
   )
 }
 
 export default Header
 
-const HeaderWrappderDiv = styled.div`
-  width: 100%;
-  max-width: 370px;
+const HeaderContainer = styled.div<HeaderDivProps>`
+  min-width: 400px;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 10px 30px;
+  align-items: center;
+  background-color: ${({ $darkMode }) => ($darkMode ? '#121212' : '#ffffff')};
+  border-bottom: 1px solid ${({ $darkMode }) => ($darkMode ? '#333' : '#ddd')};
+  color: ${({ $darkMode }) => ($darkMode ? '#ffffff' : '#333')};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
   @media (min-width: 701px) {
     display: none;
   }
 `
 
-const HeaderDiv = styled.div<HeaderDivProps>`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 2px solid black;
-  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : 'black')};
-`
-
-const ArrowDiv = styled.div<ArrowDivProps>`
+const BackButton = styled.div<ArrowDivProps>`
   visibility: ${({ $isHome }) => ($isHome ? 'hidden' : 'visible')};
   cursor: pointer;
 `
 
 const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-  font-size: 24px;
+  font-size: 20px;
+`
+
+const Logo = styled.img`
+  width: 100px;
+  height: 45px;
 `
