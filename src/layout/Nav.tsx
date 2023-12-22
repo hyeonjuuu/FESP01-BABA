@@ -5,7 +5,7 @@ import HomeImage from '@/assets/icon/Home.png'
 import LikeImage from '@/assets/icon/Like.png'
 import useThemeStore from '@/store/useThemeStore'
 import searchImage from '@/assets/icon/Search.png'
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import DarkModeToggleIcon from '@/components/DarkModeIcon'
 import { useAuthStore } from '@/store/useAuthStore'
 import AddUserIcon from '@/components/mypage/AddUserIcon'
@@ -21,80 +21,72 @@ function Nav() {
   }
 
   return (
-    <ThemeProvider
-      theme={{
-        bgColor: $darkMode ? '#1E1E1E' : '#FFF',
-        color: $darkMode ? '#fff' : '#1E1E1E'
-      }}
-    >
-      <NavContain>
-        <FLexbox>
-          <Link to="/main">
-            <MainLogo>BABA</MainLogo>
-          </Link>
-          <List>
-            <Item>
-              <StyledLink to="/main">
-                <Btn>
-                  <Image src={HomeImage} alt="메인 페이지" />
-                  <ItemName>홈</ItemName>
-                </Btn>
-              </StyledLink>
-            </Item>
-
-            <Item>
-              <StyledLink to="/search">
-                <Btn>
-                  <Image src={searchImage} alt="검색 페이지" />
-                  <ItemName>검색</ItemName>
-                </Btn>
-              </StyledLink>
-            </Item>
-
-            <Item>
-              <StyledLink to="/writing">
-                <Btn>
-                  <Image src={AddImage} alt="글쓰기 페이지" />
-                  <ItemName>만들기</ItemName>
-                </Btn>
-              </StyledLink>
-            </Item>
-
-            <Item>
+    <NavContain>
+      <FLexbox>
+        <Link to="/main">
+          <MainLogo>BABA</MainLogo>
+        </Link>
+        <List>
+          <Item>
+            <StyledLink to="/main">
               <Btn>
-                <Image src={LikeImage} alt="좋아요 페이지" />
-                <ItemName>찜 목록</ItemName>
+                <Image src={HomeImage} alt="메인 페이지" />
+                <ItemName>홈</ItemName>
               </Btn>
-            </Item>
+            </StyledLink>
+          </Item>
 
-            <Item>
-              <StyledLink to="/mypage">
-                <Btn>
-                  {isAuthenticated ? (
-                    <AddUserIcon />
-                  ) : (
-                    <Image
-                      src={UserIcon}
-                      alt="프로필 페이지"
-                      onClick={handleSendToLoginPage}
-                    />
-                  )}
-                  <ItemName>프로필</ItemName>
-                </Btn>
-              </StyledLink>
-            </Item>
-          </List>
-        </FLexbox>
+          <Item>
+            <StyledLink to="/search">
+              <Btn>
+                <Image src={searchImage} alt="검색 페이지" />
+                <ItemName>검색</ItemName>
+              </Btn>
+            </StyledLink>
+          </Item>
 
-        <Wrapper>
-          {/* <DarkModeToggle /> */}
-          <DarkModeToggleIcon
-            $isDarkMode={$darkMode}
-            toggleDarkModeAni={toggleDarkMode}
-          />
-        </Wrapper>
-      </NavContain>
-    </ThemeProvider>
+          <Item>
+            <StyledLink to="/writing">
+              <Btn>
+                <Image src={AddImage} alt="글쓰기 페이지" />
+                <ItemName>만들기</ItemName>
+              </Btn>
+            </StyledLink>
+          </Item>
+
+          <Item>
+            <Btn>
+              <Image src={LikeImage} alt="좋아요 페이지" />
+              <ItemName>찜 목록</ItemName>
+            </Btn>
+          </Item>
+
+          <Item>
+            <StyledLink to="/mypage">
+              <Btn>
+                {isAuthenticated ? (
+                  <AddUserIcon />
+                ) : (
+                  <Image
+                    src={UserIcon}
+                    alt="프로필 페이지"
+                    onClick={handleSendToLoginPage}
+                  />
+                )}
+                <ItemName>프로필</ItemName>
+              </Btn>
+            </StyledLink>
+          </Item>
+        </List>
+      </FLexbox>
+
+      <Wrapper>
+        <DarkModeToggleIcon
+          $isDarkMode={$darkMode}
+          toggleDarkModeAni={toggleDarkMode}
+        />
+      </Wrapper>
+    </NavContain>
   )
 }
 

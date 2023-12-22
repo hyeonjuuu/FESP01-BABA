@@ -16,13 +16,18 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
+import useThemeStore from '@/store/useThemeStore'
 
 interface PostProps {
   key: number
-  // onClick: () => void
+}
+
+interface BorderProps {
+  $darkMode: boolean
 }
 
 function MyPage() {
+  const { $darkMode } = useThemeStore()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -261,7 +266,7 @@ function MyPage() {
             : null}
         </Container>
 
-        <MarginContainer>
+        <MarginContainer $darkMode={$darkMode}>
           <Wrapper onClick={handleShowReviews}>
             <StyledP>게시물</StyledP>
             <span>{reviews?.length}</span>
@@ -303,7 +308,6 @@ function MyPage() {
                       {review.rating}
                     </RatingSpan>
                   </HoverDiv>
-                  {/* </HoverLink> */}
                 </Post>
               ))
             ) : (
@@ -430,9 +434,10 @@ const Container = styled.div`
   /* gap: 30px; */
 `
 
-const MarginContainer = styled(Container)`
+const MarginContainer = styled(Container)<BorderProps>`
   margin: 15px 0;
   border: 1px solid black;
+  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
 `
 
 const Wrapper = styled.button`
@@ -443,6 +448,7 @@ const Wrapper = styled.button`
   align-items: center;
   padding: 10px 0;
   gap: 10px;
+
   &:hover {
     background-color: #0282d1;
     color: #ffffff;
