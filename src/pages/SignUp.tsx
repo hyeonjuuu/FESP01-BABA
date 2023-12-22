@@ -3,7 +3,7 @@ import Logo from '@/components/Logo'
 import Input from '@/components/Input'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '@/components/Button'
 import { useNavigate } from 'react-router-dom'
 import CheckAccount from '@/components/CheckAccount'
@@ -20,11 +20,47 @@ function SignUp() {
   const passwordRef = useRef<HTMLInputElement>(null)
   const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
+  const [allAgree, setAllAgree] = useState(false)
+  const [useAgree, setUseAgree] = useState(false)
+  const [personalAgree, setPersonalAgree] = useState(false)
   const [emailError, setEmailError] = useState<string | null>(null)
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [checkPasswordMatch, setCheckPasswordMatch] = useState<string | null>(
     null
   )
+
+  const handleUseAgreeChange = () => {
+    setUseAgree(!useAgree)
+    if (personalAgree) {
+      setAllAgree(false)
+    }
+  }
+
+  const handlePersonalAgreeChange = () => {
+    setPersonalAgree(!personalAgree)
+    if (useAgree) {
+      setAllAgree(false)
+    }
+  }
+
+  useEffect(() => {
+    if (useAgree && personalAgree) {
+      setAllAgree(true)
+    } else {
+      setAllAgree(false)
+    }
+  }, [useAgree, personalAgree])
+
+  const handleAllAgreeChange = () => {
+    // allAgree 체크 여부에 따라 useAgree와 personalAgree를 설정
+    if (allAgree) {
+      setUseAgree(false)
+      setPersonalAgree(false)
+    } else {
+      setUseAgree(true)
+      setPersonalAgree(true)
+    }
+  }
 
   // input에서 focus가 벗어나면 정규식검사를 진행합니다.
   const handleEmailBlur = () => {
@@ -103,12 +139,6 @@ function SignUp() {
       <Link to="/">
         <Logo />
       </Link>
-      <Button
-        $bgcolor="#FFDC00"
-        color="#1E1E1E"
-        text="KaKao 로그인"
-        width={'360px'}
-      />
       <FormWrapper>
         <label htmlFor="email" aria-label="이메일"></label>
         <Input
@@ -165,17 +195,32 @@ function SignUp() {
         ) : null}
         <AllAgreeDiv>
           <label htmlFor="allAgree"></label>
-          <CheckBox id="allAgree" type="checkbox" />
+          <CheckBox
+            id="allAgree"
+            type="checkbox"
+            checked={allAgree}
+            onChange={handleAllAgreeChange}
+          />
           전체 약관 동의
         </AllAgreeDiv>
         <AgreeDiv>
           <label htmlFor="useAgree"></label>
-          <CheckBox id="useAgree" type="checkbox" />
+          <CheckBox
+            id="useAgree"
+            type="checkbox"
+            checked={useAgree}
+            onChange={handleUseAgreeChange}
+          />
           이용 약관 동의
         </AgreeDiv>
         <AgreeDiv>
           <label htmlFor="personalAgree"></label>
-          <CheckBox id="personalAgree" type="checkbox" />
+          <CheckBox
+            id="personalAgree"
+            type="checkbox"
+            checked={personalAgree}
+            onChange={handlePersonalAgreeChange}
+          />
           개인정보 수집 및 이용 동의
         </AgreeDiv>
         <StyledLink to="/main">

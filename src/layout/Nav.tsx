@@ -1,18 +1,24 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AddImage from '@/assets/icon/Add.png'
 import UserIcon from '@/assets/icon/User.png'
 import HomeImage from '@/assets/icon/Home.png'
 import LikeImage from '@/assets/icon/Like.png'
-import ShopImage from '@/assets/icon/Shop.png'
-import RealImage from '@/assets/icon/Reels.png'
-import ShareImage from '@/assets/icon/Share.png'
 import useThemeStore from '@/store/useThemeStore'
 import searchImage from '@/assets/icon/Search.png'
 import styled, { ThemeProvider } from 'styled-components'
 import DarkModeToggleIcon from '@/components/DarkModeIcon'
+import { useAuthStore } from '@/store/useAuthStore'
+import AddUserIcon from '@/components/mypage/AddUserIcon'
 
 function Nav() {
+  const { isAuthenticated } = useAuthStore()
   const { $darkMode, toggleDarkMode } = useThemeStore()
+  const navication = useNavigate()
+
+  const handleSendToLoginPage = () => {
+    alert('로그인 사용자만 이용 가능합니다. 로그인 페이지로 이동하시겠습니까?')
+    navication('/login')
+  }
 
   return (
     <ThemeProvider
@@ -64,29 +70,18 @@ function Nav() {
             <Item>
               <StyledLink to="/mypage">
                 <Btn>
-                  <Image src={UserIcon} alt="프로필 페이지" />
+                  {isAuthenticated ? (
+                    <AddUserIcon />
+                  ) : (
+                    <Image
+                      src={UserIcon}
+                      alt="프로필 페이지"
+                      onClick={handleSendToLoginPage}
+                    />
+                  )}
                   <ItemName>프로필</ItemName>
                 </Btn>
               </StyledLink>
-            </Item>
-
-            <Item>
-              <Btn>
-                <Image src={ShareImage} alt="메시지" />
-                <ItemName>메시지</ItemName>
-              </Btn>
-            </Item>
-            <Item>
-              <Btn>
-                <Image src={RealImage} alt="릴스" />
-                <ItemName>릴스</ItemName>
-              </Btn>
-            </Item>
-            <Item>
-              <Btn>
-                <Image src={ShopImage} alt="OTT" />
-                <ItemName>OTT</ItemName>
-              </Btn>
             </Item>
           </List>
         </FLexbox>
@@ -131,7 +126,8 @@ const NavContain = styled.nav<{ theme: { bgColor: string } }>`
     gap: 200px;
   }
   @media (min-width: 701px) and (max-width: 1260px) {
-    width: 45px;
+    width: 57px;
+    padding-left: 10px;
   }
 `
 
@@ -170,8 +166,8 @@ const MainLogo = styled.h1`
 `
 
 const Image = styled.img`
-  width: 24px;
-  height: 24px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
 `
 
