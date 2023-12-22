@@ -143,6 +143,7 @@ function MyPage() {
 
       // 좋아요 많이 받은 글
       const sortedPopularReviews = Array.from(reviews)
+        .filter(review => review.likes?.length > 0) // likes가 1 이상인 것만 필터링
         .sort((a, b) => {
           const lengthComparison =
             (b.likes?.length || 0) - (a.likes?.length || 0)
@@ -155,7 +156,7 @@ function MyPage() {
 
           return lengthComparison
         })
-        .slice(0, 10)
+        .slice(0, 4)
 
       setPopularReviews(sortedPopularReviews)
     }
@@ -242,24 +243,11 @@ function MyPage() {
         </ProfileContain>
 
         <Container>
-          <Swiper
-            className="mySwiper"
-            scrollbar={{
-              hide: true
-            }}
-            slidesPerView={4}
-            spaceBetween={1}
-            loop={true}
-            modules={[Pagination, Scrollbar]}
-          >
-            {popularReviews
-              ? popularReviews.map(popular => (
-                  <SwiperSlide key={popular.id}>
-                    <FavRing review={popular} />
-                  </SwiperSlide>
-                ))
-              : null}
-          </Swiper>
+          {popularReviews && popularReviews.length > 0
+            ? popularReviews.map(popular => (
+                <FavRing review={popular} key={popular.id} />
+              ))
+            : null}
         </Container>
 
         <MarginContainer>
@@ -431,8 +419,9 @@ const ProfileBtn = styled.button`
 
 const Container = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: start;
   margin: 0 auto;
+  gap: 50px;
 `
 
 const MarginContainer = styled(Container)`
