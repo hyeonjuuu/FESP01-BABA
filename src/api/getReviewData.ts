@@ -52,7 +52,6 @@ export const getReviewDataForEdit = async (
     .eq('id', reviewId)
 
   if (data) {
-    console.log('getReviewDataForEdit: ', data)
     return data
   } else {
     console.error(error)
@@ -68,7 +67,6 @@ export const getNickname = async (reviewId: string): Promise<any | null> => {
     .eq('user_email', reviewId)
 
   if (data) {
-    console.log('getNickname: ', data)
     return data
   } else {
     console.error(error)
@@ -86,7 +84,6 @@ export const getGenreReviewData = async (
     .or(`genre_ids.cs.${genreId}`)
 
   if (data) {
-    console.log('getGenreReviewData: ', data)
     return data
   } else {
     console.error(error)

@@ -94,7 +94,6 @@ function Login() {
             .select(`username, nickname, profile_img`)
             .eq('user_email', user.id)
             .single()
-          console.log('data', data)
 
           if (!ignore) {
             if (error) {

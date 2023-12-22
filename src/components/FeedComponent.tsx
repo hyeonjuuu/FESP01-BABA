@@ -74,7 +74,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setFeeds(sortedReviewData)
-        console.log('sort data', sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -91,6 +90,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
               loginUserIdLiked
             )
           })
+
         setIsLikReviews(myLikes)
 
         const myLikesIdArray = myLikes.map(item => item.id)
@@ -170,7 +170,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     // 2차원 배열을 1차원 배열로 만듭니다
     if (targetLikes) {
       const likesArray = setBookmarkList(targetLikes.flat())
-      console.log('likesArray: ', likesArray)
     }
 
     if (checkMyLikesId.length !== 0 && loginUserId) {
@@ -191,8 +190,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     } else {
       const newBookmarkList = [...bookmarkList, loginUserId]
       setBookmarkList(newBookmarkList)
-
-      console.log('중복아님', newBookmarkList)
 
       await addFavorite(
         movieId,
