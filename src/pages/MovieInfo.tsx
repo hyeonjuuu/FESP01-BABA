@@ -25,8 +25,8 @@ function MovieInfo() {
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
   const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
 
-  const [, setMovieCreditData] = useState<string | undefined>('')
-  const [, setIsLoading] = useState<boolean>(false)
+  // const [, setMovieCreditData] = useState<string | undefined>('')
+  // const [, setIsLoading] = useState<boolean>(false)
 
   const [showMore, setShowMore] = useState(false)
   const [castData, setCastData] = useState<any[] | undefined>()

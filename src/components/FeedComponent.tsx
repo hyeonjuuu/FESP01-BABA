@@ -14,7 +14,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { sortReviewDataByDate } from '@/utils/sortReviewDataByDate'
-import { ottIcon } from '@/utils/ottIconData'
+// import { ottIcon } from '@/utils/ottIconData'
 // import { ottIcon } from '@/utils/ottIconData'
 
 interface IsLikedProps {
@@ -370,6 +370,6 @@ const FeedContentSection = styled.div`
   padding: 10px;
   border-bottom: 0.5px solid #999999;
 `
-const Line = styled.hr`
-  border: 1px solid black;
-`
+// const Line = styled.hr`
+//   border: 1px solid black;
+// `

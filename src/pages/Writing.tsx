@@ -169,13 +169,7 @@ function Writing() {
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
-    setSelectedOtt(prevSelectedOtt => {
-      if (prevSelectedOtt.includes(iconName)) {
-        return prevSelectedOtt.filter(ott => ott !== iconName)
-      } else {
-        return [...prevSelectedOtt, iconName]
-      }
-    })
+    setSelectedOtt([iconName])
   }
 
   // const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,7 +294,7 @@ function Writing() {
             </SearchBarWrapper>
 
             <ResultWrapper
-              isSearched={isSearched}
+              issearched={isSearched}
               isSearchBtnDisabled={isSearchBtnDisabled}
             >
               <SearchContainer>
@@ -331,7 +325,7 @@ function Writing() {
           </FlexContainer>
         </SearchContainerWrapper>
 
-        <WebComtainer>
+        <WebContainer>
           <ImageBox>
             <BtnWrapper onClick={handleSelectImg}>
               <ImgSelectBtn
@@ -453,6 +447,7 @@ function Writing() {
                       name={`ott${index}`}
                       id={`ott${index}`}
                       checked={selectedOtt.includes(ottIconNames[index])}
+                      readOnly
                       // onChange={() => handleCheck(ottIconNames[index])}
                     />
                   </motion.div>
@@ -461,7 +456,7 @@ function Writing() {
             </Wrapper>
 
             <StarContainer>
-              <p>⭐️ 이 컨텐츠의 점수를 표시해주세요! ✨💫</p>
+              <p>이 컨텐츠의 점수를 표시해주세요! ⭐️</p>
               <StarRating onRatingChange={handleRatingChange} />
             </StarContainer>
 
@@ -481,7 +476,7 @@ function Writing() {
               onClick={handleSubmit}
             />
           </Description>
-        </WebComtainer>
+        </WebContainer>
       </FormStyle>
     </Container>
   )
@@ -493,19 +488,32 @@ const Container = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin: 30px 0;
   margin-bottom: 80px;
+  @media (max-width: 700px) {
+    width: 98%;
+  }
 `
 
 const FormStyle = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  width: 90%;
+  justify-content: center;
+  /* gap: 20px; */
+  /* width: 90%; */
+
+  @media (min-width: 701px) {
+    width: 70%;
+  }
 
   @media (min-width: 1031px) {
     justify-content: space-between;
+  }
+
+  @media (max-width: 700px) {
+    width: 100%;
   }
 `
 
@@ -518,25 +526,24 @@ const ImageBox = styled.div`
     object-fit: cover;
   }
 
-  @media (min-width: 701px) {
+  @media (max-width: 450px) {
+    width: 90%;
   }
 `
+
 const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-
   border-bottom-left-radius: ${props =>
     props.isSearchBtnDisabled ? '8px' : 'none'};
-
   border-bottom-right-radius: ${props =>
     props.isSearchBtnDisabled ? '8px' : 'none'};
-
   background-color: #e8e8e8;
 
   @media (min-width: 701px) {
@@ -544,16 +551,15 @@ const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
   }
 `
 
-const WebComtainer = styled.div`
-  width: 100%;
-  gap: 10px;
+const WebContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  width: 100%;
 
-  @media (min-width: 1031px) {
-    flex-direction: row;
+  @media (max-width: 700px) {
+    width: 80%;
   }
 `
 
@@ -561,8 +567,8 @@ const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 97%;
-  padding: 0 10px;
+  width: 95%; /* Adjust width for better responsiveness */
+  padding: 0 5px; /* Adjust padding for better responsiveness */
   border-radius: 8px;
   cursor: pointer;
 
@@ -583,7 +589,7 @@ const SearchBar = styled.div`
 `
 
 const ResultWrapper = styled.div<{
-  isSearched: boolean
+  issearched: boolean
   isSearchBtnDisabled: boolean
 }>`
   width: 100%;
@@ -601,32 +607,30 @@ const Contain = styled.div`
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  display: flex;
   justify-content: center;
   align-items: center;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
 
-  @media (min-width: 1031px) {
-    overflow-x: scroll;
+  @media (max-width: 390px) {
+    margin: 0 -5px; /* Adjust margin for smaller screens */
   }
 `
 
 const Description = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  width: 100%;
-
-  @media (min-width: 1031px) {
-    width: 40%;
-    height: 970px;
-    gap: 47px;
-  }
+  align-items: center;
+  justify-content: start;
+  gap: 20px;
 `
 
 const OttWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40%;
+  width: 100%; /* Change width to a percentage */
   height: 40%;
   flex: 1;
   margin: 10px 8px;
@@ -718,6 +722,9 @@ const OriginalImage = styled.div`
   position: relative;
 
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  @media (max-width: 1262px) {
+    height: 600px;
+  }
 `
 
 const MoviePoster = styled.img`
@@ -742,11 +749,7 @@ const StarContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  font-size: 20px;
-
-  @media (min-width: 1031px) {
-    flex-direction: column;
-  }
+  font-size: 18px;
 `
 
 const FeedText = styled.textarea`
@@ -778,7 +781,8 @@ const fadeIn = keyframes`
 `
 
 const Btn = styled.button`
-  width: 10%;
+  width: 100%;
+  max-width: 200px; // Set a maximum width for the button
   height: 46px;
   border-radius: 8px;
   background-color: #3797ef;
@@ -802,6 +806,7 @@ const Btn = styled.button`
 const OttTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
+  align-self: start;
 `
 
 const SearchContainer = styled.div`
@@ -823,6 +828,13 @@ const SearchContainerWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+
+  @media (max-width: 700px) {
+    width: 78%;
+  }
+  @media (max-width: 450px) {
+    width: 70%;
+  }
 `
 
 const FlexContainer = styled.div`

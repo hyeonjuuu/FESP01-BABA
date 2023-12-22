@@ -16,18 +16,18 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
-import useThemeStore from '@/store/useThemeStore'
+// import useThemeStore from '@/store/useThemeStore'
 
 interface PostProps {
   key: number
 }
 
-interface BorderProps {
-  $darkMode: boolean
-}
+// interface BorderProps {
+//   $darkMode: boolean
+// }
 
 function MyPage() {
-  const { $darkMode } = useThemeStore()
+  // const { $darkMode } = useThemeStore()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -266,7 +266,7 @@ function MyPage() {
             : null}
         </Container>
 
-        <MarginContainer $darkMode={$darkMode}>
+        <MarginContainer>
           <Wrapper onClick={handleShowReviews}>
             <StyledP>게시물</StyledP>
             <span>{reviews?.length}</span>
@@ -372,31 +372,36 @@ const Box = styled.section`
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  width: 98%;
   margin-bottom: 70px;
 
   @media (min-width: 1031px) {
     display: flex;
     align-items: center;
   }
-  @media (min-width: 701px) and(max-width: 1030px) {
+
+  @media (min-width: 701px) and (max-width: 1030px) {
     display: flex;
     align-items: center;
   }
 `
 
 const ContentBox = styled.div`
-  width: 390px;
+  width: 100%; /* Make it full-width on mobile */
+  max-width: 600px; /* Adjust the maximum width for larger screens if needed */
+  margin: 0 auto;
 `
 
 const ProfileContain = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column; /* Stack items vertically on small screens */
+  align-items: center;
   padding: 0 12px;
 `
 
 const ImageWrapper = styled.div`
-  width: 72px;
-  height: 72px;
+  width: 120px; /* Adjust the image size */
+  height: 120px; /* Adjust the image size */
   border-radius: 50%;
   overflow: hidden;
 `
@@ -404,23 +409,27 @@ const ImageWrapper = styled.div`
 const ProfileImage = styled.img`
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  cursor: pointer;
 `
 
 const ProfileInfo = styled.div`
-  display: flex;
-  align-items: start;
-  flex-direction: column;
+  margin-top: 15px; /* Add some spacing */
+  text-align: center;
 `
 
 const ProfileBtn = styled.button`
-  width: 240px;
-  height: 30px;
-  background-color: EFEFEF;
+  width: 100%;
+  height: 40px;
+  background-color: #efefef;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 3px;
   border: none;
+  margin-top: 15px; /* Add some spacing */
+  cursor: pointer;
+
   &:hover {
     background-color: #0282d1;
     color: #ffffff;
@@ -433,26 +442,40 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const MarginContainer = styled(Container)<BorderProps>`
+const MarginContainer = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 15px;
   margin: 15px 0;
   border: 1px solid black;
-  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
+  justify-content: space-between;
+
+  @media (max-width: 700px) {
+    gap: 10px;
+    /* flex-wrap: wrap; */
+  }
 `
 
 const Wrapper = styled.button`
-  width: 50%;
+  width: 48%; /* Two columns on larger screens */
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0;
+  padding: 15px 0;
   gap: 10px;
+  cursor: pointer;
 
   &:hover {
     background-color: #0282d1;
     color: #ffffff;
   }
+
+  @media (max-width: 700px) {
+    width: 100%; /* Full-width on smaller screens */
+  }
 `
+
 const StyledP = styled.p`
   margin: 0;
 `
@@ -461,6 +484,7 @@ const PostsContain = styled.section`
   display: flex;
   flex-wrap: wrap;
   gap: 1px;
+  width: 100%;
 `
 
 const Post = styled.div<PostProps>`
