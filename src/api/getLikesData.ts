@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabaseClient'
 
 export const fetchAllLikes = async () => {
@@ -24,19 +23,17 @@ export const deleteLikes = async (itemId?: number) => {
 }
 
 // 내가 누른 좋아요
-export const getMyLikes = async (id: string) => {
+export const getMyLikes = async (id: string[]) => {
   try {
     const { data, error } = await supabase
       .from('reviews')
-      .select('likes, id, movie_title')
-      .eq('user_id', id)
-    // .match({ user_id: id })
+      .select('*')
+      .contains('likes', id)
 
     if (error) {
       console.error(error.message)
       return { error }
     } else {
-      console.log('likes 가져오기 성공: ', data)
       return { data }
     }
   } catch (error) {
@@ -58,7 +55,6 @@ export const getLikes = async (id: number) => {
       console.error(error.message)
       return { error }
     } else {
-      console.log('likes 가져오기 성공: ', data)
       return { data }
     }
   } catch (error) {
@@ -94,16 +90,11 @@ export const addFavorite = async (
 
     const existingLikes = (await existingData?.likes) || []
 
-    // 새로운 사용자 id 추가
-    let updatedLikes
+    let updatedLikes = existingLikes.includes(loginUserId)
+      ? existingLikes.filter((item: string) => item !== loginUserId)
+      : [...existingLikes, loginUserId]
 
-    if (existingLikes.includes(loginUserId)) {
-      updatedLikes = existingLikes.filter(
-        (item: string) => item !== loginUserId
-      )
-    } else {
-      updatedLikes = [...existingLikes, loginUserId]
-    }
+    updatedLikes = updatedLikes.length === 0 ? null : updatedLikes
 
     // 업서트
     const { data, error } = await supabase.from('reviews').upsert([
@@ -122,8 +113,6 @@ export const addFavorite = async (
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       throw error
-    } else {
-      console.log('Supabase 데이터 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
@@ -135,6 +124,8 @@ export const getfavorites = async (userId: string) => {
   const { data } = await supabase
     .from('reviews')
     .select('likes_id')
+    // .select('*')
+    // .eq('likes', userId)
     .match({ likes_id: userId })
 
   return data

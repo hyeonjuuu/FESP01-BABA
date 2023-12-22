@@ -3,17 +3,17 @@ import Logo from '@/components/Logo'
 import styled from 'styled-components'
 import Input from '@/components/Input'
 import { HTMLAttributes } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/utils/supabaseClient'
+import { useUserStore } from '@/store/useUserStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import CheckAccount from '@/components/CheckAccount'
+import { Link, useNavigate } from 'react-router-dom'
 import { userLogin, gitHubLogin } from '@/utils/userData'
 import { faEye } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
-import { useUserStore } from '@/store/useUserStore'
 
 interface PasswordInputProps extends HTMLAttributes<HTMLDivElement> {
   $inputColor?: boolean
@@ -94,7 +94,6 @@ function Login() {
             .select(`username, nickname, profile_img`)
             .eq('user_email', user.id)
             .single()
-          console.log('data', data)
 
           if (!ignore) {
             if (error) {

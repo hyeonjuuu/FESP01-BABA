@@ -2,17 +2,18 @@ import styled from 'styled-components'
 import star from '@/assets/StarIcon.svg'
 import like from '@/assets/HeartIcon.svg'
 import userImage from '@/assets/userIcon.png'
+import { useNavigate } from 'react-router-dom'
+import userInfoInLs from '@/utils/userInfoInLs'
+import { FontProps } from './CategoryComponent'
 import { addFavorite } from '@/api/getLikesData'
 import likefill from '@/assets/HeartIconFill.svg'
+import { supabase } from '@/utils/supabaseClient'
 import useThemeStore from '../store/useThemeStore'
-import { FontProps } from './CategoryComponent'
 import { useEffect, useRef, useState } from 'react'
-import userInfoInLs from '@/utils/userInfoInLs'
-import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { supabase } from '@/utils/supabaseClient'
+import { sortReviewDataByDate } from '@/utils/sortReviewDataByDate'
 
 interface IsLikedProps {
   id: number
@@ -36,23 +37,18 @@ type LikeIconProps = {
 
 function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { $darkMode } = useThemeStore()
-  const [feeds, setFeeds] = useState<ReviewData[]>([])
-  const [, setReviewsId] = useState<string[]>([])
-  const [usersId, setUsersId] = useState<string[]>([])
-  const [isLiked, setIsLiked] = useState<boolean>(false)
-  const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
-  const [myLikesId, setMyLikesId] = useState<number[]>([])
-  const [renderProfile, setRenderProfile] = useState<{
-    [key: string]: { imgSrc?: string | null }
-  }>({})
-
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
 
-  const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
-    []
-  )
   const feedContentSectionRef = useRef<HTMLDivElement>(null)
+
+  const [usersId, setUsersId] = useState<string[]>([])
+  const [isLiked, setIsLiked] = useState<boolean>(false)
+  const [myLikesId, setMyLikesId] = useState<number[]>([])
+  const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
+  const [renderProfile, setRenderProfile] = useState<{
+    [key: string]: { imgSrc?: string | null }
+  }>({})
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -68,13 +64,13 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           .from('reviews')
           .select()
 
-        if (reviewError) throw new Error()
+        if (reviewError) {
+          throw new Error('Failed to fetch review data')
+        }
 
-        const sortedReviewData = reviewData.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )
-        setFeeds(sortedReviewData)
+        // 데이터의 날짜를 최신 순서부터 오래된 순서로 나열합니다.
+        const sortedReviewData = sortReviewDataByDate(reviewData)
+        // updateReviewData(sortedReviewData);
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -84,20 +80,18 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           }))
           .filter(entry => {
             const likesArray = entry.likes || []
-            const loginUserIdLiked = likesArray.includes(loginUserId)
+            const loginUserIdLiked = likesArray.includes(loginUserId as string)
             return (
               entry.likes !== null &&
               Array.isArray(entry.likes) &&
               loginUserIdLiked
             )
           })
+
         setIsLikReviews(myLikes)
 
         const myLikesIdArray = myLikes.map(item => item.id)
         setMyLikesId(myLikesIdArray)
-
-        const reviewsId = sortedReviewData.map(item => item.user_id)
-        setReviewsId(reviewsId)
 
         const usersId = sortedReviewData.map(data => data.user_id)
         setUsersId(usersId)
@@ -117,7 +111,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           reviews.map(async item => await getProfileImgUrl(item.user_id))
         )
 
-        setRenderProfileImg(imgSrc)
         const makeObj = imgSrc.map((item, index) => ({
           imgSrc: item,
           userId: usersId[index]
@@ -188,8 +181,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     } else {
       const newBookmarkList = [...bookmarkList, loginUserId]
       setBookmarkList(newBookmarkList)
-
-      console.log('중복아님', newBookmarkList)
 
       await addFavorite(
         movieId,

@@ -11,7 +11,6 @@ const getSearchMovies = async (search: string) => {
         }
       }
     )
-    console.log('검색데이터: ', response.data)
 
     return response.data
   } catch (error) {

@@ -35,7 +35,6 @@ export const uploadProfileImg = async (
       console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       return null
     } else {
-      console.log('Supabase 이미지 삽입 성공:', data)
       // 이미지 URL 반환
       return data?.path ?? null
     }
@@ -62,8 +61,6 @@ export const addImgUrlToUsers = async (
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-    } else {
-      console.log('Supabase 프로필 이미지 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
@@ -82,8 +79,6 @@ export const getProfileImgUrl = async (id: string): Promise<string | null> => {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       return null
     } else {
-      // console.log('Supabase 이미지 가져오기 성공:', data)
-
       // 첫 번째 객체의 img_url 반환
       return data && data.length > 0 ? data[0].profile_img : null
     }
@@ -92,30 +87,6 @@ export const getProfileImgUrl = async (id: string): Promise<string | null> => {
     return null
   }
 }
-
-// 유저들의 프로필 이미지 가져오기
-// export const getProfileImgs = async (
-//   userEmails: string[]
-// ): Promise<string[] | null> => {
-//   try {
-//     const { data, error } = await supabaseAdmin
-//       .from('users')
-//       .select('profile_img')
-//       .eq('user_email', userEmails)
-
-//     if (error) {
-//       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-//       return null
-//     } else {
-//       // 여러 행 중에서 각 행의 profile_img 값을 추출하여 배열로 반환
-//       console.log('유저들의 프로필 data: ', data)
-//       return data ? data.map(user => user.profile_img) : null
-//     }
-//   } catch (error) {
-//     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
-//     return null
-//   }
-// }
 
 //# 프로필 이미지 삭제
 export const deleteProfileImg = async (id: string) => {

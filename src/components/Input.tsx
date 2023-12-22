@@ -5,7 +5,7 @@ interface InputProps {
   placeholder?: string
   maxlength?: number
   id?: string
-  width: string
+  width?: string
   $noBorder?: boolean // 새로운 prop 추가
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   name?: string

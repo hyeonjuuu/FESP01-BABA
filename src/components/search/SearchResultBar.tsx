@@ -26,8 +26,6 @@ function SearchResultBar({
       inputRef.current.value = title
       onSearch()
     }
-
-    console.log('클릭')
   }
 
   return (
