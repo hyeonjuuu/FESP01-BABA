@@ -4,14 +4,15 @@ import { ResultBarContainProps } from '@/types'
 import useThemeStore from '@/store/useThemeStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { useEffect, useRef, useState } from 'react'
+import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import loadingSpinner from '@/assets/spinner/popcornLoding.gif'
 import SearchResultBar, {
   Contain,
   ResultBar,
   Warppaer
 } from '@/components/search/SearchResultBar'
+import GoingUpBtn from '@/components/GoingUpBtn'
 
 function SearchPage() {
   const { $darkMode } = useThemeStore()
@@ -203,6 +204,7 @@ function SearchPage() {
           <NoResultsMessage>최근 검색어가 없습니다.</NoResultsMessage>
         )}
       </ResultWrapper>
+      <GoingUpBtn />
     </Box>
   )
 }

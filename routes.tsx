@@ -1,4 +1,3 @@
-import MovieInfo from '@/pages/MovieInfo'
 import React from 'react'
 import { lazy } from 'react'
 import {
@@ -24,9 +23,9 @@ const Login: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
 const SignUp: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/SignUp')
 )
-const Detail: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
-  () => import('./src/pages/Detail')
-)
+// const Detail: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
+//   () => import('./src/pages/Detail')
+// )
 const NotFound: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/NotFound')
 )
@@ -44,6 +43,9 @@ const EditReview: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
 const MyPage: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
   () => import('./src/pages/MyPage')
 )
+const MovieInfo: React.LazyExoticComponent<() => React.JSX.Element> = lazy(
+  () => import('./src/pages/MovieInfo')
+)
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -52,13 +54,13 @@ const router = createBrowserRouter(
       <Route path="/main" element={<MainPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/detail/:id" element={<Detail />} />
+      <Route path="/info/:id" element={<MovieInfo />} />
       {/* <Route path="/detail" element={<Detail />} /> */}
       <Route path="/search" element={<SearchPage />} />
       <Route path="/writing" element={<Writing />} />
       <Route path="/edit/:id" element={<EditReview />} />
       <Route path="/mypage" element={<MyPage />} />
-      <Route path="/info" element={<MovieInfo />} />
+      {/* <Route path="/info" element={<MovieInfo />} /> */}
 
       <Route path="*" element={<NotFound />} />
     </Route>

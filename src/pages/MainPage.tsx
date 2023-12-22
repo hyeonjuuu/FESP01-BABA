@@ -5,6 +5,7 @@ import RecommendContentsSection from '@/layout/RecommendContentsSection'
 import { useEffect, useState } from 'react'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
+import GoingUpBtn from '@/components/GoingUpBtn'
 
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
@@ -70,6 +71,7 @@ function Main() {
           </NoDataNotice>
         )}
       </Wrapper>
+      <GoingUpBtn />
     </>
   )
 }

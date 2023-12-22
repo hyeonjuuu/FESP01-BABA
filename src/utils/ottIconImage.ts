@@ -1,11 +1,11 @@
-import waveIcon from '@/assets/wavveIcon.png'
-import tvingIcon from '@/assets/tvingIcon.png'
-import disneyIcon from '@/assets/disneyIcon.png'
-import watchaIcon from '@/assets/watchaIcon.png'
-import netflixIcon from '@/assets/netflixIcon.png'
-import appleTvIcon from '@/assets/appleTvIcon.png'
-import primeTVIcon from '@/assets/primeVideoPngIcon.png'
-import coupangPlayIcon from '@/assets/coupangPlayIcon.png'
+import waveIcon from '@/assets/ottIcon/wavveIcon.png'
+import tvingIcon from '@/assets/ottIcon/tving.jpeg'
+import disneyIcon from '@/assets/ottIcon/desniy.jpeg'
+import watchaIcon from '@/assets/ottIcon/watchaIcon.png'
+import netflixIcon from '@/assets/ottIcon/netFlix.png'
+import appleTvIcon from '@/assets/ottIcon/appleTvIcon.png'
+import primeTVIcon from '@/assets/ottIcon/primeVideoPngIcon.png'
+import coupangPlayIcon from '@/assets/ottIcon/coupangPlayIcon.png'
 
 const ottIcons = [
   waveIcon,

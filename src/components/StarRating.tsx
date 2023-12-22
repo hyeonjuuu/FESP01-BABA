@@ -55,10 +55,17 @@ const StarContainer = styled.div`
   display: flex;
 `
 
+// 스타일드 컴포넌트 오류???? 대체 무슨 오류지...
 const StarIcon = styled.div<StarIconProps>`
+  @media (min-width: 1031px) {
+    flex-direction: column;
+    width: 28px;
+    height: 28px;
+    margin: 0 7px;
+  }
+
   width: 22px;
   height: 22px;
-  // 저장하면서 괄호 사라져서 에러나는 것...작동에는 문제없음
   background-image: url(${props =>
     props.selected
       ? props.$darkMode
@@ -69,4 +76,9 @@ const StarIcon = styled.div<StarIconProps>`
         : whiteStar});
   cursor: pointer;
   margin-right: 5px;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 `
