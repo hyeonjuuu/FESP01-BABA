@@ -6,6 +6,7 @@ import { HTMLAttributes } from 'react'
 import Button from '@/components/Button'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/utils/supabaseClient'
+import { useUserStore } from '@/store/useUserStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import CheckAccount from '@/components/CheckAccount'
 import { Link, useNavigate } from 'react-router-dom'
@@ -13,7 +14,6 @@ import { userLogin, gitHubLogin } from '@/utils/userData'
 import { faEye } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
-import { useUserStore } from '@/store/useUserStore'
 
 interface PasswordInputProps extends HTMLAttributes<HTMLDivElement> {
   $inputColor?: boolean

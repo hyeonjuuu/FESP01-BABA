@@ -39,6 +39,7 @@ const HomeDivWrapper = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 `
 
 const ButtonDivWrapper = styled.div`

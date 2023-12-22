@@ -1,11 +1,8 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AddImage from '@/assets/icon/Add.png'
 import UserIcon from '@/assets/icon/User.png'
 import HomeImage from '@/assets/icon/Home.png'
 import LikeImage from '@/assets/icon/Like.png'
-import ShopImage from '@/assets/icon/Shop.png'
-import RealImage from '@/assets/icon/Reels.png'
-import ShareImage from '@/assets/icon/Share.png'
 import useThemeStore from '@/store/useThemeStore'
 import searchImage from '@/assets/icon/Search.png'
 import styled, { ThemeProvider } from 'styled-components'
@@ -16,6 +13,12 @@ import AddUserIcon from '@/components/mypage/AddUserIcon'
 function Nav() {
   const { isAuthenticated } = useAuthStore()
   const { $darkMode, toggleDarkMode } = useThemeStore()
+  const navication = useNavigate()
+
+  const handleSendToLoginPage = () => {
+    alert('로그인 사용자만 이용 가능합니다. 로그인 페이지로 이동하시겠습니까?')
+    navication('/login')
+  }
 
   return (
     <ThemeProvider
@@ -70,8 +73,11 @@ function Nav() {
                   {isAuthenticated ? (
                     <AddUserIcon />
                   ) : (
-                    // <Image src={UserIcon} alt="프로필 페이지" />
-                    <AddUserIcon />
+                    <Image
+                      src={UserIcon}
+                      alt="프로필 페이지"
+                      onClick={handleSendToLoginPage}
+                    />
                   )}
                   <ItemName>프로필</ItemName>
                 </Btn>

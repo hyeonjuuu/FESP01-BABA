@@ -1,15 +1,12 @@
 import { create } from 'zustand'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_KEY as string
-)
+import { supabase } from 'utils/supabaseClient'
+import { getProfileImgUrl } from '@/api/profileImgApi'
 
 interface UserData {
   email?: string
   username: string | undefined
   nickname: string
+  profileIcon: string | null
 }
 
 interface AuthStore {
@@ -38,15 +35,16 @@ export const useAuthStore = create<AuthStore>(set => ({
       })
 
       if (data && data.user) {
+        const userIconImage = await getProfileImgUrl(data.user.id)
         // Supabase의 User 타입에서 UserData 타입으로 변환
         const userData: UserData = {
           username: data.user.email,
-          nickname: 'user_nickname'
+          nickname: 'user_nickname',
+          profileIcon: userIconImage
         }
 
         localStorage.setItem('userData', JSON.stringify(userData))
         set({ isAuthenticated: true, user: userData })
-        console.log('로그인 성공:', userData)
         alert('로그인에 성공하였습니다!')
       } else if (error) {
         console.error('로그인 실패:', error.message)
