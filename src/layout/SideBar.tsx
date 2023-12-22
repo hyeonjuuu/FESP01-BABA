@@ -1,10 +1,14 @@
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import useThemeStore from '@/store/useThemeStore'
 import { usePopularDataStore } from '@/store/usePopularDataStore'
 import { useEffect } from 'react'
 import getPopularData from '@/api/getPopularData'
 import { movieGenres } from '@/utils/genresData'
 import { Link } from 'react-router-dom'
+
+interface TextColorProps {
+  $darkMode: boolean
+}
 
 function SideBar() {
   const { populardata, setPopularData } = usePopularDataStore()
@@ -19,40 +23,35 @@ function SideBar() {
   }, [])
 
   return (
-    <ThemeProvider
-      theme={{
-        bgColor: $darkMode ? '#1E1E1E' : '#FFF',
-        color: $darkMode ? '#fff' : '#1E1E1E'
-      }}
-    >
-      <SideBarWrapper>
-        <Title>🍿 오늘의 추천 영화 🎬</Title>
-        {populardata?.results.slice(0, 10).map((item, index) => (
-          <SideContentWrapper key={item.id} to={`/movie/${item.id}`}>
-            <ContentNumber>{index + 1}</ContentNumber>
-            <RecommendImage
-              src={`https://image.tmdb.org/t/p/original${item.poster_path}`}
-              alt={`${item.title} 포스터`}
-            />
-            <Movie>
-              <MovieTitle>{item.title}</MovieTitle>
-              <MovieInfo>
-                <List>
-                  {item.genre_ids
-                    .slice(0, 3)
-                    .map((id: number, index: number) => {
-                      const genre = movieGenres.genres.find(
-                        genre => genre.id === id
-                      )
-                      return <GenreSpan key={index}>{genre?.name}</GenreSpan>
-                    })}
-                </List>
-              </MovieInfo>
-            </Movie>
-          </SideContentWrapper>
-        ))}
-      </SideBarWrapper>
-    </ThemeProvider>
+    <SideBarWrapper>
+      <Title>🍿 오늘의 추천 영화 🎬</Title>
+      {populardata?.results.slice(0, 10).map((item, index) => (
+        <SideContentWrapper key={item.id} to={`/info/${item.id}`}>
+          <ContentNumber>{index + 1}</ContentNumber>
+          <RecommendImage
+            src={`https://image.tmdb.org/t/p/original${item.poster_path}`}
+            alt={`${item.title} 포스터`}
+          />
+          <Movie>
+            <MovieTitle $darkMode={$darkMode}>{item.title}</MovieTitle>
+            <MovieInfo>
+              <List>
+                {item.genre_ids.slice(0, 3).map((id: number, index: number) => {
+                  const genre = movieGenres.genres.find(
+                    genre => genre.id === id
+                  )
+                  return (
+                    <GenreSpan key={index} $darkMode={$darkMode}>
+                      {genre?.name}
+                    </GenreSpan>
+                  )
+                })}
+              </List>
+            </MovieInfo>
+          </Movie>
+        </SideContentWrapper>
+      ))}
+    </SideBarWrapper>
   )
 }
 
@@ -105,9 +104,9 @@ const Movie = styled.div`
   justify-content: center;
 `
 
-const MovieTitle = styled.div`
+const MovieTitle = styled.div<TextColorProps>`
   font-weight: 600;
-  color: #303032;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#303032')};
   width: 210px;
 `
 
@@ -124,8 +123,8 @@ const List = styled.li`
   display: flex;
 `
 
-const GenreSpan = styled.span`
+const GenreSpan = styled.span<TextColorProps>`
   margin: 0;
-  color: #777777;
+  color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777777')};
   margin-right: 4px;
 `

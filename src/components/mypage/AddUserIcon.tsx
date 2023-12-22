@@ -1,27 +1,41 @@
 import styled from 'styled-components'
 import { useEffect, useState } from 'react'
+import { getProfileImgUrl } from '@/api/profileImgApi'
+import userInfoInLs from '@/utils/userInfoInLs'
+import UserIcon from '@/assets/icon/User.png'
 
 function AddUserIcon() {
-  const [profileIcon, setProfileIcon] = useState('')
+  const { userId } = userInfoInLs()
+  const [renderProfileImg, setRenderProfileImg] = useState<string | undefined>(
+    undefined
+  )
+
+  // 프로필 이미지 렌더링
+  const fetchAndRenderProfileImg = async () => {
+    if (userId) {
+      try {
+        const imgSrc = await getProfileImgUrl(userId)
+        if (imgSrc) {
+          setRenderProfileImg(imgSrc)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
 
   useEffect(() => {
-    // 로컬스토리지에서 userData 불러오기
-    const userDataString = localStorage.getItem('userData')
-
-    const userData = JSON.parse(userDataString as string)
-
-    const profileIcon = userData && userData.profileIcon
-
-    setProfileIcon(profileIcon)
+    fetchAndRenderProfileImg()
   }, [])
 
   return (
     <>
-      {/* <Warpper>
-        <FontAwesomeIcon icon={faPlus} />
-      </Warpper> */}
       <Warpper
-        src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${profileIcon}`}
+        src={
+          renderProfileImg
+            ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg}`
+            : UserIcon
+        }
         alt=""
       />
     </>

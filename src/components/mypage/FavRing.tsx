@@ -17,7 +17,7 @@ function FavRing({ review }: FavRingProps) {
     <Contain>
       <div>
         <Wrapper>
-          <HoverLink to={`/detail/${review.id}`}>
+          <HoverLink to={`/info/${review.movie_id}`}>
             <StoryRing>
               <Img
                 src={
