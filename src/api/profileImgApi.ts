@@ -50,7 +50,7 @@ export const addImgUrlToUsers = async (
   profile_img: string | null
 ) => {
   try {
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('users')
       .update([
         {

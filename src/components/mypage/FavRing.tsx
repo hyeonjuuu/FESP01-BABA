@@ -32,8 +32,7 @@ function FavRing({ review }: FavRingProps) {
               />
               <HoverDiv>
                 <MovieTitleSpan>
-                  <FontAwesomeIcon icon={faHeart} />
-                  {''}
+                  <FontAwesomeIcon icon={faHeart} />{' '}
                   {review.likes ? review.likes.length : 0}
                 </MovieTitleSpan>
               </HoverDiv>
@@ -56,7 +55,7 @@ const Contain = styled.div`
   align-items: center;
   margin: 40px 0;
   overflow: visible;
-  /* padding: 0 10px 0 15px; */
+  padding: 0 20px;
 `
 
 const Wrapper = styled.div`

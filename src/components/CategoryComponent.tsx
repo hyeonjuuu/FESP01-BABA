@@ -78,6 +78,8 @@ function CategoryComponent() {
     setSelectCategory(select)
   }
 
+  console.log($darkMode)
+
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {

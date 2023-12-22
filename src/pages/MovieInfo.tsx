@@ -13,7 +13,7 @@ import CastInfo from '@/components/movieInfo/CastInfo'
 import styled, { ThemeProvider } from 'styled-components'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { findMovieDirector, getDetailData } from '@/api/tmdbDetailData'
+import { getDetailData } from '@/api/tmdbDetailData'
 import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
 // import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
@@ -24,8 +24,10 @@ function MovieInfo() {
   const [reviewData, setReviewData] = useState<any[] | null>(null)
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
   const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
+
   const [, setMovieCreditData] = useState<string | undefined>('')
   const [, setIsLoading] = useState<boolean>(false)
+
   const [showMore, setShowMore] = useState(false)
   const [castData, setCastData] = useState<any[] | undefined>()
   const [trailers, setTrailers] = useState<any[] | null>([])
@@ -38,12 +40,12 @@ function MovieInfo() {
     const getMovieInfoData = async () => {
       try {
         const response = await getDetailData(movieID as string)
-        const director = await findMovieDirector(movieID as string)
+        // const director = await findMovieDirector(movieID as string)
 
         if (response) {
           const data = response.data
           setMovieInfoData(data)
-          setMovieCreditData(director)
+          // setMovieCreditData(director)
 
           const trailerData = await getTrailer(`${data.title} 예고편`)
           setTrailers(trailerData)
@@ -61,7 +63,7 @@ function MovieInfo() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true)
+        // setIsLoading(true)
         const data = await getReviewData()
         const nicknameData = await getReviewDataWithUserInfo()
 
@@ -72,7 +74,7 @@ function MovieInfo() {
       } catch (error) {
         console.error(error)
       } finally {
-        setIsLoading(false)
+        // setIsLoading(false)
       }
     }
 

@@ -21,7 +21,12 @@ interface PostProps {
   key: number
 }
 
+interface BorderProps {
+  $darkMode: boolean
+}
+
 function MyPage() {
+  const { $darkMode } = useThemeStore()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -201,6 +206,19 @@ function MyPage() {
     fetchFavoriteReviews()
   }, [userId])
 
+  const handleGoToEdit = (review: ReviewsProps, userId: string) => {
+    const confirmResult = window.confirm('리뷰 수정 페이지로 이동하겠습니까?')
+
+    if (confirmResult) {
+      navigate(`/edit/${review.id}`, {
+        state: {
+          review,
+          userId
+        }
+      })
+    }
+  }
+
   return (
     <Box>
       <ContentBox>
@@ -247,7 +265,7 @@ function MyPage() {
             : null}
         </Container>
 
-        <MarginContainer>
+        <MarginContainer $darkMode={$darkMode}>
           <Wrapper onClick={handleShowReviews}>
             <StyledP>게시물</StyledP>
             <span>{reviews?.length}</span>
@@ -264,37 +282,31 @@ function MyPage() {
             reviews && reviews.length > 0 ? (
               // 1. 리뷰 있을 때
               reviews.map(review => (
-                <Post key={review.id}>
-                  <HoverLink
-                    to={`/edit/${review.id}`}
-                    state={{
-                      review_id: review.id,
-                      user_id: userId,
-                      movie_id: review.movie_id
-                    }}
-                  >
-                    <PostImg
-                      src={
-                        review.img_url
-                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
-                          : `https://image.tmdb.org/t/p/original/${review.default_img?.replace(
-                              'public/',
-                              ''
-                            )}`
-                      }
-                      alt={`${review.movie_title} 포스터`}
-                    />
-                    <HoverDiv>
-                      <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
-                      <RatingSpan>
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          style={{ color: '#FFC61A' }}
-                        />{' '}
-                        {review.rating}
-                      </RatingSpan>
-                    </HoverDiv>
-                  </HoverLink>
+                <Post
+                  key={review.id}
+                  onClick={() => handleGoToEdit(review, userId!)}
+                >
+                  <PostImg
+                    src={
+                      review.img_url
+                        ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
+                        : `https://image.tmdb.org/t/p/original/${review.default_img?.replace(
+                            'public/',
+                            ''
+                          )}`
+                    }
+                    alt={`${review.movie_title} 포스터`}
+                  />
+                  <HoverDiv>
+                    <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
+                    <RatingSpan>
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        style={{ color: '#FFC61A' }}
+                      />{' '}
+                      {review.rating}
+                    </RatingSpan>
+                  </HoverDiv>
                 </Post>
               ))
             ) : (
@@ -312,7 +324,7 @@ function MyPage() {
             // 3. 좋아요 있을 때
             myLikes.map(like => (
               <Post key={like.id}>
-                <HoverLink to={`/info/${like.id}`}>
+                <HoverLink to={`/info/${like.movieId}`}>
                   <PostImg
                     src={
                       like.imgUrl
@@ -418,12 +430,12 @@ const Container = styled.div`
   display: flex;
   justify-content: start;
   margin: 0 auto;
-  gap: 50px;
 `
 
-const MarginContainer = styled(Container)`
+const MarginContainer = styled(Container)<BorderProps>`
   margin: 15px 0;
   border: 1px solid black;
+  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
 `
 
 const Wrapper = styled.button`
@@ -434,6 +446,7 @@ const Wrapper = styled.button`
   align-items: center;
   padding: 10px 0;
   gap: 10px;
+
   &:hover {
     background-color: #0282d1;
     color: #ffffff;
@@ -453,6 +466,19 @@ const Post = styled.div<PostProps>`
   width: 129px;
   height: 129px;
   background-color: #0282d1;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    > img {
+      filter: saturate(0%) brightness(40%);
+      transition: 0.5s;
+    }
+    > div {
+      color: white;
+      visibility: visible;
+    }
+  }
 `
 
 export const HoverLink = styled(Link)`
