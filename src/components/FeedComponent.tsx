@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { sortReviewDataByDate } from '@/utils/sortReviewDataByDate'
 
 interface IsLikedProps {
   id: number
@@ -39,20 +40,15 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
   const { bookmarkList, setBookmarkList, deleteBookmarkList } =
     useBookmarkStore()
 
-  const [, setReviewsId] = useState<string[]>([])
+  const feedContentSectionRef = useRef<HTMLDivElement>(null)
+
   const [usersId, setUsersId] = useState<string[]>([])
-  const [feeds, setFeeds] = useState<ReviewData[]>([])
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [myLikesId, setMyLikesId] = useState<number[]>([])
   const [isLikeReviews, setIsLikReviews] = useState<IsLikedProps[] | null>([])
   const [renderProfile, setRenderProfile] = useState<{
     [key: string]: { imgSrc?: string | null }
   }>({})
-
-  const [renderProfileImg, setRenderProfileImg] = useState<(string | null)[]>(
-    []
-  )
-  const feedContentSectionRef = useRef<HTMLDivElement>(null)
 
   const getuserData = userInfoInLs()
   const loginUserId = getuserData.userId
@@ -68,13 +64,13 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           .from('reviews')
           .select()
 
-        if (reviewError) throw new Error()
+        if (reviewError) {
+          throw new Error('Failed to fetch review data')
+        }
 
-        const sortedReviewData = reviewData.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )
-        setFeeds(sortedReviewData)
+        // 데이터의 날짜를 최신 순서부터 오래된 순서로 나열합니다.
+        const sortedReviewData = sortReviewDataByDate(reviewData)
+        // updateReviewData(sortedReviewData);
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -84,7 +80,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           }))
           .filter(entry => {
             const likesArray = entry.likes || []
-            const loginUserIdLiked = likesArray.includes(loginUserId)
+            const loginUserIdLiked = likesArray.includes(loginUserId as string)
             return (
               entry.likes !== null &&
               Array.isArray(entry.likes) &&
@@ -95,9 +91,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
         const myLikesIdArray = myLikes.map(item => item.id)
         setMyLikesId(myLikesIdArray)
-
-        const reviewsId = sortedReviewData.map(item => item.user_id)
-        setReviewsId(reviewsId)
 
         const usersId = sortedReviewData.map(data => data.user_id)
         setUsersId(usersId)
@@ -117,7 +110,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           reviews.map(async item => await getProfileImgUrl(item.user_id))
         )
 
-        setRenderProfileImg(imgSrc)
         const makeObj = imgSrc.map((item, index) => ({
           imgSrc: item,
           userId: usersId[index]
@@ -167,8 +159,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     // 2차원 배열을 1차원 배열로 만듭니다
     if (targetLikes) {
-      const likesArray = setBookmarkList(targetLikes.flat())
-      console.log('likesArray: ', likesArray)
+      setBookmarkList(targetLikes.flat())
     }
 
     if (checkMyLikesId.length !== 0 && loginUserId) {
@@ -189,8 +180,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     } else {
       const newBookmarkList = [...bookmarkList, loginUserId]
       setBookmarkList(newBookmarkList)
-
-      console.log('중복아님', newBookmarkList)
 
       await addFavorite(
         movieId,
