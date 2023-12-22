@@ -9,8 +9,13 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import { movieGenres, tvGenres } from '@/utils/genresData'
 import { useGenresStore } from '@/store/useGenresStore'
-import { motion, useTime, useTransform, animate } from 'framer-motion'
-import { faPause } from '@fortawesome/free-solid-svg-icons'
+import {
+  motion,
+  useTime,
+  useTransform,
+  animate,
+  useMotionValue
+} from 'framer-motion'
 
 export interface FontProps {
   fontSize?: string
@@ -77,8 +82,7 @@ function CategoryComponent() {
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    const selectCategoryButton =
-      e.currentTarget.querySelectorAll('div')[1].textContent
+    const selectCategoryButton = e.currentTarget.nextElementSibling?.textContent
 
     if (selectCategory === '영화') {
       const filterCategory = movieGenres.genres.filter(
@@ -96,6 +100,28 @@ function CategoryComponent() {
   }
 
   useEffect(() => {}, [movieGenresState])
+
+  const rotateValue = useMotionValue(0)
+  const rotate = useTransform(rotateValue, [0, 1], [0, 360])
+
+  // const time = useTime()
+  // const rotate = useTransform(
+  //   rotateValue,
+  //   // rotateValue,
+  //   [0, 4000], // For every 4 seconds...
+  //   [0, 360], // ...rotate 360deg
+  //   { clamp: false }
+  // )
+
+  // const handleHoverStart = () => {
+  //   rotateValue.set(1) // 회전 상태를 나타내는 값을 1로 설정
+  //   console.log('1')
+  // }
+
+  // const handleHoverEnd = () => {
+  //   rotateValue.set(0) // 회전 상태를 나타내는 값을 0으로 설정
+  //   console.log('2')
+  // }
 
   return (
     <CategorySection>
@@ -145,7 +171,14 @@ function CategoryComponent() {
         {selectCategory === '영화'
           ? movieCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
-                <CategoryButton onClick={handleFilterCategory}>
+                <CategoryWrapper>
+                  {/* <motion.button
+                    whileHover={{ rotate: 360 }}
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 0 }}
+                    onClick={handleFilterCategory}
+                    style={{ rotate: rotateValue }}
+                  > */}
                   <motion.button
                     whileHover={{
                       rotate: 360,
@@ -160,13 +193,14 @@ function CategoryComponent() {
                       backgroundColor: 'inherit',
                       cursor: 'pointer'
                     }}
+                    onClick={handleFilterCategory}
                   >
                     <CategoryCircle color={color}></CategoryCircle>
                   </motion.button>
                   <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
                     {text}
                   </CategroyList>
-                </CategoryButton>
+                </CategoryWrapper>
               </SwiperSlideWrapper>
             ))
           : dramaCategories.map(({ color, text, fontSize }, index) => (
@@ -214,6 +248,7 @@ const CategoryTitle = styled.div`
   justify-content: space-between;
   flex-flow: row;
   align-content: center;
+  line-height: 100%;
 `
 
 const SelectLabel = styled.select`
@@ -247,6 +282,11 @@ const CategoryButton = styled.button`
   outline: none;
   background-color: inherit;
   cursor: pointer;
+`
+
+const CategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 `
 
 export const SwiperWrapper = styled(Swiper)`

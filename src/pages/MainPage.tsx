@@ -5,6 +5,7 @@ import RecommendContentsSection from '@/layout/RecommendContentsSection'
 import { useEffect, useState } from 'react'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
+import { motion } from 'framer-motion'
 
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
@@ -60,7 +61,15 @@ function Main() {
   return (
     <>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
-      <Wrapper>
+      <motion.div
+        animate={{ y: 0 }}
+        transition={{ ease: 'easeOut', duration: 2, delay: 5 }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '22px'
+        }}
+      >
         <CategoryComponent />
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
         {movieGenresStateId === undefined || reviews.length > 0 ? (
@@ -70,7 +79,7 @@ function Main() {
             선택한 카테고리에 해당하는 리뷰가 없습니다.😢
           </NoDataNotice>
         )}
-      </Wrapper>
+      </motion.div>
     </>
   )
 }
