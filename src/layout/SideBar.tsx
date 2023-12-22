@@ -28,7 +28,7 @@ function SideBar() {
       <SideBarWrapper>
         <Title>🍿 오늘의 추천 영화 🎬</Title>
         {populardata?.results.slice(0, 10).map((item, index) => (
-          <SideContentWrapper key={item.id} to={`/movie/${item.id}`}>
+          <SideContentWrapper key={item.id} to={`/info/${item.id}`}>
             <ContentNumber>{index + 1}</ContentNumber>
             <RecommendImage
               src={`https://image.tmdb.org/t/p/original${item.poster_path}`}

@@ -54,7 +54,10 @@ export const insertUserData = async (userData: UserData, uuid: string) => {
 export const gitHubLogin = async () => {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'github'
+      provider: 'github',
+      options: {
+        redirectTo: window.location.origin + '/main'
+      }
     })
     if (error) {
       console.error('GitHub 로그인 실패:', error.message)
