@@ -161,7 +161,7 @@ function SearchPage() {
           searchDataList.length > 0 ? (
             // Case 1: searchResults에 값이 있는 경우
             searchDataList.map(result => (
-              <StyledLink key={result.id} to={`/detail/${result.id}`}>
+              <StyledLink key={result.id} to={`/info/${result.id}`}>
                 <Container $darkMode={$darkMode}>
                   <Contain>
                     <Image

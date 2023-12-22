@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { Icon, Image, Input } from './SearchPage'
-// import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
@@ -337,13 +337,13 @@ function Writing() {
               <ImgSelectBtn
                 color={isSelectImg ? '#3797EF' : ''}
                 $hasBorder
-                // onClick={handleSelectDefaultIimg}
+                onClick={handleSelectDefaultImg}
               >
                 기본 이미지
               </ImgSelectBtn>
               <ImgSelectBtn
                 color={isSelectImg ? '' : '#3797EF'}
-                // onClick={handleSelectUserIimg}
+                onClick={handleSelectUserImg}
               >
                 사용자 이미지
               </ImgSelectBtn>
@@ -355,14 +355,22 @@ function Writing() {
                   alt={`${selectMovie.title || selectMovie.name} 포스터`}
                 />
               ) : (
-                selectMovie && (
-                  <>
+                <>
+                  {imgSrc && selectMovie ? ( // 사용자가 이미지를 업로드한 경우
                     <MoviePoster
                       src={imgSrc}
                       alt={`${
                         selectMovie.title || selectMovie.name
                       } 관련 이미지`}
+                      onClick={handleDeleteImg}
                     />
+                  ) : (
+                    // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
+                    <PlzSelectImgDiv>
+                      <FontAwesomeIcon icon={faImage} />
+                    </PlzSelectImgDiv>
+                  )}
+                  {!isSelectImg && (
                     <div>
                       <label htmlFor="photo">사진</label>
                       <input
@@ -371,10 +379,10 @@ function Writing() {
                         name="photo"
                         id="photo"
                         onChange={handleUpload}
-                      ></input>
+                      />
                     </div>
-                  </>
-                )
+                  )}
+                </>
               )}
             </OriginalImage>
           </ImageBox>
@@ -547,13 +555,13 @@ const ResultWrapper = styled.div<{
   top: 50px;
 `
 
-const NoResultsMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 50px;
-`
+// const NoResultsMessage = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 100%;
+//   height: 50px;
+// `
 
 const Contain = styled.div`
   display: flex;
