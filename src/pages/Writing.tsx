@@ -17,13 +17,12 @@ import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
 import {
   addReview,
   addReviewWithImgUrl,
-  uploadDefaultImage,
   uploadFile,
   uploadImage
 } from '@/api/reviewApi'
-import { getNickname, getReviewDataWithUserInfo } from '@/api/getReviewData'
-import styled, { keyframes } from 'styled-components'
+import { getNickname } from '@/api/getReviewData'
 import debounce from '@/utils/debounce'
+import styled, { keyframes } from 'styled-components'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -72,8 +71,6 @@ function Writing() {
 
     const fetchNickname = async () => {
       const nickname = await getNickname(userIdInLs.userId!)
-      console.log('닉네임: ', nickname[0].username)
-
       setNickname(nickname[0].username)
     }
     fetchNickname()
@@ -220,8 +217,6 @@ function Writing() {
     500
   )
 
-  console.log(selectMovie)
-
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = '100px'
@@ -235,7 +230,6 @@ function Writing() {
 
     const ottValue = selectedOtt
     const textValue = text === 'Enter your text here...' ? '' : text
-    // const defaultImgUrl = await uploadDefaultImage(defaultImg!)
     const defaultImgUrl = await uploadFile(defaultImg!)
 
     if (
@@ -265,7 +259,6 @@ function Writing() {
       } else if (selectMovie && imgSrc) {
         const imgUrl = await uploadImage(image!)
         await addReviewWithImgUrl(
-          // await addReview(
           selectMovie.id,
           userEmail!,
           text,
@@ -276,16 +269,6 @@ function Writing() {
           nickname,
           defaultImgUrl!,
           selectMovie.genre_ids
-          // selectMovie.id,
-          // userEmail!,
-          // text,
-          // selectedOtt,
-          // rating,
-          // selectMovie.title || selectMovie.name || 'Unknown Title',
-          // nickname,
-          // defaultImgUrl!,
-          // imgUrl!,
-          // selectMovie.genre_ids
         )
       }
       alert('리뷰가 등록되었습니다!😊')

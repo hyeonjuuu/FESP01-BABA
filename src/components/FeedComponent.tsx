@@ -87,6 +87,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
               loginUserIdLiked
             )
           })
+
         setIsLikReviews(myLikes)
 
         const myLikesIdArray = myLikes.map(item => item.id)
@@ -159,7 +160,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     // 2차원 배열을 1차원 배열로 만듭니다
     if (targetLikes) {
-      setBookmarkList(targetLikes.flat())
+      const likesArray = setBookmarkList(targetLikes.flat())
     }
 
     if (checkMyLikesId.length !== 0 && loginUserId) {

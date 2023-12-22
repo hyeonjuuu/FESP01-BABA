@@ -35,7 +35,6 @@ export const uploadProfileImg = async (
       console.error(`이미지 데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
       return null
     } else {
-      console.log('Supabase 이미지 삽입 성공:', data)
       // 이미지 URL 반환
       return data?.path ?? null
     }
@@ -62,8 +61,6 @@ export const addImgUrlToUsers = async (
 
     if (error) {
       console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error.message}`)
-    } else {
-      console.log('Supabase 프로필 이미지 삽입 성공:', data)
     }
   } catch (error) {
     console.error(`데이터 통신에 실패하였습니다..😵‍💫 ${error}`)
