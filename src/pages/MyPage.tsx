@@ -421,7 +421,7 @@ const Container = styled.div`
   display: flex;
   justify-content: start;
   margin: 0 auto;
-  gap: 50px;
+  /* gap: 30px; */
 `
 
 const MarginContainer = styled(Container)`
