@@ -12,7 +12,7 @@ interface DetailReviewProps {
   nickname?: string
   rating?: string
   text: string
-  userId: string
+  userId?: string
 }
 
 function DetailReview({ nickname, rating, text, userId }: DetailReviewProps) {

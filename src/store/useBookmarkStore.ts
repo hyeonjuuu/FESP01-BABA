@@ -4,7 +4,7 @@ export const useBookmarkStore = create<BookmarkStore>(set => ({
   bookmarkList: [],
 
   setBookmarkList: (itemIds: string[]) =>
-    set(state => ({
+    set(() => ({
       bookmarkList: itemIds
     })),
 

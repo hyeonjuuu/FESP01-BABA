@@ -14,7 +14,7 @@ export const matchLike = async (userId: string | null) => {
   return data
 }
 
-export const addLike = async (likeItem: LikesType, itemId: number) => {
+export const addLike = async (likeItem: LikesType) => {
   await supabase.from('likes').insert(likeItem).select()
 }
 
@@ -72,7 +72,7 @@ export const addFavorite = async (
   rating: number,
   movie_title: string,
   id: Number,
-  likes: string[],
+  // likes:string[],
   loginUserId?: string
 ) => {
   try {
@@ -97,7 +97,7 @@ export const addFavorite = async (
     updatedLikes = updatedLikes.length === 0 ? null : updatedLikes
 
     // 업서트
-    const { data, error } = await supabase.from('reviews').upsert([
+    const { error } = await supabase.from('reviews').upsert([
       {
         movie_id,
         user_id,
