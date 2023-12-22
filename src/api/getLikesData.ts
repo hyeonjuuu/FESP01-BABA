@@ -54,7 +54,6 @@ export const addFavorite = async (
   rating: number,
   movie_title: string,
   id: Number,
-  // likes: string[],
   loginUserId?: string
 ) => {
   try {

@@ -16,7 +16,6 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
-import useThemeStore from '@/store/useThemeStore'
 
 interface PostProps {
   key: number
@@ -431,7 +430,6 @@ const Container = styled.div`
   display: flex;
   justify-content: start;
   margin: 0 auto;
-  /* gap: 30px; */
 `
 
 const MarginContainer = styled(Container)<BorderProps>`

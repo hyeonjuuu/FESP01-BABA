@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import getSearchMovies from '@/api/getSearchMovies'
 import { Icon, Image, Input } from './SearchPage'
-// import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { ResultBar, Warppaer } from '@/components/search/SearchResultBar'
@@ -402,6 +402,13 @@ function Writing() {
                       } 관련 이미지`}
                       onClick={handleDeleteImg}
                     />
+                  ) : (
+                    // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
+                    <PlzSelectImgDiv>
+                      <FontAwesomeIcon icon={faImage} />
+                    </PlzSelectImgDiv>
+                  )}
+                  {!isSelectImg && (
                     <div>
                       <label htmlFor="photo">사진</label>
                       <input
@@ -410,10 +417,10 @@ function Writing() {
                         name="photo"
                         id="photo"
                         onChange={handleUpload}
-                      ></input>
+                      />
                     </div>
-                  </>
-                )
+                  )}
+                </>
               )}
             </OriginalImage> */}
           </ImageBox>
