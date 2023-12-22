@@ -23,7 +23,6 @@ import {
 import { getNickname } from '@/api/getReviewData'
 import debounce from '@/utils/debounce'
 import styled, { keyframes } from 'styled-components'
-import { faImage } from '@fortawesome/free-regular-svg-icons'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -41,7 +40,7 @@ function Writing() {
   const [isSearchBtnDisabled, setIsSearchBtnDisabled] = useState(true)
   const [isSearched, setIsSearched] = useState(false) // 검색이 수행되었는지 나타내는 상태
   const [selectMovie, setSelectMovie] = useState<SearchResultProps | null>(null)
-  const [isSelectImg] = useState<boolean>(true)
+  const [isSelectImg, setIsSelectImg] = useState<boolean>(true)
   const [imgSrc, setImgSrc]: any = useState(null)
   const [defaultImg, setDefaultImg] = useState<string | null>('')
   const [image, setImage] = useState<File | null>(null)
@@ -78,6 +77,12 @@ function Writing() {
   }, [])
 
   //# 검색
+  // const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   e.target.value = e.target.value.toLowerCase()
+  //   setIsSearchBtnDisabled(e.target.value.length === 0) // input value가 변경될 때마다 검색 버튼의 활성화 상태 갱신
+  // }
+
+  // TitleDiv를 클릭했을 때 inputRef로 포커스 이동합니다.
   const handleTitleClick = () => {
     if (inputRef.current) {
       inputRef.current.focus()
@@ -86,7 +91,7 @@ function Writing() {
 
   const handleSearchBtn = async (e: React.MouseEvent) => {
     e.preventDefault()
-    setIsSearched(true)
+    setIsSearched(true) // 검색 버튼을 클릭하면 검색이 수행되었다고 상태를 갱신
 
     try {
       const searchData = await getSearchMovies(inputRef.current?.value || '')
@@ -107,6 +112,7 @@ function Writing() {
       console.error(error)
     } finally {
       inputRef.current!.value = ''
+      // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
 
@@ -117,12 +123,24 @@ function Writing() {
 
     setIsSearchBtnDisabled(false)
     setDefaultImg(selectedResult?.poster_path)
-    setIsSearched(false)
+    setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
   }
 
   //# 이미지 선택
   const handleSelectImg = (e: React.MouseEvent) => {
     e.preventDefault()
+  }
+
+  const handleSelectDefaultImg = () => {
+    setIsSelectImg(true)
+  }
+
+  const handleSelectUserImg = () => {
+    if (!selectMovie) {
+      alert('제목을 먼저 선택해주세요')
+      return
+    }
+    setIsSelectImg(false)
   }
 
   // 이미지 미리보기
@@ -141,6 +159,14 @@ function Writing() {
     })
   }
 
+  const handleDeleteImg = () => {
+    const confirmed = window.confirm('이미지를 삭제하시겠습니까?')
+    if (confirmed) {
+      setImage(null)
+      setImgSrc(null)
+    }
+  }
+
   //# OTT 선택
   const handleCheck = (iconName: string) => {
     setSelectedOtt(prevSelectedOtt => {
@@ -151,6 +177,20 @@ function Writing() {
       }
     })
   }
+
+  // const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const inputOtt = event.target.value
+
+  //   setSelectedOtt(prevSelectedOtt => {
+  //     if (prevSelectedOtt.length === 0) {
+  //       return [inputOtt]
+  //     } else {
+  //       const newSelectedOtt = [...prevSelectedOtt]
+  //       newSelectedOtt[newSelectedOtt.length - 1] = inputOtt
+  //       return newSelectedOtt
+  //     }
+  //   })
+  // }
 
   //# 별점
   const handleRatingChange = (newRating: number) => {

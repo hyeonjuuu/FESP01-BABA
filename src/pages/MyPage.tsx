@@ -16,6 +16,7 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
+import useThemeStore from '@/store/useThemeStore'
 
 interface PostProps {
   key: number
