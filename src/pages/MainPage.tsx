@@ -56,7 +56,6 @@ function Main() {
 
     window.scrollTo(0, 0)
   }, [movieGenresState])
-  console.log('리뷰', reviews)
 
   return (
     <>

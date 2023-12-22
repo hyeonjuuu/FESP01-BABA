@@ -9,7 +9,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import { movieGenres, tvGenres } from '@/utils/genresData'
 import { useGenresStore } from '@/store/useGenresStore'
-import { motion, useTransform, useMotionValue } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 export interface FontProps {
   fontSize?: string
@@ -74,15 +74,16 @@ function CategoryComponent() {
   const { movieGenresState, setMovieGenresState } = useGenresStore()
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const select = e.currentTarget.value
+
     setSelectCategory(select)
   }
-
-  console.log($darkMode)
 
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const selectCategoryButton = e.currentTarget.nextElementSibling?.textContent
+    console.log(e.currentTarget)
+    const selectTarget = e.currentTarget
 
     if (selectCategory === '영화') {
       const filterCategory = movieGenres.genres.filter(
@@ -100,28 +101,6 @@ function CategoryComponent() {
   }
 
   useEffect(() => {}, [movieGenresState])
-
-  const rotateValue = useMotionValue(0)
-  const rotate = useTransform(rotateValue, [0, 1], [0, 360])
-
-  // const time = useTime()
-  // const rotate = useTransform(
-  //   rotateValue,
-  //   // rotateValue,
-  //   [0, 4000], // For every 4 seconds...
-  //   [0, 360], // ...rotate 360deg
-  //   { clamp: false }
-  // )
-
-  // const handleHoverStart = () => {
-  //   rotateValue.set(1) // 회전 상태를 나타내는 값을 1로 설정
-  //   console.log('1')
-  // }
-
-  // const handleHoverEnd = () => {
-  //   rotateValue.set(0) // 회전 상태를 나타내는 값을 0으로 설정
-  //   console.log('2')
-  // }
 
   return (
     <CategorySection>
@@ -173,20 +152,17 @@ function CategoryComponent() {
           ? movieCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
                 <CategoryWrapper>
-                  {/* <motion.button
-                    whileHover={{ rotate: 360 }}
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: 0 }}
-                    onClick={handleFilterCategory}
-                    style={{ rotate: rotateValue }}
-                  > */}
                   <motion.button
                     whileHover={{
-                      rotate: 360,
-                      transition: { duration: 1 }
+                      rotate: [0, 360],
+                      transition: {
+                        duration: 1,
+                        repeat: Infinity,
+                        repeatDelay: 0
+                      }
                     }}
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: 0 }}
+                    initial={{ rotate: 360 }}
+                    animate={{ rotate: 360 }}
                     style={{
                       boxSizing: 'border-box',
                       border: 'none',

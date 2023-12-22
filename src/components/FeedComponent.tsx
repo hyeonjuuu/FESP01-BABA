@@ -75,7 +75,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
         setFeeds(sortedReviewData)
-        console.log('sort data', sortedReviewData)
 
         // 내가 누른 좋아요
         const myLikes: IsLikedProps[] = sortedReviewData
@@ -130,7 +129,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
             {}
           )
         }))
-        console.log('makeObj: ', makeObj)
       } catch (error) {
         console.error(error)
       }
@@ -170,7 +168,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
     // 2차원 배열을 1차원 배열로 만듭니다
     if (targetLikes) {
       const likesArray = setBookmarkList(targetLikes.flat())
-      console.log('likesArray: ', likesArray)
     }
 
     if (checkMyLikesId.length !== 0 && loginUserId) {
@@ -209,7 +206,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     setIsLiked(prevState => !prevState)
   }
-  console.log('최초 bookmarkList: ', bookmarkList)
 
   return (
     <FeedSection>
