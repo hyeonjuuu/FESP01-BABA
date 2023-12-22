@@ -77,25 +77,6 @@ function Nav() {
                 </Btn>
               </StyledLink>
             </Item>
-
-            <Item>
-              <Btn>
-                <Image src={ShareImage} alt="메시지" />
-                <ItemName>메시지</ItemName>
-              </Btn>
-            </Item>
-            <Item>
-              <Btn>
-                <Image src={RealImage} alt="릴스" />
-                <ItemName>릴스</ItemName>
-              </Btn>
-            </Item>
-            <Item>
-              <Btn>
-                <Image src={ShopImage} alt="OTT" />
-                <ItemName>OTT</ItemName>
-              </Btn>
-            </Item>
           </List>
         </FLexbox>
 
