@@ -16,13 +16,18 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
-import 'swiper/css'
+// import useThemeStore from '@/store/useThemeStore'
 
 interface PostProps {
   key: number
 }
 
+// interface BorderProps {
+//   $darkMode: boolean
+// }
+
 function MyPage() {
+  // const { $darkMode } = useThemeStore()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -202,6 +207,19 @@ function MyPage() {
     fetchFavoriteReviews()
   }, [userId])
 
+  const handleGoToEdit = (review: ReviewsProps, userId: string) => {
+    const confirmResult = window.confirm('리뷰 수정 페이지로 이동하겠습니까?')
+
+    if (confirmResult) {
+      navigate(`/edit/${review.id}`, {
+        state: {
+          review,
+          userId
+        }
+      })
+    }
+  }
+
   return (
     <Box>
       <ContentBox>
@@ -265,37 +283,31 @@ function MyPage() {
             reviews && reviews.length > 0 ? (
               // 1. 리뷰 있을 때
               reviews.map(review => (
-                <Post key={review.id}>
-                  <HoverLink
-                    to={`/edit/${review.id}`}
-                    state={{
-                      review_id: review.id,
-                      user_id: userId,
-                      movie_id: review.movie_id
-                    }}
-                  >
-                    <PostImg
-                      src={
-                        review.img_url
-                          ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
-                          : `https://image.tmdb.org/t/p/original/${review.default_img?.replace(
-                              'public/',
-                              ''
-                            )}`
-                      }
-                      alt={`${review.movie_title} 포스터`}
-                    />
-                    <HoverDiv>
-                      <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
-                      <RatingSpan>
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          style={{ color: '#FFC61A' }}
-                        />{' '}
-                        {review.rating}
-                      </RatingSpan>
-                    </HoverDiv>
-                  </HoverLink>
+                <Post
+                  key={review.id}
+                  onClick={() => handleGoToEdit(review, userId!)}
+                >
+                  <PostImg
+                    src={
+                      review.img_url
+                        ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/movieImage/${review.img_url}`
+                        : `https://image.tmdb.org/t/p/original/${review.default_img?.replace(
+                            'public/',
+                            ''
+                          )}`
+                    }
+                    alt={`${review.movie_title} 포스터`}
+                  />
+                  <HoverDiv>
+                    <MovieTitleSpan>{review.movie_title}</MovieTitleSpan>
+                    <RatingSpan>
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        style={{ color: '#FFC61A' }}
+                      />{' '}
+                      {review.rating}
+                    </RatingSpan>
+                  </HoverDiv>
                 </Post>
               ))
             ) : (
@@ -479,6 +491,19 @@ const Post = styled.div<PostProps>`
   width: 129px;
   height: 129px;
   background-color: #0282d1;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    > img {
+      filter: saturate(0%) brightness(40%);
+      transition: 0.5s;
+    }
+    > div {
+      color: white;
+      visibility: visible;
+    }
+  }
 `
 
 export const HoverLink = styled(Link)`

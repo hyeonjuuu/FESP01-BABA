@@ -24,8 +24,10 @@ function MovieInfo() {
   const [reviewData, setReviewData] = useState<any[] | null>(null)
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
   const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
-  // const [movieCreditData, setMovieCreditData] = useState<string | undefined>('')
-  // const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const [, setMovieCreditData] = useState<string | undefined>('')
+  const [, setIsLoading] = useState<boolean>(false)
+
   const [showMore, setShowMore] = useState(false)
   const [castData, setCastData] = useState<any[] | undefined>()
   const [trailers, setTrailers] = useState<any[] | null>([])
@@ -141,13 +143,13 @@ function MovieInfo() {
           </Wrapper>
           <RelatedVideos>
             <h3>관련 영상</h3>
-            {trailers?.map((item) => (
+            {trailers?.map(item => (
               <Iframe key={item.videoId} videoId={item.id.videoId} />
             ))}
           </RelatedVideos>
           <CastAndCrew>
             <h3>감독 및 출연</h3>
-            {castData?.map((info) => (
+            {castData?.map(info => (
               <CastInfo
                 key={info.id}
                 profile={info.profile_path}
@@ -163,8 +165,8 @@ function MovieInfo() {
             </TitleWrapper>
             {reviewData?.map((reviewItem, index) => {
               const matchingNicknames = nicknames
-                ?.filter((n) => n.user_email === reviewItem.user_id)
-                .map((n) => n.nickname)
+                ?.filter(n => n.user_email === reviewItem.user_id)
+                .map(n => n.nickname)
 
               return (
                 <DetailReview
@@ -266,7 +268,7 @@ const InfoContainer = styled.section`
   position: relative;
   z-index: 2;
   padding: 20px;
-  background-color: ${(props) => props.theme.bgColor};
+  background-color: ${props => props.theme.bgColor};
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: 1px solid #2c2c2c;
@@ -331,7 +333,7 @@ const OverviewWrapper = styled.p`
   font-size: 18px;
   line-height: 1.5;
   margin-top: 20px;
-  color: ${(props) => props.theme.color};
+  color: ${props => props.theme.color};
 `
 
 const Average = styled.div`

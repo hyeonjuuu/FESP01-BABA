@@ -74,6 +74,7 @@ function CategoryComponent() {
   const { movieGenresState, setMovieGenresState } = useGenresStore()
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const select = e.currentTarget.value
+
     setSelectCategory(select)
   }
 
@@ -151,11 +152,15 @@ function CategoryComponent() {
                 <CategoryWrapper>
                   <motion.button
                     whileHover={{
-                      rotate: 360,
-                      transition: { duration: 1 }
+                      rotate: [0, 360],
+                      transition: {
+                        duration: 1,
+                        repeat: Infinity,
+                        repeatDelay: 0
+                      }
                     }}
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: 0 }}
+                    initial={{ rotate: 360 }}
+                    animate={{ rotate: 360 }}
                     style={{
                       boxSizing: 'border-box',
                       border: 'none',

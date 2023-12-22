@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
 import yellowStar from '@/assets/StarIcon.svg'
 import useThemeStore from '@/store/useThemeStore'
 import whiteStar from '@/assets/WhiteStarIcon.svg'
 import darkModeWhiteStar from '@/assets/DarkModeWhiteStar.svg'
 import darkModeYellowStar from '@/assets/DarkModeYellowStar.svg'
+import styled, { css } from 'styled-components'
 
 interface StarRatingProps {
   onRatingChange: (newRating: number) => void
@@ -37,13 +37,13 @@ const StarRating = ({ onRatingChange, initialRating = 0 }: StarRatingProps) => {
 
   return (
     <StarContainer>
-      {[1, 2, 3, 4, 5].map((index) => (
+      {[1, 2, 3, 4, 5].map(index => (
         <StarIcon
           key={index}
           onClick={() => handleStarClick(index)}
           selected={index <= rating}
           $darkMode={$darkMode}
-        />
+        ></StarIcon>
       ))}
     </StarContainer>
   )
@@ -68,7 +68,7 @@ const StarIcon = styled.div<StarIconProps>`
     margin: 0 7px;
   }
 
-  ${(props) => css`
+  ${props => css`
     background-image: url(${props.selected
       ? props.$darkMode
         ? darkModeYellowStar

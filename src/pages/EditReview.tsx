@@ -29,11 +29,13 @@ function EditReview() {
 
   const naviagte = useNavigate()
   const location = useLocation()
+  const { review } = location.state
+
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const movieId = location.state.movie_id
-  const reviewId = location.state.review_id
-  const userId = location.state.user_id
+  const movieId = review.movie_id
+  const reviewId = review.id
+  const userId = review.user_id
 
   const [addDate, setAddDate] = useState<string>('')
   const [updateDate, setUpdateDate] = useState<string>('')
@@ -51,7 +53,6 @@ function EditReview() {
   useEffect(() => {
     const fetchReviewdata = async () => {
       const reviewInfo = await getReviewDataForEdit(reviewId)
-      console.log('reviewInfo: ', reviewInfo)
 
       const addDate = reviewInfo[0]?.created_at
       const updateDate = reviewInfo[0]?.updated_at

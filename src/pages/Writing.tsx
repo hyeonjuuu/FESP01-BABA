@@ -379,6 +379,43 @@ function Writing() {
                 </>
               )}
             </OriginalImage>
+            {/* <OriginalImage>
+              {selectMovie && isSelectImg ? (
+                <MoviePoster
+                  src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
+                  alt={`${selectMovie.title || selectMovie.name} 포스터`}
+                />
+              ) : (
+                selectMovie && (
+                  <>
+                    <MoviePoster
+                      src={imgSrc}
+                      alt={`${
+                        selectMovie.title || selectMovie.name
+                      } 관련 이미지`}
+                      onClick={handleDeleteImg}
+                    />
+                  ) : (
+                    // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
+                    <PlzSelectImgDiv>
+                      <FontAwesomeIcon icon={faImage} />
+                    </PlzSelectImgDiv>
+                  )}
+                  {!isSelectImg && (
+                    <div>
+                      <label htmlFor="photo">사진</label>
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        name="photo"
+                        id="photo"
+                        onChange={handleUpload}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </OriginalImage> */}
           </ImageBox>
 
           <Description>
@@ -560,14 +597,6 @@ const ResultWrapper = styled.div<{
   z-index: 101;
   top: 50px;
 `
-
-// const NoResultsMessage = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   width: 100%;
-//   height: 50px;
-// `
 
 const Contain = styled.div`
   display: flex;

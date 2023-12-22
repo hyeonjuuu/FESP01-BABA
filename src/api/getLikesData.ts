@@ -1,23 +1,5 @@
 import { supabase } from '@/utils/supabaseClient'
 
-export const fetchAllLikes = async () => {
-  const { data } = await supabase.from('likes').select('*')
-  return data
-}
-
-export const matchLike = async (userId: string | null) => {
-  const { data } = await supabase
-    .from('likes')
-    .select('review_id')
-    .match({ user_id: userId })
-
-  return data
-}
-
-export const addLike = async (likeItem: LikesType) => {
-  await supabase.from('likes').insert(likeItem).select()
-}
-
 export const deleteLikes = async (itemId?: number) => {
   await supabase.from('likes').delete().match({ review_id: itemId })
 }
@@ -72,7 +54,6 @@ export const addFavorite = async (
   rating: number,
   movie_title: string,
   id: Number,
-  // likes:string[],
   loginUserId?: string
 ) => {
   try {
