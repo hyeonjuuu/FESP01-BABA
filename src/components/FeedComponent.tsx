@@ -160,11 +160,11 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     // 2차원 배열을 1차원 배열로 만듭니다
     if (targetLikes) {
-      const likesArray = setBookmarkList(targetLikes.flat())
+      setBookmarkList(targetLikes.flat())
     }
 
     if (checkMyLikesId.length !== 0 && loginUserId) {
-      const newBookmarkList = bookmarkList.filter(item => item !== loginUserId)
+      bookmarkList.filter(item => item !== loginUserId)
       deleteBookmarkList(loginUserId)
 
       await addFavorite(
@@ -175,7 +175,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
         rating,
         title,
         id,
-        newBookmarkList,
+        // newBookmarkList,
         loginUserId
       )
     } else {
@@ -190,7 +190,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
         rating,
         title,
         id,
-        newBookmarkList,
+        // newBookmarkList,
         loginUserId
       )
     }

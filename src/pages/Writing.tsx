@@ -23,6 +23,7 @@ import {
 import { getNickname } from '@/api/getReviewData'
 import debounce from '@/utils/debounce'
 import styled, { keyframes } from 'styled-components'
+import { faImage } from '@fortawesome/free-regular-svg-icons'
 
 interface ResultBarContainProps {
   $darkMode: boolean
@@ -337,18 +338,55 @@ function Writing() {
               <ImgSelectBtn
                 color={isSelectImg ? '#3797EF' : ''}
                 $hasBorder
-                // onClick={handleSelectDefaultIimg}
+                onClick={handleSelectDefaultImg}
               >
                 기본 이미지
               </ImgSelectBtn>
               <ImgSelectBtn
                 color={isSelectImg ? '' : '#3797EF'}
-                // onClick={handleSelectUserIimg}
+                onClick={handleSelectUserImg}
               >
                 사용자 이미지
               </ImgSelectBtn>
             </BtnWrapper>
             <OriginalImage>
+              {selectMovie && isSelectImg ? (
+                <MoviePoster
+                  src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
+                  alt={`${selectMovie.title || selectMovie.name} 포스터`}
+                />
+              ) : (
+                <>
+                  {imgSrc && selectMovie ? ( // 사용자가 이미지를 업로드한 경우
+                    <MoviePoster
+                      src={imgSrc}
+                      alt={`${
+                        selectMovie.title || selectMovie.name
+                      } 관련 이미지`}
+                      onClick={handleDeleteImg}
+                    />
+                  ) : (
+                    // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
+                    <PlzSelectImgDiv>
+                      <FontAwesomeIcon icon={faImage} />
+                    </PlzSelectImgDiv>
+                  )}
+                  {!isSelectImg && (
+                    <div>
+                      <label htmlFor="photo">사진</label>
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        name="photo"
+                        id="photo"
+                        onChange={handleUpload}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </OriginalImage>
+            {/* <OriginalImage>
               {selectMovie && isSelectImg ? (
                 <MoviePoster
                   src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
@@ -362,6 +400,7 @@ function Writing() {
                       alt={`${
                         selectMovie.title || selectMovie.name
                       } 관련 이미지`}
+                      onClick={handleDeleteImg}
                     />
                     <div>
                       <label htmlFor="photo">사진</label>
@@ -376,7 +415,7 @@ function Writing() {
                   </>
                 )
               )}
-            </OriginalImage>
+            </OriginalImage> */}
           </ImageBox>
 
           <Description>
@@ -545,14 +584,6 @@ const ResultWrapper = styled.div<{
   position: absolute;
   z-index: 101;
   top: 50px;
-`
-
-const NoResultsMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 50px;
 `
 
 const Contain = styled.div`

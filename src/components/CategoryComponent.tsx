@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import { useEffect, useState } from 'react'
+import { SelectHTMLAttributes, useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Scrollbar } from 'swiper/modules'
 import 'swiper/css'
@@ -9,8 +9,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import { movieGenres, tvGenres } from '@/utils/genresData'
 import { useGenresStore } from '@/store/useGenresStore'
-import { motion, useTime, useTransform, animate } from 'framer-motion'
-import { faPause } from '@fortawesome/free-solid-svg-icons'
+import { motion } from 'framer-motion'
 
 export interface FontProps {
   fontSize?: string
@@ -21,6 +20,10 @@ export interface FontProps {
 interface SizeProps {
   size?: string
   $darkMode: boolean
+}
+
+interface DarkModeSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  $darkMode?: boolean
 }
 
 const movieCategories = [
@@ -71,14 +74,14 @@ function CategoryComponent() {
   const { movieGenresState, setMovieGenresState } = useGenresStore()
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const select = e.currentTarget.value
+
     setSelectCategory(select)
   }
 
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    const selectCategoryButton =
-      e.currentTarget.querySelectorAll('div')[1].textContent
+    const selectCategoryButton = e.currentTarget.nextElementSibling?.textContent
 
     if (selectCategory === '영화') {
       const filterCategory = movieGenres.genres.filter(
@@ -106,6 +109,7 @@ function CategoryComponent() {
         <form action="#">
           <label htmlFor="영화/드라마" aria-label="선택하세요"></label>
           <SelectLabel
+            $darkMode={$darkMode}
             name="languages"
             id="영화/드라마"
             onChange={handleChange}
@@ -129,11 +133,11 @@ function CategoryComponent() {
             spaceBetween: 0
           },
           768: {
-            slidesPerView: 8,
+            slidesPerView: 9,
             spaceBetween: 0
           },
           1020: {
-            slidesPerView: 7,
+            slidesPerView: 8,
             spaceBetween: 0
           },
           1280: {
@@ -145,14 +149,18 @@ function CategoryComponent() {
         {selectCategory === '영화'
           ? movieCategories.map(({ color, text, fontSize }, index) => (
               <SwiperSlideWrapper key={index} style={{ width: 'auto' }}>
-                <CategoryButton onClick={handleFilterCategory}>
+                <CategoryWrapper>
                   <motion.button
                     whileHover={{
-                      rotate: 360,
-                      transition: { duration: 1 }
+                      rotate: [0, 360],
+                      transition: {
+                        duration: 1,
+                        repeat: Infinity,
+                        repeatDelay: 0
+                      }
                     }}
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: 0 }}
+                    initial={{ rotate: 360 }}
+                    animate={{ rotate: 360 }}
                     style={{
                       boxSizing: 'border-box',
                       border: 'none',
@@ -160,13 +168,14 @@ function CategoryComponent() {
                       backgroundColor: 'inherit',
                       cursor: 'pointer'
                     }}
+                    onClick={handleFilterCategory}
                   >
                     <CategoryCircle color={color}></CategoryCircle>
                   </motion.button>
                   <CategroyList fontSize={fontSize} $darkMode={$darkMode}>
                     {text}
                   </CategroyList>
-                </CategoryButton>
+                </CategoryWrapper>
               </SwiperSlideWrapper>
             ))
           : dramaCategories.map(({ color, text, fontSize }, index) => (
@@ -214,12 +223,14 @@ const CategoryTitle = styled.div`
   justify-content: space-between;
   flex-flow: row;
   align-content: center;
+  line-height: 100%;
 `
 
-const SelectLabel = styled.select`
+const SelectLabel = styled.select<DarkModeSelectProps>`
   border: none;
   font-family: GmarketSans;
   color: #28c7c7;
+  background-color: ${({ $darkMode }) => ($darkMode ? '#1E1E1E' : '#ffffff')};
 `
 
 const CategroyList = styled.div<FontProps>`
@@ -249,6 +260,11 @@ const CategoryButton = styled.button`
   cursor: pointer;
 `
 
+const CategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 export const SwiperWrapper = styled(Swiper)`
   display: flex;
   flex-direction: column;
@@ -262,7 +278,7 @@ export const SwiperWrapper = styled(Swiper)`
     flex-shrink: 2;
   }
   @media (min-width: 1280px) and (max-width: 1920px) {
-    max-width: 720px;
+    max-width: 620px;
     min-width: 610px;
     width: 100%;
     flex-shrink: 2;
