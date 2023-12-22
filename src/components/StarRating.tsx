@@ -37,7 +37,7 @@ const StarRating = ({ onRatingChange, initialRating = 0 }: StarRatingProps) => {
 
   return (
     <StarContainer>
-      {[1, 2, 3, 4, 5].map((index) => (
+      {[1, 2, 3, 4, 5].map(index => (
         <StarIcon
           key={index}
           onClick={() => handleStarClick(index)}
@@ -68,7 +68,7 @@ const StarIcon = styled.div<StarIconProps>`
     margin: 0 7px;
   }
 
-  ${(props) => css`
+  ${props => css`
     background-image: url(${props.selected
       ? props.$darkMode
         ? darkModeYellowStar

@@ -23,7 +23,6 @@ import {
 import { getNickname } from '@/api/getReviewData'
 import debounce from '@/utils/debounce'
 import styled, { keyframes } from 'styled-components'
-import { faImage } from '@fortawesome/free-regular-svg-icons'
 
 interface ResultBarContainProps {
   $darkMode: boolean
