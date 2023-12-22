@@ -82,8 +82,6 @@ function CategoryComponent() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const selectCategoryButton = e.currentTarget.nextElementSibling?.textContent
-    console.log(e.currentTarget)
-    const selectTarget = e.currentTarget
 
     if (selectCategory === '영화') {
       const filterCategory = movieGenres.genres.filter(

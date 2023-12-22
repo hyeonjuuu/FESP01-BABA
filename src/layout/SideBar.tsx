@@ -1,10 +1,14 @@
 import styled, { ThemeProvider } from 'styled-components'
 import useThemeStore from '@/store/useThemeStore'
 import { usePopularDataStore } from '@/store/usePopularDataStore'
-import { useEffect } from 'react'
+import { SelectHTMLAttributes, useEffect } from 'react'
 import getPopularData from '@/api/getPopularData'
 import { movieGenres } from '@/utils/genresData'
 import { Link } from 'react-router-dom'
+
+interface DarkModeSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  $darkMode?: boolean
+}
 
 function SideBar() {
   const { populardata, setPopularData } = usePopularDataStore()
@@ -28,14 +32,14 @@ function SideBar() {
       <SideBarWrapper>
         <Title>🍿 오늘의 추천 영화 🎬</Title>
         {populardata?.results.slice(0, 10).map((item, index) => (
-          <SideContentWrapper key={item.id} to={`/movie/${item.id}`}>
+          <SideContentWrapper key={item.id} to={`/info/${item.id}`}>
             <ContentNumber>{index + 1}</ContentNumber>
             <RecommendImage
               src={`https://image.tmdb.org/t/p/original${item.poster_path}`}
               alt={`${item.title} 포스터`}
             />
             <Movie>
-              <MovieTitle>{item.title}</MovieTitle>
+              <MovieTitle $darkMode={$darkMode}>{item.title}</MovieTitle>
               <MovieInfo>
                 <List>
                   {item.genre_ids
@@ -105,9 +109,9 @@ const Movie = styled.div`
   justify-content: center;
 `
 
-const MovieTitle = styled.div`
+const MovieTitle = styled.div<DarkModeSelectProps>`
   font-weight: 600;
-  color: #303032;
+  color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   width: 210px;
 `
 

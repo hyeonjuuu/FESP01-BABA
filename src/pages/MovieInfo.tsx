@@ -24,8 +24,8 @@ function MovieInfo() {
   const [reviewData, setReviewData] = useState<any[] | null>(null)
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
   const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
-  const [movieCreditData, setMovieCreditData] = useState<string | undefined>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [, setMovieCreditData] = useState<string | undefined>('')
+  const [, setIsLoading] = useState<boolean>(false)
   const [showMore, setShowMore] = useState(false)
   const [castData, setCastData] = useState<any[] | undefined>()
   const [trailers, setTrailers] = useState<any[] | null>([])
@@ -45,8 +45,8 @@ function MovieInfo() {
           setMovieInfoData(data)
           setMovieCreditData(director)
 
-          // const trailerData = await getTrailer(`${data.title} 예고편`)
-          // setTrailers(trailerData)
+          const trailerData = await getTrailer(`${data.title} 예고편`)
+          setTrailers(trailerData)
         }
       } catch (error) {
         console.error(

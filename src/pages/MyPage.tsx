@@ -16,9 +16,6 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css'
-import { Pagination, Scrollbar } from 'swiper/modules'
 
 interface PostProps {
   key: number
@@ -315,7 +312,7 @@ function MyPage() {
             // 3. 좋아요 있을 때
             myLikes.map(like => (
               <Post key={like.id}>
-                <HoverLink to={`/detail/${like.id}`}>
+                <HoverLink to={`/info/${like.id}`}>
                   <PostImg
                     src={
                       like.imgUrl

@@ -14,6 +14,8 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { sortReviewDataByDate } from '@/utils/sortReviewDataByDate'
+import { ottIcon } from '@/utils/ottIconData'
+// import { ottIcon } from '@/utils/ottIconData'
 
 interface IsLikedProps {
   id: number
@@ -67,6 +69,8 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
         if (reviewError) {
           throw new Error('Failed to fetch review data')
         }
+
+        console.log(reviewData)
 
         // 데이터의 날짜를 최신 순서부터 오래된 순서로 나열합니다.
         const sortedReviewData = sortReviewDataByDate(reviewData)
@@ -197,6 +201,7 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     setIsLiked(prevState => !prevState)
   }
+  console.log(reviews)
 
   return (
     <FeedSection>
@@ -248,9 +253,13 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
                 </CommonDivWrapper>
               </ContentTitleWrapper>
               <ContentText $darkMode={$darkMode}>{item.text}</ContentText>
-              <Button fontSize="12px" fontWeight="300" $darkMode={$darkMode}>
-                더보기
-              </Button>
+              <CreateDate
+                fontSize="12px"
+                fontWeight="300"
+                $darkMode={$darkMode}
+              >
+                {item.created_at.substring(0, 10)}
+              </CreateDate>
             </FeedContentSection>
           ))}
         </ContentWrapper>
@@ -312,6 +321,7 @@ const FeedImage = styled.img`
   width: 310px;
   border: 1px solid #dedede;
   display: block;
+  margin: auto;
 `
 const FeedContent = styled.div`
   display: flex;
@@ -321,7 +331,7 @@ const FeedContent = styled.div`
   align-items: center;
 `
 const ContentWrapper = styled.div`
-  width: 19.375rem;
+  width: 360px;
 `
 
 const ContentTitle = styled.span`
@@ -341,12 +351,11 @@ const ContentTitleWrapper = styled(CommonDivWrapper)`
   align-self: center;
   align-content: center;
 `
-const Button = styled.button<FontProps>`
+const CreateDate = styled.span<FontProps>`
   box-sizing: border-box;
   border: none;
   outline: none;
   background-color: inherit;
-  cursor: pointer;
   font-size: ${({ fontSize }) => fontSize};
   font-weight: ${({ fontWeight }) => fontWeight};
   color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#777777')};
@@ -358,5 +367,9 @@ const Button = styled.button<FontProps>`
 `
 const FeedContentSection = styled.div`
   margin: 12px 0;
-  padding: 10px 0;
+  padding: 10px;
+  border-bottom: 0.5px solid #999999;
+`
+const Line = styled.hr`
+  border: 1px solid black;
 `
