@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import { useEffect, useState } from 'react'
+import { SelectHTMLAttributes, useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Scrollbar } from 'swiper/modules'
 import 'swiper/css'
@@ -9,13 +9,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import { movieGenres, tvGenres } from '@/utils/genresData'
 import { useGenresStore } from '@/store/useGenresStore'
-import {
-  motion,
-  useTime,
-  useTransform,
-  animate,
-  useMotionValue
-} from 'framer-motion'
+import { motion, useTransform, useMotionValue } from 'framer-motion'
 
 export interface FontProps {
   fontSize?: string
@@ -26,6 +20,10 @@ export interface FontProps {
 interface SizeProps {
   size?: string
   $darkMode: boolean
+}
+
+interface DarkModeSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  $darkMode?: boolean
 }
 
 const movieCategories = [
@@ -78,6 +76,8 @@ function CategoryComponent() {
     const select = e.currentTarget.value
     setSelectCategory(select)
   }
+
+  console.log($darkMode)
 
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -132,6 +132,7 @@ function CategoryComponent() {
         <form action="#">
           <label htmlFor="영화/드라마" aria-label="선택하세요"></label>
           <SelectLabel
+            $darkMode={$darkMode}
             name="languages"
             id="영화/드라마"
             onChange={handleChange}
@@ -155,11 +156,11 @@ function CategoryComponent() {
             spaceBetween: 0
           },
           768: {
-            slidesPerView: 8,
+            slidesPerView: 9,
             spaceBetween: 0
           },
           1020: {
-            slidesPerView: 7,
+            slidesPerView: 8,
             spaceBetween: 0
           },
           1280: {
@@ -251,10 +252,11 @@ const CategoryTitle = styled.div`
   line-height: 100%;
 `
 
-const SelectLabel = styled.select`
+const SelectLabel = styled.select<DarkModeSelectProps>`
   border: none;
   font-family: GmarketSans;
   color: #28c7c7;
+  background-color: ${({ $darkMode }) => ($darkMode ? '#1E1E1E' : '#ffffff')};
 `
 
 const CategroyList = styled.div<FontProps>`
@@ -302,7 +304,7 @@ export const SwiperWrapper = styled(Swiper)`
     flex-shrink: 2;
   }
   @media (min-width: 1280px) and (max-width: 1920px) {
-    max-width: 720px;
+    max-width: 620px;
     min-width: 610px;
     width: 100%;
     flex-shrink: 2;

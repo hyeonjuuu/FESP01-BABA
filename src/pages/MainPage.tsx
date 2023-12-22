@@ -61,15 +61,7 @@ function Main() {
   return (
     <>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
-      <motion.div
-        animate={{ y: 0 }}
-        transition={{ ease: 'easeOut', duration: 2, delay: 5 }}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '22px'
-        }}
-      >
+      <Wrapper>
         <CategoryComponent />
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
         {movieGenresStateId === undefined || reviews.length > 0 ? (
@@ -79,7 +71,7 @@ function Main() {
             선택한 카테고리에 해당하는 리뷰가 없습니다.😢
           </NoDataNotice>
         )}
-      </motion.div>
+      </Wrapper>
     </>
   )
 }
