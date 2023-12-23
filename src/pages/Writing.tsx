@@ -111,8 +111,7 @@ function Writing() {
     } catch (error) {
       console.error(error)
     } finally {
-      inputRef.current!.value = ''
-      // 검색 후에는 검색 버튼을 다시 비활성화
+      inputRef.current!.value = '' // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
 
@@ -120,7 +119,6 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
-
     setIsSearchBtnDisabled(false)
     setDefaultImg(selectedResult?.poster_path)
     setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
@@ -136,10 +134,6 @@ function Writing() {
   }
 
   const handleSelectUserImg = () => {
-    if (!selectMovie) {
-      alert('제목을 먼저 선택해주세요')
-      return
-    }
     setIsSelectImg(false)
   }
 
@@ -278,7 +272,7 @@ function Writing() {
       <FormStyle encType="multipart/form-data">
         <SearchContainerWrapper>
           <FlexContainer>
-            <SearchBarWrapper isSearchBtnDisabled={isSearchBtnDisabled}>
+            <SearchBarWrapper $isSearchBtnDisabled={isSearchBtnDisabled}>
               <SearchBar>
                 <Icon>
                   <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -294,8 +288,8 @@ function Writing() {
             </SearchBarWrapper>
 
             <ResultWrapper
-              issearched={isSearched}
-              isSearchBtnDisabled={isSearchBtnDisabled}
+              $isSearched={isSearched}
+              $isSearchBtnDisabled={isSearchBtnDisabled}
             >
               <SearchContainer>
                 {searchList.map(result => (
@@ -350,11 +344,11 @@ function Writing() {
                 />
               ) : (
                 <>
-                  {imgSrc && selectMovie ? ( // 사용자가 이미지를 업로드한 경우
+                  {imgSrc ? ( // 사용자가 이미지를 업로드한 경우
                     <MoviePoster
                       src={imgSrc}
                       alt={`${
-                        selectMovie.title || selectMovie.name
+                        selectMovie?.title || selectMovie?.name
                       } 관련 이미지`}
                       onClick={handleDeleteImg}
                     />
@@ -379,43 +373,6 @@ function Writing() {
                 </>
               )}
             </OriginalImage>
-            {/* <OriginalImage>
-              {selectMovie && isSelectImg ? (
-                <MoviePoster
-                  src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
-                  alt={`${selectMovie.title || selectMovie.name} 포스터`}
-                />
-              ) : (
-                selectMovie && (
-                  <>
-                    <MoviePoster
-                      src={imgSrc}
-                      alt={`${
-                        selectMovie.title || selectMovie.name
-                      } 관련 이미지`}
-                      onClick={handleDeleteImg}
-                    />
-                  ) : (
-                    // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
-                    <PlzSelectImgDiv>
-                      <FontAwesomeIcon icon={faImage} />
-                    </PlzSelectImgDiv>
-                  )}
-                  {!isSelectImg && (
-                    <div>
-                      <label htmlFor="photo">사진</label>
-                      <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png"
-                        name="photo"
-                        id="photo"
-                        onChange={handleUpload}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </OriginalImage> */}
           </ImageBox>
 
           <Description>
@@ -437,7 +394,7 @@ function Writing() {
                         src={icon}
                         alt={ottIconNames[index]}
                         title={ottIconNames[index]}
-                        isSelected={selectedOtt.includes(ottIconNames[index])}
+                        $isSelected={selectedOtt.includes(ottIconNames[index])}
                         onClick={() => handleCheck(ottIconNames[index])}
                       />
                     </Style>
@@ -531,7 +488,7 @@ const ImageBox = styled.div`
   }
 `
 
-const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
+const SearchBarWrapper = styled.div<{ $isSearchBtnDisabled: boolean }>`
   display: flex;
   flex: 1;
   align-items: center;
@@ -541,9 +498,9 @@ const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border-bottom-left-radius: ${props =>
-    props.isSearchBtnDisabled ? '8px' : 'none'};
+    props.$isSearchBtnDisabled ? '8px' : 'none'};
   border-bottom-right-radius: ${props =>
-    props.isSearchBtnDisabled ? '8px' : 'none'};
+    props.$isSearchBtnDisabled ? '8px' : 'none'};
   background-color: #e8e8e8;
 
   @media (min-width: 701px) {
@@ -589,8 +546,8 @@ const SearchBar = styled.div`
 `
 
 const ResultWrapper = styled.div<{
-  issearched: boolean
-  isSearchBtnDisabled: boolean
+  $isSearched: boolean
+  $isSearchBtnDisabled: boolean
 }>`
   width: 100%;
   position: absolute;
@@ -654,12 +611,12 @@ const Style = styled.div`
   height: 60px;
 `
 
-const OttIcon = styled.img<{ isSelected: boolean }>`
+const OttIcon = styled.img<{ $isSelected: boolean }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
-  border: ${({ isSelected }) => (isSelected ? '2px solid #3797EF' : 'none')};
+  border: ${({ $isSelected }) => ($isSelected ? '2px solid #3797EF' : 'none')};
 
   &:hover {
     transform: scale(1.1);
@@ -710,9 +667,9 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
     cursor: default;
   }
 
-  &:not(.selected):hover {
+  /* &:not(.selected):hover {
     background-color: #3797ef;
-  }
+  } */
 `
 
 const OriginalImage = styled.div`
