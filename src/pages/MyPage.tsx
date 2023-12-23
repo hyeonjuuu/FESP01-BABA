@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import userImage from '@/assets/userIcon.png'
+import UserIcon from '@/assets/icon/User.png'
 import { Link, useNavigate } from 'react-router-dom'
 import { getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
@@ -243,7 +243,7 @@ function MyPage() {
                 src={
                   renderProfileImg
                     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg}`
-                    : userImage
+                    : UserIcon
                 }
                 alt="사용자 이미지"
                 onClick={handleProfileImg}
@@ -444,11 +444,13 @@ const ImageWrapper = styled.div`
   overflow: hidden;
 `
 
-const ProfileImage = styled.img`
+const ProfileImage = styled.img<{ theme: { bgColor: string } }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
+  filter: ${props =>
+    props.theme.bgColor === '#1E1E1E' ? 'invert(1)' : 'none'};
 `
 
 const ProfileInfo = styled.div`

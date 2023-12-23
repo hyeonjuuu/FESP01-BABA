@@ -667,9 +667,10 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
     cursor: default;
   }
 
-  /* &:not(.selected):hover {
-    background-color: #3797ef;
-  } */
+  &:not(.selected):hover {
+    background-color: #fffc9f;
+    color: black;
+  }
 `
 
 const OriginalImage = styled.div`
