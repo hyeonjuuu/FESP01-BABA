@@ -504,10 +504,13 @@ const PostsContain = styled.section`
   flex-wrap: wrap;
   gap: 1px;
   width: 100%;
+  justify-content: start;
 `
 
 const Post = styled.div<PostProps>`
-  width: 129px;
+  width: calc(
+    25% - 1px
+  ); /* 4개의 아이템이 한 줄에 나타날 수 있도록 너비를 조절합니다. */
   height: 129px;
   background-color: #0282d1;
   cursor: pointer;
@@ -543,6 +546,12 @@ export const HoverLink = styled(Link)`
   }
 `
 
+const PostImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`
+
 export const HoverDiv = styled.div`
   width: 100px;
   position: absolute;
@@ -552,7 +561,6 @@ export const HoverDiv = styled.div`
   text-align: center;
   visibility: hidden;
 `
-
 export const MovieTitleSpan = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -565,12 +573,6 @@ const RatingSpan = styled.span`
   display: block;
   padding-top: 10px;
   color: #ffc61a;
-`
-
-const PostImg = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `
 
 const PictureWrapper = styled.div`
