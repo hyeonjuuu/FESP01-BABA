@@ -16,18 +16,21 @@ import { faPenToSquare, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
-// import useThemeStore from '@/store/useThemeStore'
+import useThemeStore from '@/store/useThemeStore'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import { Pagination } from 'swiper/modules'
 
 interface PostProps {
   key: number
 }
 
-// interface BorderProps {
-//   $darkMode: boolean
-// }
+interface DarkModeProps {
+  $darkMode: boolean
+}
 
 function MyPage() {
-  // const { $darkMode } = useThemeStore()
+  const { $darkMode } = useThemeStore()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [userId, setUserId] = useState<string | null>(null)
@@ -159,7 +162,7 @@ function MyPage() {
 
           return lengthComparison
         })
-        .slice(0, 4)
+        .slice(0, 10)
 
       setPopularReviews(sortedPopularReviews)
     }
@@ -258,15 +261,29 @@ function MyPage() {
           </ProfileInfo>
         </ProfileContain>
 
-        <Container>
-          {popularReviews && popularReviews.length > 0
-            ? popularReviews.map(popular => (
-                <FavRing review={popular} key={popular.id} />
-              ))
-            : null}
-        </Container>
+        {popularReviews && popularReviews.length > 0 ? (
+          <Swiper
+            className="mySwiper"
+            slidesPerView={4}
+            breakpoints={{
+              700: {
+                slidesPerView: 6
+              }
+            }}
+            loop={true}
+            modules={[Pagination]}
+          >
+            <Container>
+              {popularReviews.map(popular => (
+                <SwiperSlide key={popular.id}>
+                  <FavRing review={popular} />
+                </SwiperSlide>
+              ))}
+            </Container>
+          </Swiper>
+        ) : null}
 
-        <MarginContainer>
+        <MarginContainer $darkMode={$darkMode}>
           <Wrapper onClick={handleShowReviews}>
             <StyledP>게시물</StyledP>
             <span>{reviews?.length}</span>
@@ -429,6 +446,7 @@ const ProfileBtn = styled.button`
   border: none;
   margin-top: 15px; /* Add some spacing */
   cursor: pointer;
+  color: #303032;
 
   &:hover {
     background-color: #0282d1;
@@ -442,12 +460,13 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const MarginContainer = styled.div`
+const MarginContainer = styled.div<DarkModeProps>`
   display: flex;
   width: 100%;
   gap: 15px;
   margin: 15px 0;
   border: 1px solid black;
+  border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
   justify-content: space-between;
 
   @media (max-width: 700px) {
