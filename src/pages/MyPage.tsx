@@ -42,6 +42,7 @@ function MyPage() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
+
   const [reviews, setReviews] = useState<ReviewsProps[] | null>(null)
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
   const [popularReviews, setPopularReviews] = useState<ReviewsProps[] | null>(
@@ -247,6 +248,7 @@ function MyPage() {
                 }
                 alt="사용자 이미지"
                 onClick={handleProfileImg}
+                $shouldInvert={!renderProfileImg} // renderProfileImg가 true이면 invert를 적용하지 않음
               />
               <div>
                 <label htmlFor="photo">사진</label>
@@ -444,13 +446,16 @@ const ImageWrapper = styled.div`
   overflow: hidden;
 `
 
-const ProfileImage = styled.img<{ theme: { bgColor: string } }>`
+const ProfileImage = styled.img<{
+  theme: { bgColor: string }
+  $shouldInvert: boolean
+}>`
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
-  filter: ${props =>
-    props.theme.bgColor === '#1E1E1E' ? 'invert(1)' : 'none'};
+  filter: ${({ theme, $shouldInvert }) =>
+    $shouldInvert && theme.bgColor === '#1E1E1E' ? 'invert(1)' : 'none'};
 `
 
 const ProfileInfo = styled.div`
