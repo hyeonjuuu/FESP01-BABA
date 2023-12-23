@@ -29,6 +29,11 @@ interface DarkModeProps {
   $darkMode: boolean
 }
 
+interface WrapperProps {
+  $bgColor: string
+  color: string
+}
+
 function MyPage() {
   const { $darkMode } = useThemeStore()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -223,6 +228,11 @@ function MyPage() {
     }
   }
 
+  //# 로그아웃
+  const handleLogOut = () => {
+    console.log('로그아웃')
+  }
+
   return (
     <Box>
       <ContentBox>
@@ -255,9 +265,12 @@ function MyPage() {
 
           <ProfileInfo>
             <p>{userEmail}</p>
-            <ProfileBtn onClick={handleDeleteProfileImg}>
-              프로필 편집
-            </ProfileBtn>
+            <ProfileBtnWrapper>
+              <ProfileBtn onClick={handleDeleteProfileImg}>
+                프로필 편집
+              </ProfileBtn>
+              <ProfileBtn onClick={handleLogOut}>로그아웃</ProfileBtn>
+            </ProfileBtnWrapper>
           </ProfileInfo>
         </ProfileContain>
 
@@ -284,12 +297,20 @@ function MyPage() {
         ) : null}
 
         <MarginContainer $darkMode={$darkMode}>
-          <Wrapper onClick={handleShowReviews}>
+          <Wrapper
+            onClick={handleShowReviews}
+            color={isShowReviews ? '#FFFFFF' : ''}
+            $bgColor={isShowReviews ? '#3797EF' : ''}
+          >
             <StyledP>게시물</StyledP>
             <span>{reviews?.length}</span>
           </Wrapper>
 
-          <Wrapper onClick={handleShowLikes}>
+          <Wrapper
+            onClick={handleShowLikes}
+            color={!isShowReviews ? '#FFFFFF' : ''}
+            $bgColor={!isShowReviews ? '#3797EF' : ''}
+          >
             <StyledP>좋아요</StyledP>
             <span>{myLikes?.length}</span>
           </Wrapper>
@@ -432,11 +453,22 @@ const ProfileImage = styled.img`
 
 const ProfileInfo = styled.div`
   margin-top: 15px; /* Add some spacing */
-  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
+const ProfileBtnWrapper = styled.div`
+  width: 80%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 `
 
 const ProfileBtn = styled.button`
-  width: 100%;
+  width: 45%;
   height: 40px;
   background-color: #efefef;
   display: flex;
@@ -463,7 +495,6 @@ const Container = styled.div`
 const MarginContainer = styled.div<DarkModeProps>`
   display: flex;
   width: 100%;
-  gap: 15px;
   margin: 15px 0;
   border: 1px solid black;
   border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
@@ -475,28 +506,31 @@ const MarginContainer = styled.div<DarkModeProps>`
   }
 `
 
-const Wrapper = styled.button`
+const Wrapper = styled.div<WrapperProps>`
   width: 48%; /* Two columns on larger screens */
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 15px 0;
-  gap: 10px;
   cursor: pointer;
-
-  &:hover {
-    background-color: #0282d1;
-    color: #ffffff;
-  }
+  background-color: ${({ $bgColor }) => $bgColor};
+  color: ${({ color }) => color};
+  flex-grow: 1;
 
   @media (max-width: 700px) {
     width: 100%; /* Full-width on smaller screens */
+  }
+
+  &:hover {
+    background-color: #fffc9f;
+    color: black;
   }
 `
 
 const StyledP = styled.p`
   margin: 0;
+  padding-bottom: 10px;
 `
 
 const PostsContain = styled.section`
