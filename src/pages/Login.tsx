@@ -10,7 +10,7 @@ import { useUserStore } from '@/store/useUserStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import CheckAccount from '@/components/CheckAccount'
 import { Link, useNavigate } from 'react-router-dom'
-import { userLogin, gitHubLogin } from '@/utils/userData'
+import { gitHubLogin } from '@/utils/userData'
 import { faEye } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SignUpWrapperDiv, SrOnlyH2, FormWrapper } from '@/pages/SignUp'
@@ -49,12 +49,17 @@ function Login() {
   const handleUserLogin = async (event: React.MouseEvent) => {
     event.preventDefault()
     try {
-      await userLogin(formData)
-      await login(formData.email, formData.password).then(() =>
-        navigate('/main')
-      )
+      await login(formData.email, formData.password)
+      // 로그인 성공
+      navigate('/main')
     } catch (error) {
-      console.error(`❌ Error: ${error}`)
+      // 로그인 실패
+      if ((error as any)?.response && (error as any)?.response.status === 400) {
+        console.error('❌ 로그인 실패: 잘못된 사용자 정보')
+        // 실패 시 특별히 처리해야 하는 로직이 있다면 여기에 추가
+      } else {
+        console.error(`❌ Error: ${error}`)
+      }
     }
   }
 

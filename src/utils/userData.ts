@@ -140,3 +140,12 @@ export const checkSession = async () => {
     throw error // 더 상세한 오류 처리가 필요할 경우 여기서 처리하세요.
   }
 }
+
+export const userLogOut = async () => {
+  try {
+    await supabase.auth.signOut()
+    // 기타 로그아웃 이후의 처리
+  } catch (error) {
+    console.error('로그아웃 실패:', error)
+  }
+}
