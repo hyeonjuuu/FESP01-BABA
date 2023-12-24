@@ -15,6 +15,24 @@ export const getReviewData = async (): Promise<ReviewData[] | null> => {
   }
 }
 
+// 해당 영화의 리뷰만 가져오기
+export const getTheReviews = async (
+  movieID: string
+): Promise<ReviewData[] | null> => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .eq('movie_id', movieID)
+
+  if (data) {
+    return data
+  } else {
+    console.log(error)
+    return null
+  }
+}
+
 // reviews데이터의 user_id를 기반으로 users테이블의 nickname을 가져옵니다.
 export const getReviewDataWithUserInfo = async () => {
   const { data: reviewsData, error: reviewsError } = await supabase

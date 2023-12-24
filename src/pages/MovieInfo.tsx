@@ -14,11 +14,12 @@ import styled, { ThemeProvider } from 'styled-components'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getDetailData } from '@/api/tmdbDetailData'
-import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
+import { getReviewDataWithUserInfo, getTheReviews } from '@/api/getReviewData'
 // import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 function MovieInfo() {
   const { id: movieID } = useParams()
+
   const { $darkMode } = useThemeStore()
 
   const [reviewData, setReviewData] = useState<any[] | null>(null)
@@ -66,7 +67,8 @@ function MovieInfo() {
     const fetchData = async () => {
       try {
         // setIsLoading(true)
-        const data = await getReviewData()
+        // const data = await getReviewData()
+        const data = await getTheReviews(movieID!)
         const nicknameData = await getReviewDataWithUserInfo()
 
         if (data) {
