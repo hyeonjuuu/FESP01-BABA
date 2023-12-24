@@ -22,6 +22,8 @@ function MovieInfo() {
   const { $darkMode } = useThemeStore()
 
   const [reviewData, setReviewData] = useState<any[] | null>(null)
+  console.log('reviewData: ', reviewData)
+
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
   const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
 
@@ -97,6 +99,21 @@ function MovieInfo() {
 
   // 감독정보 & 로딩구현
 
+  // cross-origin issue in Iframe
+  useEffect(() => {
+    const receiveMessage = (event: MessageEvent) => {
+      const {} = event
+      // const { data } = event
+      // console.log('Received message in MovieInfo:', data)
+    }
+
+    window.addEventListener('message', receiveMessage)
+
+    return () => {
+      window.removeEventListener('message', receiveMessage)
+    }
+  }, [])
+
   return (
     <ThemeProvider
       theme={{
@@ -144,7 +161,7 @@ function MovieInfo() {
           <RelatedVideos>
             <h3>관련 영상</h3>
             {trailers?.map(item => (
-              <Iframe key={item.videoId} videoId={item.id.videoId} />
+              <Iframe key={item.id.videoId} videoId={item.id.videoId} />
             ))}
           </RelatedVideos>
           <CastAndCrew>
