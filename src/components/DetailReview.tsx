@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { useEffect, useState } from 'react'
+import UserIcon from '@/assets/icon/User.png'
 import useThemeStore from '@/store/useThemeStore'
 import { renderStars } from './movieInfo/renderStars'
 import { getProfileImgUrl } from '@/api/profileImgApi'
@@ -19,6 +20,7 @@ function DetailReview({ nickname, rating, text, userId }: DetailReviewProps) {
   const { $darkMode } = useThemeStore()
 
   const [userProfileIcon, setUserProfileIcon] = useState<string | null>('')
+
   const [gradeStar, setGradeStar] = useState<JSX.Element[] | null>(null)
 
   useEffect(() => {
@@ -38,8 +40,13 @@ function DetailReview({ nickname, rating, text, userId }: DetailReviewProps) {
   return (
     <DetailReviewDivWrapper>
       <Img
-        src={`https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${userProfileIcon}`}
+        src={
+          userProfileIcon
+            ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${userProfileIcon}`
+            : UserIcon
+        }
         alt=""
+        $shouldInvert={!userProfileIcon}
       ></Img>
 
       <DetailReviewDiv>
@@ -62,11 +69,16 @@ const DetailReviewDivWrapper = styled.div`
   margin-bottom: 20px; /* 예시로 추가한 부분 */
 `
 
-const Img = styled.img`
+const Img = styled.img<{
+  theme: { bgColor: string }
+  $shouldInvert: boolean
+}>`
   width: 50px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
+  filter: ${({ theme, $shouldInvert }) =>
+    $shouldInvert && theme.bgColor === '#1E1E1E' ? 'invert(1)' : 'none'};
 `
 
 const DetailReviewDiv = styled.div`
