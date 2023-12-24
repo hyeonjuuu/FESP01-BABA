@@ -14,14 +14,17 @@ import styled, { ThemeProvider } from 'styled-components'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getDetailData } from '@/api/tmdbDetailData'
-import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
+import { getReviewDataWithUserInfo, getTheReviews } from '@/api/getReviewData'
 // import { getReviewData, getReviewDataWithUserInfo } from '@/api/getReviewData'
 
 function MovieInfo() {
   const { id: movieID } = useParams()
+
   const { $darkMode } = useThemeStore()
 
   const [reviewData, setReviewData] = useState<any[] | null>(null)
+  console.log('reviewData: ', reviewData)
+
   const [nicknames, setNicknames] = useState<any[] | null | undefined>(null)
   const [movieinfoData, setMovieInfoData] = useState<MovieInfo | null>(null)
 
@@ -64,7 +67,8 @@ function MovieInfo() {
     const fetchData = async () => {
       try {
         // setIsLoading(true)
-        const data = await getReviewData()
+        // const data = await getReviewData()
+        const data = await getTheReviews(movieID!)
         const nicknameData = await getReviewDataWithUserInfo()
 
         if (data) {
@@ -96,6 +100,21 @@ function MovieInfo() {
   }, [movieID])
 
   // 감독정보 & 로딩구현
+
+  // cross-origin issue in Iframe
+  useEffect(() => {
+    const receiveMessage = (event: MessageEvent) => {
+      const {} = event
+      // const { data } = event
+      // console.log('Received message in MovieInfo:', data)
+    }
+
+    window.addEventListener('message', receiveMessage)
+
+    return () => {
+      window.removeEventListener('message', receiveMessage)
+    }
+  }, [])
 
   return (
     <ThemeProvider
@@ -144,7 +163,7 @@ function MovieInfo() {
           <RelatedVideos>
             <h3>관련 영상</h3>
             {trailers?.map(item => (
-              <Iframe key={item.videoId} videoId={item.id.videoId} />
+              <Iframe key={item.id.videoId} videoId={item.id.videoId} />
             ))}
           </RelatedVideos>
           <CastAndCrew>
