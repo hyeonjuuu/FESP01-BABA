@@ -20,6 +20,7 @@ import useThemeStore from '@/store/useThemeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import { Pagination } from 'swiper/modules'
+import { userLogOut } from '@/utils/userData'
 
 interface PostProps {
   key: number
@@ -53,6 +54,7 @@ function MyPage() {
   //# 로그인 여부 확인
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const { logout } = useAuthStore()
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -231,7 +233,8 @@ function MyPage() {
 
   //# 로그아웃
   const handleLogOut = () => {
-    console.log('로그아웃')
+    userLogOut()
+    logout()
   }
 
   return (
