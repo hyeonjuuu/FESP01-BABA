@@ -35,11 +35,6 @@ type LikeIconProps = {
   disabled?: boolean
 }
 
-type OttIconData = {
-  ott: string
-  icon: string
-}
-
 /* -------------------------------------------------------------------------- */
 
 function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
