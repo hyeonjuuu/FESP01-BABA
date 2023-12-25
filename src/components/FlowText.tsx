@@ -7,14 +7,10 @@ const MarqueeContainer = styled(motion.div)`
   transform-style: preserve-3d;
   white-space: nowrap;
   will-change: transform;
-  /* position: absolute; */
+  margin: 4px;
 `
 
 const MarqueeContentContainer = styled.div`
-  /* display: flex;
-  align-items: center;
-  margin-right: 20px; */
-
   position: relative;
   width: 100%;
   max-width: 100%;
@@ -27,13 +23,9 @@ const MarqueeContentContainer = styled.div`
 `
 
 const MarqueeText = styled.div`
-  /* @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,700;1,300;1,400;1,700&display=swap'); */
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-  /* font-family: 'Josefin Sans', sans-serif; */
-  /* font-family: 'EB Garamond', serif; */
   font-family: 'Montserrat', sans-serif;
   font-size: 24px;
-  /* font-weight: 700; */
   font-weight: 400;
   color: #303032;
   white-space: nowrap;
@@ -63,22 +55,8 @@ const marqueeVariants = {
 
 const FlowText = () => {
   return (
-    // <div>
-    //   <MarqueeContentContainer>
-    //     <MarqueeContainer
-    //       className="track"
-    //       variants={marqueeVariants}
-    //       animate="animate"
-    //     >
-    //       <MarqueeText>Share your review</MarqueeText>
-    //     </MarqueeContainer>
-    //   </MarqueeContentContainer>
-    //   <MarqueeIcon src={flowShape} alt="" />
-    // </div>
-
     <MarqueeContainer
       initial={{ x: '-110%' }}
-      // animate={{ x: '0%' }}
       animate="animate"
       transition={{ duration: 10, ease: 'linear', repeat: Infinity }}
       variants={marqueeVariants}

@@ -64,21 +64,11 @@ function Main() {
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
       <Wrapper>
         <CategoryComponent />
+        {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
         <FlowWrapper>
           <FlowText />
         </FlowWrapper>
-        {/* <TextContainer>
-          <TextWrapper
-            animate={{ x: ['100%', '-360%'] }}
-            transition={{ duration: 20, ease: 'linear', repeat: Infinity }}
-          >
-            <Text>
-              텍스트가 무한히 흐르는 효과 텍스트가 무한히 흐르는 효과 텍스트가
-              무한히 흐르는 효과
-            </Text>
-          </TextWrapper>
-        </TextContainer> */}
-        {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
+
         {movieGenresStateId === undefined || reviews.length > 0 ? (
           <FeedComponent reviews={reviews} />
         ) : (
@@ -118,25 +108,9 @@ const NoDataNotice = styled.div`
   align-items: center;
   height: 50%;
 `
-const TextContainer = styled.div`
-  width: 100%;
-  height: 100px;
-  overflow: hidden;
-  background-color: #303032;
-  height: 30px;
-  width: 100%;
-`
 
-const TextWrapper = styled(motion.div)`
-  display: flex;
-  white-space: nowrap;
-`
-
-const Text = styled.span`
-  padding-right: 20px;
-  margin: auto 0;
-  color: white;
-`
 const FlowWrapper = styled.div`
   max-width: 100%;
+  border-bottom: 0.5px solid #999999;
+  border-top: 0.5px solid #999999;
 `

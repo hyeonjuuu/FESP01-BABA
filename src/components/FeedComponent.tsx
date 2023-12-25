@@ -329,14 +329,14 @@ const UserImage = styled.img`
   width: 36px;
   object-fit: cover;
   border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid #dedede;
 `
 const TextColor = styled.span<TextColorProps>`
   color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#444444')};
   font-size: 14px;
 `
 const FeedImage = styled.img`
-  width: 310px;
+  width: 420px;
   border: 1px solid #dedede;
   display: block;
   margin: auto;
@@ -349,7 +349,7 @@ const FeedContent = styled.div`
   align-items: center;
 `
 const ContentWrapper = styled.div`
-  width: 360px;
+  width: 520px;
 `
 
 const ContentTitle = styled.span`
@@ -387,7 +387,7 @@ const CreateDate = styled.span<FontProps>`
 `
 const FeedContentSection = styled.div`
   margin: 12px 0;
-  padding: 10px;
+  padding: 9.5%;
   border-bottom: 0.5px solid #999999;
 `
 const OttImg = styled.img`
