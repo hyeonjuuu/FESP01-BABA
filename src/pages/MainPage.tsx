@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from '@/components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
 import GoingUpBtn from '@/components/GoingUpBtn'
-import { motion } from 'framer-motion'
 import FlowText from './../components/FlowText'
 
 function Main() {

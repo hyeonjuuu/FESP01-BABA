@@ -290,7 +290,7 @@ export default FeedComponent
 const FeedSection = styled.section`
   display: flex;
   flex-flow: column;
-  margin-top: 26px;
+  margin-top: 4px;
   overflow-x: hidden;
 `
 
