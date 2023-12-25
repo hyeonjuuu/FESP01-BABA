@@ -15,7 +15,7 @@ import { getProfileImgUrl } from '@/api/profileImgApi'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { sortReviewDataByDate } from '@/utils/sortReviewDataByDate'
 import { ottIcon } from '@/utils/ottIconData'
-// import { ottIcon } from '@/utils/ottIconData'
+import defaultOtt from '@/assets/ottIcon/defaultOtt.svg'
 
 interface IsLikedProps {
   id: number
@@ -239,37 +239,20 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
               />
 
               <ContentTitleWrapper>
-                <div>
-                  {Array.isArray(item.ott) ? (
-                    item.ott.map(ottItem => {
-                      const matchedIcon = ottIcon.ottData.find(
-                        (iconItem: OttIconData) => iconItem.ott === ottItem
-                      )
-                      return matchedIcon ? (
-                        <img
-                          key={ottItem}
-                          src={matchedIcon.icon}
-                          alt={`${ottItem} 아이콘`}
-                        />
-                      ) : null
-                    })
-                  ) : (
-                    // item.ott이 배열이 아닌 경우
-                    <img
+                <ContentTitleSubWrapper>
+                  {
+                    <OttImg
                       src={
                         ottIcon.ottData.find(
                           iconItem => iconItem.ott === item.ott
-                        )?.icon || 'defaultIconURL' // 기본 아이콘 URL 또는 다른 처리를 넣으세요
+                        )?.icon || defaultOtt
                       }
                       alt={`${item.ott} 아이콘`}
                     />
-                  )}
-                  {/* {ottIcon.ottData.map(ottIcon => ottIcon.ott === item.ott)} */}
-                  {/* {ottIcon.ottData[0].ott} */}
-                  {/* {item.ott} */}
-                </div>
+                  }
 
-                <ContentTitle>{item.movie_title}</ContentTitle>
+                  <ContentTitle>{item.movie_title}</ContentTitle>
+                </ContentTitleSubWrapper>
                 <CommonDivWrapper>
                   <StarIcon />
                   <span>{item.rating}</span>
@@ -371,6 +354,8 @@ const ContentWrapper = styled.div`
 const ContentTitle = styled.span`
   font-weight: bold;
   font-size: 20px;
+  margin: auto 0;
+  vertical-align: text-bottom;
 `
 const ContentText = styled.p<TextColorProps>`
   text-align: left;
@@ -403,4 +388,15 @@ const FeedContentSection = styled.div`
   margin: 12px 0;
   padding: 10px;
   border-bottom: 0.5px solid #999999;
+`
+const OttImg = styled.img`
+  width: 30px;
+  height: 30px;
+`
+
+const ContentTitleSubWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 `

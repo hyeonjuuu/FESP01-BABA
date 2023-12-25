@@ -166,32 +166,7 @@ function Writing() {
   //# OTT 선택
   const handleCheck = (iconName: string) => {
     setSelectedOtt(iconName)
-    // setSelectedOtt(prevSelectedOtt => {
-    //   if (prevSelectedOtt && Array.isArray(prevSelectedOtt)) {
-    //     if (prevSelectedOtt.includes(iconName)) {
-    //       return prevSelectedOtt.filter((ott: string) => ott !== iconName)
-    //     } else {
-    //       return [...prevSelectedOtt, iconName]
-    //     }
-    //   } else {
-    //     return [iconName]
-    //   }
-    // })
   }
-
-  // const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const inputOtt = event.target.value
-
-  //   setSelectedOtt(prevSelectedOtt => {
-  //     if (prevSelectedOtt.length === 0) {
-  //       return [inputOtt]
-  //     } else {
-  //       const newSelectedOtt = [...prevSelectedOtt]
-  //       newSelectedOtt[newSelectedOtt.length - 1] = inputOtt
-  //       return newSelectedOtt
-  //     }
-  //   })
-  // }
 
   //# 별점
   const handleRatingChange = (newRating: number) => {
