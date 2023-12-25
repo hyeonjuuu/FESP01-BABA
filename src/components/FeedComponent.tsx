@@ -35,6 +35,11 @@ type LikeIconProps = {
   disabled?: boolean
 }
 
+type OttIconData = {
+  ott: string
+  icon: string
+}
+
 /* -------------------------------------------------------------------------- */
 
 function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
@@ -201,7 +206,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
 
     setIsLiked(prevState => !prevState)
   }
-  console.log(reviews)
 
   return (
     <FeedSection>
@@ -235,6 +239,36 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
               />
 
               <ContentTitleWrapper>
+                <div>
+                  {Array.isArray(item.ott) ? (
+                    item.ott.map(ottItem => {
+                      const matchedIcon = ottIcon.ottData.find(
+                        (iconItem: OttIconData) => iconItem.ott === ottItem
+                      )
+                      return matchedIcon ? (
+                        <img
+                          key={ottItem}
+                          src={matchedIcon.icon}
+                          alt={`${ottItem} 아이콘`}
+                        />
+                      ) : null
+                    })
+                  ) : (
+                    // item.ott이 배열이 아닌 경우
+                    <img
+                      src={
+                        ottIcon.ottData.find(
+                          iconItem => iconItem.ott === item.ott
+                        )?.icon || 'defaultIconURL' // 기본 아이콘 URL 또는 다른 처리를 넣으세요
+                      }
+                      alt={`${item.ott} 아이콘`}
+                    />
+                  )}
+                  {/* {ottIcon.ottData.map(ottIcon => ottIcon.ott === item.ott)} */}
+                  {/* {ottIcon.ottData[0].ott} */}
+                  {/* {item.ott} */}
+                </div>
+
                 <ContentTitle>{item.movie_title}</ContentTitle>
                 <CommonDivWrapper>
                   <StarIcon />
@@ -369,7 +403,4 @@ const FeedContentSection = styled.div`
   margin: 12px 0;
   padding: 10px;
   border-bottom: 0.5px solid #999999;
-`
-const Line = styled.hr`
-  border: 1px solid black;
 `

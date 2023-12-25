@@ -44,7 +44,9 @@ function Writing() {
   const [imgSrc, setImgSrc]: any = useState(null)
   const [defaultImg, setDefaultImg] = useState<string | null>('')
   const [image, setImage] = useState<File | null>(null)
-  const [selectedOtt, setSelectedOtt] = useState<string[]>([])
+  // const [selectedOtt, setSelectedOtt] = useState<string[]>([])
+  const [selectedOtt, setSelectedOtt] = useState<string>('')
+
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
 
@@ -111,8 +113,7 @@ function Writing() {
     } catch (error) {
       console.error(error)
     } finally {
-      inputRef.current!.value = ''
-      // 검색 후에는 검색 버튼을 다시 비활성화
+      inputRef.current!.value = '' // 검색 후에는 검색 버튼을 다시 비활성화
     }
   }
 
@@ -120,7 +121,6 @@ function Writing() {
   const handleSelectMovie = (selectedResult: SearchListProps) => {
     setSelectMovie(selectedResult)
     setSearchList([])
-
     setIsSearchBtnDisabled(false)
     setDefaultImg(selectedResult?.poster_path)
     setIsSearched(false) // 영화를 선택하면 검색이 완료된 상태를 false로 설정
@@ -136,10 +136,6 @@ function Writing() {
   }
 
   const handleSelectUserImg = () => {
-    if (!selectMovie) {
-      alert('제목을 먼저 선택해주세요')
-      return
-    }
     setIsSelectImg(false)
   }
 
@@ -169,13 +165,18 @@ function Writing() {
 
   //# OTT 선택
   const handleCheck = (iconName: string) => {
-    setSelectedOtt(prevSelectedOtt => {
-      if (prevSelectedOtt.includes(iconName)) {
-        return prevSelectedOtt.filter(ott => ott !== iconName)
-      } else {
-        return [...prevSelectedOtt, iconName]
-      }
-    })
+    setSelectedOtt(iconName)
+    // setSelectedOtt(prevSelectedOtt => {
+    //   if (prevSelectedOtt && Array.isArray(prevSelectedOtt)) {
+    //     if (prevSelectedOtt.includes(iconName)) {
+    //       return prevSelectedOtt.filter((ott: string) => ott !== iconName)
+    //     } else {
+    //       return [...prevSelectedOtt, iconName]
+    //     }
+    //   } else {
+    //     return [iconName]
+    //   }
+    // })
   }
 
   // const handleInputOtt = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -284,7 +285,7 @@ function Writing() {
       <FormStyle encType="multipart/form-data">
         <SearchContainerWrapper>
           <FlexContainer>
-            <SearchBarWrapper isSearchBtnDisabled={isSearchBtnDisabled}>
+            <SearchBarWrapper $isSearchBtnDisabled={isSearchBtnDisabled}>
               <SearchBar>
                 <Icon>
                   <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -300,8 +301,8 @@ function Writing() {
             </SearchBarWrapper>
 
             <ResultWrapper
-              isSearched={isSearched}
-              isSearchBtnDisabled={isSearchBtnDisabled}
+              $isSearched={isSearched}
+              $isSearchBtnDisabled={isSearchBtnDisabled}
             >
               <SearchContainer>
                 {searchList.map(result => (
@@ -331,7 +332,7 @@ function Writing() {
           </FlexContainer>
         </SearchContainerWrapper>
 
-        <WebComtainer>
+        <WebContainer>
           <ImageBox>
             <BtnWrapper onClick={handleSelectImg}>
               <ImgSelectBtn
@@ -356,11 +357,11 @@ function Writing() {
                 />
               ) : (
                 <>
-                  {imgSrc && selectMovie ? ( // 사용자가 이미지를 업로드한 경우
+                  {imgSrc ? ( // 사용자가 이미지를 업로드한 경우
                     <MoviePoster
                       src={imgSrc}
                       alt={`${
-                        selectMovie.title || selectMovie.name
+                        selectMovie?.title || selectMovie?.name
                       } 관련 이미지`}
                       onClick={handleDeleteImg}
                     />
@@ -385,43 +386,6 @@ function Writing() {
                 </>
               )}
             </OriginalImage>
-            {/* <OriginalImage>
-              {selectMovie && isSelectImg ? (
-                <MoviePoster
-                  src={`https://image.tmdb.org/t/p/original/${selectMovie.poster_path}`}
-                  alt={`${selectMovie.title || selectMovie.name} 포스터`}
-                />
-              ) : (
-                selectMovie && (
-                  <>
-                    <MoviePoster
-                      src={imgSrc}
-                      alt={`${
-                        selectMovie.title || selectMovie.name
-                      } 관련 이미지`}
-                      onClick={handleDeleteImg}
-                    />
-                  ) : (
-                    // 사용자가 이미지를 업로드하지 않았거나 selectMovie가 없는 경우
-                    <PlzSelectImgDiv>
-                      <FontAwesomeIcon icon={faImage} />
-                    </PlzSelectImgDiv>
-                  )}
-                  {!isSelectImg && (
-                    <div>
-                      <label htmlFor="photo">사진</label>
-                      <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png"
-                        name="photo"
-                        id="photo"
-                        onChange={handleUpload}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </OriginalImage> */}
           </ImageBox>
 
           <Description>
@@ -443,7 +407,7 @@ function Writing() {
                         src={icon}
                         alt={ottIconNames[index]}
                         title={ottIconNames[index]}
-                        isSelected={selectedOtt.includes(ottIconNames[index])}
+                        $isSelected={selectedOtt.includes(ottIconNames[index])}
                         onClick={() => handleCheck(ottIconNames[index])}
                       />
                     </Style>
@@ -453,6 +417,7 @@ function Writing() {
                       name={`ott${index}`}
                       id={`ott${index}`}
                       checked={selectedOtt.includes(ottIconNames[index])}
+                      readOnly
                       // onChange={() => handleCheck(ottIconNames[index])}
                     />
                   </motion.div>
@@ -461,7 +426,7 @@ function Writing() {
             </Wrapper>
 
             <StarContainer>
-              <p>⭐️ 이 컨텐츠의 점수를 표시해주세요! ✨💫</p>
+              <p>이 컨텐츠의 점수를 표시해주세요! ⭐️</p>
               <StarRating onRatingChange={handleRatingChange} />
             </StarContainer>
 
@@ -481,7 +446,7 @@ function Writing() {
               onClick={handleSubmit}
             />
           </Description>
-        </WebComtainer>
+        </WebContainer>
       </FormStyle>
     </Container>
   )
@@ -493,19 +458,32 @@ const Container = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin: 30px 0;
   margin-bottom: 80px;
+  @media (max-width: 700px) {
+    width: 98%;
+  }
 `
 
 const FormStyle = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  width: 90%;
+  justify-content: center;
+  /* gap: 20px; */
+  /* width: 90%; */
+
+  @media (min-width: 701px) {
+    width: 70%;
+  }
 
   @media (min-width: 1031px) {
     justify-content: space-between;
+  }
+
+  @media (max-width: 700px) {
+    width: 100%;
   }
 `
 
@@ -518,25 +496,24 @@ const ImageBox = styled.div`
     object-fit: cover;
   }
 
-  @media (min-width: 701px) {
+  @media (max-width: 450px) {
+    width: 90%;
   }
 `
-const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
+
+const SearchBarWrapper = styled.div<{ $isSearchBtnDisabled: boolean }>`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-
   border-bottom-left-radius: ${props =>
-    props.isSearchBtnDisabled ? '8px' : 'none'};
-
+    props.$isSearchBtnDisabled ? '8px' : 'none'};
   border-bottom-right-radius: ${props =>
-    props.isSearchBtnDisabled ? '8px' : 'none'};
-
+    props.$isSearchBtnDisabled ? '8px' : 'none'};
   background-color: #e8e8e8;
 
   @media (min-width: 701px) {
@@ -544,16 +521,15 @@ const SearchBarWrapper = styled.div<{ isSearchBtnDisabled: boolean }>`
   }
 `
 
-const WebComtainer = styled.div`
-  width: 100%;
-  gap: 10px;
+const WebContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  width: 100%;
 
-  @media (min-width: 1031px) {
-    flex-direction: row;
+  @media (max-width: 700px) {
+    width: 80%;
   }
 `
 
@@ -561,8 +537,8 @@ const ResultBarContain = styled.div<ResultBarContainProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 97%;
-  padding: 0 10px;
+  width: 95%; /* Adjust width for better responsiveness */
+  padding: 0 5px; /* Adjust padding for better responsiveness */
   border-radius: 8px;
   cursor: pointer;
 
@@ -583,8 +559,8 @@ const SearchBar = styled.div`
 `
 
 const ResultWrapper = styled.div<{
-  isSearched: boolean
-  isSearchBtnDisabled: boolean
+  $isSearched: boolean
+  $isSearchBtnDisabled: boolean
 }>`
   width: 100%;
   position: absolute;
@@ -601,32 +577,30 @@ const Contain = styled.div`
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  display: flex;
   justify-content: center;
   align-items: center;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
 
-  @media (min-width: 1031px) {
-    overflow-x: scroll;
+  @media (max-width: 390px) {
+    margin: 0 -5px; /* Adjust margin for smaller screens */
   }
 `
 
 const Description = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  width: 100%;
-
-  @media (min-width: 1031px) {
-    width: 40%;
-    height: 970px;
-    gap: 47px;
-  }
+  align-items: center;
+  justify-content: start;
+  gap: 20px;
 `
 
 const OttWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40%;
+  width: 100%; /* Change width to a percentage */
   height: 40%;
   flex: 1;
   margin: 10px 8px;
@@ -650,12 +624,12 @@ const Style = styled.div`
   height: 60px;
 `
 
-const OttIcon = styled.img<{ isSelected: boolean }>`
+const OttIcon = styled.img<{ $isSelected: boolean }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
-  border: ${({ isSelected }) => (isSelected ? '2px solid #3797EF' : 'none')};
+  border: ${({ $isSelected }) => ($isSelected ? '2px solid #3797EF' : 'none')};
 
   &:hover {
     transform: scale(1.1);
@@ -707,7 +681,8 @@ const ImgSelectBtn = styled.button<{ $hasBorder?: boolean; color?: string }>`
   }
 
   &:not(.selected):hover {
-    background-color: #3797ef;
+    background-color: #fffc9f;
+    color: black;
   }
 `
 
@@ -718,6 +693,9 @@ const OriginalImage = styled.div`
   position: relative;
 
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  @media (max-width: 1262px) {
+    height: 600px;
+  }
 `
 
 const MoviePoster = styled.img`
@@ -742,11 +720,7 @@ const StarContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  font-size: 20px;
-
-  @media (min-width: 1031px) {
-    flex-direction: column;
-  }
+  font-size: 18px;
 `
 
 const FeedText = styled.textarea`
@@ -778,7 +752,8 @@ const fadeIn = keyframes`
 `
 
 const Btn = styled.button`
-  width: 10%;
+  width: 100%;
+  max-width: 200px; // Set a maximum width for the button
   height: 46px;
   border-radius: 8px;
   background-color: #3797ef;
@@ -802,6 +777,7 @@ const Btn = styled.button`
 const OttTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
+  align-self: start;
 `
 
 const SearchContainer = styled.div`
@@ -823,6 +799,13 @@ const SearchContainerWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+
+  @media (max-width: 700px) {
+    width: 78%;
+  }
+  @media (max-width: 450px) {
+    width: 70%;
+  }
 `
 
 const FlexContainer = styled.div`
