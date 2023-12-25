@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import useThemeStore from '@/store/useThemeStore'
 import { usePopularDataStore } from '@/store/usePopularDataStore'
-import { SelectHTMLAttributes, useEffect } from 'react'
+import { useEffect } from 'react'
 import getPopularData from '@/api/getPopularData'
 import { movieGenres } from '@/utils/genresData'
 import { Link } from 'react-router-dom'
@@ -10,9 +10,9 @@ interface TextColorProps {
   $darkMode: boolean
 }
 
-interface DarkModeSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  $darkMode?: boolean
-}
+// interface DarkModeSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+//   $darkMode?: boolean
+// }
 
 function SideBar() {
   const { populardata, setPopularData } = usePopularDataStore()

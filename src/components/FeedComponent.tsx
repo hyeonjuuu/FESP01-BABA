@@ -75,8 +75,6 @@ function FeedComponent({ reviews }: { reviews: ReviewData[] }) {
           throw new Error('Failed to fetch review data')
         }
 
-        console.log(reviewData)
-
         // 데이터의 날짜를 최신 순서부터 오래된 순서로 나열합니다.
         const sortedReviewData = sortReviewDataByDate(reviewData)
         // updateReviewData(sortedReviewData);

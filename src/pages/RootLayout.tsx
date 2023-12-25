@@ -24,7 +24,6 @@ export default function RootLayout() {
 
         {location.pathname === '/main' ? <SideBar /> : ''}
         {location.pathname === '/search' ? <SideBar /> : ''}
-        {location.pathname === '/writing' ? <SideBar /> : ''}
         {location.pathname.startsWith('/info') ? <CastContainer /> : ''}
 
         {/* <ResponsiveFake /> */}

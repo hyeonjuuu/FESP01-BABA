@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import userImage from '@/assets/userIcon.png'
+import UserIcon from '@/assets/icon/User.png'
 import { Link, useNavigate } from 'react-router-dom'
 import { getUserReviews } from '@/api/reviewApi'
 import FavRing from '@/components/mypage/FavRing'
@@ -17,13 +17,22 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import userInfoInLs from '@/utils/userInfoInLs'
 import { getMyLikes } from '@/api/getLikesData'
 import useThemeStore from '@/store/useThemeStore'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import { Pagination } from 'swiper/modules'
+import { userLogOut } from '@/utils/userData'
 
 interface PostProps {
   key: number
 }
 
-interface BorderProps {
+interface DarkModeProps {
   $darkMode: boolean
+}
+
+interface WrapperProps {
+  $bgColor: string
+  color: string
 }
 
 function MyPage() {
@@ -34,6 +43,7 @@ function MyPage() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [profileImg, setProfileImg] = useState<File | null>(null)
   const [renderProfileImg, setRenderProfileImg] = useState<string | null>(null)
+
   const [reviews, setReviews] = useState<ReviewsProps[] | null>(null)
   const [isShowReviews, setIsShowReviews] = useState<boolean>(true)
   const [popularReviews, setPopularReviews] = useState<ReviewsProps[] | null>(
@@ -44,6 +54,7 @@ function MyPage() {
   //# 로그인 여부 확인
   const navigate = useNavigate()
   const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const { logout } = useAuthStore()
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -159,7 +170,7 @@ function MyPage() {
 
           return lengthComparison
         })
-        .slice(0, 4)
+        .slice(0, 10)
 
       setPopularReviews(sortedPopularReviews)
     }
@@ -220,6 +231,12 @@ function MyPage() {
     }
   }
 
+  //# 로그아웃
+  const handleLogOut = () => {
+    userLogOut()
+    logout()
+  }
+
   return (
     <Box>
       <ContentBox>
@@ -230,10 +247,11 @@ function MyPage() {
                 src={
                   renderProfileImg
                     ? `https://ufinqahbxsrpjbqmrvti.supabase.co/storage/v1/object/public/userImage/${renderProfileImg}`
-                    : userImage
+                    : UserIcon
                 }
                 alt="사용자 이미지"
                 onClick={handleProfileImg}
+                $shouldInvert={!renderProfileImg} // renderProfileImg가 true이면 invert를 적용하지 않음
               />
               <div>
                 <label htmlFor="photo">사진</label>
@@ -252,27 +270,52 @@ function MyPage() {
 
           <ProfileInfo>
             <p>{userEmail}</p>
-            <ProfileBtn onClick={handleDeleteProfileImg}>
-              프로필 편집
-            </ProfileBtn>
+            <ProfileBtnWrapper>
+              <ProfileBtn onClick={handleDeleteProfileImg}>
+                프로필 편집
+              </ProfileBtn>
+              <ProfileBtn onClick={handleLogOut}>로그아웃</ProfileBtn>
+            </ProfileBtnWrapper>
           </ProfileInfo>
         </ProfileContain>
 
-        <Container>
-          {popularReviews && popularReviews.length > 0
-            ? popularReviews.map(popular => (
-                <FavRing review={popular} key={popular.id} />
-              ))
-            : null}
-        </Container>
+        {popularReviews && popularReviews.length > 0 ? (
+          <Swiper
+            className="mySwiper"
+            slidesPerView={4}
+            breakpoints={{
+              700: {
+                slidesPerView: 6
+              }
+            }}
+            loop={true}
+            modules={[Pagination]}
+          >
+            <Container>
+              {popularReviews.map(popular => (
+                <SwiperSlide key={popular.id}>
+                  <FavRing review={popular} />
+                </SwiperSlide>
+              ))}
+            </Container>
+          </Swiper>
+        ) : null}
 
         <MarginContainer $darkMode={$darkMode}>
-          <Wrapper onClick={handleShowReviews}>
+          <Wrapper
+            onClick={handleShowReviews}
+            color={isShowReviews ? '#FFFFFF' : ''}
+            $bgColor={isShowReviews ? '#3797EF' : ''}
+          >
             <StyledP>게시물</StyledP>
             <span>{reviews?.length}</span>
           </Wrapper>
 
-          <Wrapper onClick={handleShowLikes}>
+          <Wrapper
+            onClick={handleShowLikes}
+            color={!isShowReviews ? '#FFFFFF' : ''}
+            $bgColor={!isShowReviews ? '#3797EF' : ''}
+          >
             <StyledP>좋아요</StyledP>
             <span>{myLikes?.length}</span>
           </Wrapper>
@@ -372,55 +415,81 @@ const Box = styled.section`
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  width: 98%;
   margin-bottom: 70px;
 
   @media (min-width: 1031px) {
     display: flex;
     align-items: center;
   }
-  @media (min-width: 701px) and(max-width: 1030px) {
+
+  @media (min-width: 701px) and (max-width: 1030px) {
     display: flex;
     align-items: center;
   }
 `
 
 const ContentBox = styled.div`
-  width: 390px;
+  width: 100%; /* Make it full-width on mobile */
+  max-width: 600px; /* Adjust the maximum width for larger screens if needed */
+  margin: 0 auto;
 `
 
 const ProfileContain = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column; /* Stack items vertically on small screens */
+  align-items: center;
   padding: 0 12px;
 `
 
 const ImageWrapper = styled.div`
-  width: 72px;
-  height: 72px;
+  width: 120px; /* Adjust the image size */
+  height: 120px; /* Adjust the image size */
   border-radius: 50%;
   overflow: hidden;
 `
 
-const ProfileImage = styled.img`
+const ProfileImage = styled.img<{
+  theme: { bgColor: string }
+  $shouldInvert: boolean
+}>`
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  filter: ${({ theme, $shouldInvert }) =>
+    $shouldInvert && theme.bgColor === '#1E1E1E' ? 'invert(1)' : 'none'};
 `
 
 const ProfileInfo = styled.div`
+  margin-top: 15px; /* Add some spacing */
+  width: 100%;
   display: flex;
-  align-items: start;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
+const ProfileBtnWrapper = styled.div`
+  width: 80%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 `
 
 const ProfileBtn = styled.button`
-  width: 240px;
-  height: 30px;
-  background-color: EFEFEF;
+  width: 45%;
+  height: 40px;
+  background-color: #efefef;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 3px;
   border: none;
+  margin-top: 15px; /* Add some spacing */
+  cursor: pointer;
+  color: #303032;
+
   &:hover {
     background-color: #0282d1;
     color: #ffffff;
@@ -433,38 +502,59 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const MarginContainer = styled(Container)<BorderProps>`
+const MarginContainer = styled.div<DarkModeProps>`
+  display: flex;
+  width: 100%;
   margin: 15px 0;
   border: 1px solid black;
   border-color: ${({ $darkMode }) => ($darkMode ? '#FFFFFF' : '#303032')};
+  justify-content: space-between;
+
+  @media (max-width: 700px) {
+    gap: 10px;
+    /* flex-wrap: wrap; */
+  }
 `
 
-const Wrapper = styled.button`
-  width: 50%;
+const Wrapper = styled.div<WrapperProps>`
+  width: 48%; /* Two columns on larger screens */
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0;
-  gap: 10px;
+  padding: 15px 0;
+  cursor: pointer;
+  background-color: ${({ $bgColor }) => $bgColor};
+  color: ${({ color }) => color};
+  flex-grow: 1;
+
+  @media (max-width: 700px) {
+    width: 100%; /* Full-width on smaller screens */
+  }
 
   &:hover {
-    background-color: #0282d1;
-    color: #ffffff;
+    background-color: #fffc9f;
+    color: black;
   }
 `
+
 const StyledP = styled.p`
   margin: 0;
+  padding-bottom: 10px;
 `
 
 const PostsContain = styled.section`
   display: flex;
   flex-wrap: wrap;
   gap: 1px;
+  width: 100%;
+  justify-content: start;
 `
 
 const Post = styled.div<PostProps>`
-  width: 129px;
+  width: calc(
+    25% - 1px
+  ); /* 4개의 아이템이 한 줄에 나타날 수 있도록 너비를 조절합니다. */
   height: 129px;
   background-color: #0282d1;
   cursor: pointer;
@@ -500,6 +590,12 @@ export const HoverLink = styled(Link)`
   }
 `
 
+const PostImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`
+
 export const HoverDiv = styled.div`
   width: 100px;
   position: absolute;
@@ -509,7 +605,6 @@ export const HoverDiv = styled.div`
   text-align: center;
   visibility: hidden;
 `
-
 export const MovieTitleSpan = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -522,12 +617,6 @@ const RatingSpan = styled.span`
   display: block;
   padding-top: 10px;
   color: #ffc61a;
-`
-
-const PostImg = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `
 
 const PictureWrapper = styled.div`
