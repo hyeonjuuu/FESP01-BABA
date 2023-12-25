@@ -352,7 +352,7 @@ const ContentWrapper = styled.div`
 
 const ContentTitle = styled.span`
   font-weight: bold;
-  font-size: 20px;
+  font-size: 22px;
   margin: auto 0;
   vertical-align: text-bottom;
 `
@@ -360,7 +360,7 @@ const ContentText = styled.p<TextColorProps>`
   text-align: left;
   color: ${({ $darkMode }) => ($darkMode ? '#E0E0E0' : '#444444')};
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
 `
 const ContentTitleWrapper = styled(CommonDivWrapper)`
   justify-content: space-between;
