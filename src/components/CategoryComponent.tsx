@@ -22,7 +22,8 @@ interface SizeProps {
   $darkMode: boolean
 }
 
-interface DarkModeSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+export interface DarkModeSelectProps
+  extends SelectHTMLAttributes<HTMLSelectElement> {
   $darkMode?: boolean
 }
 
@@ -77,8 +78,6 @@ function CategoryComponent() {
 
     setSelectCategory(select)
   }
-
-  console.log($darkMode)
 
   const handleFilterCategory = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>

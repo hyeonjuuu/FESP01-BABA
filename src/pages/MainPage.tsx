@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import FeedComponent from '@/components/FeedComponent'
 import CategoryComponent from '@/components/CategoryComponent'
 import RecommendContentsSection from '@/layout/RecommendContentsSection'
@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
 import GoingUpBtn from '@/components/GoingUpBtn'
+import { motion } from 'framer-motion'
+import FlowText from './../components/FlowText'
 
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
@@ -62,6 +64,20 @@ function Main() {
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
       <Wrapper>
         <CategoryComponent />
+        <FlowWrapper>
+          <FlowText />
+        </FlowWrapper>
+        {/* <TextContainer>
+          <TextWrapper
+            animate={{ x: ['100%', '-360%'] }}
+            transition={{ duration: 20, ease: 'linear', repeat: Infinity }}
+          >
+            <Text>
+              텍스트가 무한히 흐르는 효과 텍스트가 무한히 흐르는 효과 텍스트가
+              무한히 흐르는 효과
+            </Text>
+          </TextWrapper>
+        </TextContainer> */}
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
         {movieGenresStateId === undefined || reviews.length > 0 ? (
           <FeedComponent reviews={reviews} />
@@ -82,6 +98,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 22px;
+  overflow: hidden;
 `
 
 const MainPageTitle = styled.h1`
@@ -100,4 +117,26 @@ const NoDataNotice = styled.div`
   justify-content: center;
   align-items: center;
   height: 50%;
+`
+const TextContainer = styled.div`
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
+  background-color: #303032;
+  height: 30px;
+  width: 100%;
+`
+
+const TextWrapper = styled(motion.div)`
+  display: flex;
+  white-space: nowrap;
+`
+
+const Text = styled.span`
+  padding-right: 20px;
+  margin: auto 0;
+  color: white;
+`
+const FlowWrapper = styled.div`
+  max-width: 100%;
 `

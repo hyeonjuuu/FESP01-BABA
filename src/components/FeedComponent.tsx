@@ -291,6 +291,7 @@ const FeedSection = styled.section`
   display: flex;
   flex-flow: column;
   margin-top: 26px;
+  overflow-x: hidden;
 `
 
 export const StarIcon = styled.button`
@@ -392,6 +393,7 @@ const FeedContentSection = styled.div`
 const OttImg = styled.img`
   width: 30px;
   height: 30px;
+  align-self: self-start;
 `
 
 const ContentTitleSubWrapper = styled.div`
