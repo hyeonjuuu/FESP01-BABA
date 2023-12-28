@@ -20,7 +20,16 @@ button {
   border-color: ${({ theme }) => theme.borderColor};
   cursor: pointer;
   font-family: GmarketSans;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  cursor: pointer;
   
+}
+input {
+  font-family: GmarketSans;
+
 }
 
 a {

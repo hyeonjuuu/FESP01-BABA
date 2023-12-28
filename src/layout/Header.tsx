@@ -5,6 +5,9 @@ import DarkModeToggleIcon from '@/components/DarkModeIcon'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../assets/logo.svg'
+import Search from '../components/search/Search'
+import SearchResultBar from './../components/search/SearchResultBar'
+import AuthButton from './../components/main/AuthButton'
 
 interface HeaderDivProps {
   $darkMode: boolean
@@ -14,24 +17,31 @@ interface ArrowDivProps {
   $isHome: boolean
 }
 
-const Header = ({ isHome }: { isHome: boolean }) => {
+const Header = () => {
   const { $darkMode, toggleDarkMode } = useThemeStore()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
-  const handleGoBack = () => {
-    navigate(-1)
-  }
+  // const handleGoBack = () => {
+  //   navigate(-1)
+  // }
 
   return (
     <>
       <HeaderContainer $darkMode={$darkMode}>
-        <BackButton $isHome={isHome} onClick={handleGoBack}>
+        {/* <BackButton $isHome={isHome} onClick={handleGoBack}>
           <StyledFontAwesomeIcon icon={faArrowLeft} />
         </BackButton>
-        <Logo src={logo} alt="" />
         <DarkModeToggleIcon
-          $isDarkMode={$darkMode}
-          toggleDarkModeAni={toggleDarkMode}
+        $isDarkMode={$darkMode}
+        toggleDarkModeAni={toggleDarkMode}
+      /> */}
+        <Logo src={logo} alt="" />
+        <Search />
+        <AuthButton text="로그인" color="#222222" backgroundColor="#AAEEC4" />
+        <AuthButton
+          text="회원가입"
+          color="none"
+          backgroundColor="transperate"
         />
       </HeaderContainer>
     </>
@@ -41,21 +51,11 @@ const Header = ({ isHome }: { isHome: boolean }) => {
 export default Header
 
 const HeaderContainer = styled.div<HeaderDivProps>`
-  min-width: 400px;
-  width: 100vw;
+  height: 72px;
   display: flex;
-  justify-content: space-between;
-  box-sizing: border-box;
-  padding: 10px 30px;
+  gap: 10px;
   align-items: center;
-  background-color: ${({ $darkMode }) => ($darkMode ? '#121212' : '#ffffff')};
-  border-bottom: 1px solid ${({ $darkMode }) => ($darkMode ? '#333' : '#ddd')};
-  color: ${({ $darkMode }) => ($darkMode ? '#ffffff' : '#333')};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  @media (min-width: 701px) {
-    display: none;
-  }
+  padding: 0 52px;
 `
 
 const BackButton = styled.div<ArrowDivProps>`

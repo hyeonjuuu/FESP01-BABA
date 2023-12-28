@@ -111,7 +111,7 @@ function SearchPage() {
     <Box>
       <h3 hidden>검색창</h3>
       <SearchBarWrapper>
-        <SearchBar>
+        <SearchBarContent>
           <Icon>
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </Icon>
@@ -126,7 +126,7 @@ function SearchPage() {
             }}
             ref={inputRef}
           />
-        </SearchBar>
+        </SearchBarContent>
 
         {showSearchResult || searchDataList.length > 0 ? (
           <ClearBtn type="button" onClick={handleSearchCancle}>
@@ -232,7 +232,7 @@ export const SearchBarWrapper = styled.div`
   }
 `
 
-export const SearchBar = styled.div`
+export const SearchBarContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

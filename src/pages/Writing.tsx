@@ -261,7 +261,7 @@ function Writing() {
         <SearchContainerWrapper>
           <FlexContainer>
             <SearchBarWrapper $isSearchBtnDisabled={isSearchBtnDisabled}>
-              <SearchBar>
+              <SearchBarContent>
                 <Icon>
                   <FontAwesomeIcon icon={faMagnifyingGlass} />
                 </Icon>
@@ -271,7 +271,7 @@ function Writing() {
                   // onChange={handleSearchInput}
                   ref={inputRef}
                 />
-              </SearchBar>
+              </SearchBarContent>
               <Btn onClick={handleSearchBtn}>검색</Btn>
             </SearchBarWrapper>
 
@@ -522,7 +522,7 @@ const ResultBarContain = styled.div<ResultBarContainProps>`
   }
 `
 
-const SearchBar = styled.div`
+const SearchBarContent = styled.div`
   display: flex;
 
   align-items: center;

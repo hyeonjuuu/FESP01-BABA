@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
 import GoingUpBtn from '@/components/GoingUpBtn'
-import FlowText from './../components/FlowText'
+import Header from '@/layout/Header'
 
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
@@ -59,14 +59,12 @@ function Main() {
   }, [movieGenresState])
 
   return (
-    <>
+    <MainWrapper>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
-      <Wrapper>
+      <Header />
+      {/* <Wrapper>
         <CategoryComponent />
         {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
-        <FlowWrapper>
-          <FlowText />
-        </FlowWrapper>
 
         {movieGenresStateId === undefined || reviews.length > 0 ? (
           <FeedComponent reviews={reviews} />
@@ -75,13 +73,17 @@ function Main() {
             선택한 카테고리에 해당하는 리뷰가 없습니다.😢
           </NoDataNotice>
         )}
-      </Wrapper>
-      <GoingUpBtn />
-    </>
+      </Wrapper> */}
+    </MainWrapper>
   )
 }
 
 export default Main
+
+const MainWrapper = styled.div`
+  background-color: #edece8;
+  height: 100vh;
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -106,10 +108,4 @@ const NoDataNotice = styled.div`
   justify-content: center;
   align-items: center;
   height: 50%;
-`
-
-const FlowWrapper = styled.div`
-  max-width: 100%;
-  border-bottom: 0.5px solid #999999;
-  border-top: 0.5px solid #999999;
 `
