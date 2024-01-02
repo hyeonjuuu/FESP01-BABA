@@ -37,11 +37,11 @@ const Header = () => {
       /> */}
         <Logo src={logo} alt="" />
         <Search />
-        <AuthButton text="로그인" color="#222222" backgroundColor="#AAEEC4" />
+        <AuthButton text="로그인" color="#222222" backgroundcolor="#AAEEC4" />
         <AuthButton
           text="회원가입"
           color="none"
-          backgroundColor="transperate"
+          backgroundcolor="transperate"
         />
       </HeaderContainer>
     </>

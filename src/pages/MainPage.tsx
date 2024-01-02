@@ -8,12 +8,20 @@ import SwiperCore from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper-bundle.css'
 import { Autoplay, EffectCoverflow } from 'swiper/modules'
+import { isHtmlElement } from 'react-router-dom/dist/dom'
+import { useTrendDataStore } from '@/store/useTrendDataStore'
 
 SwiperCore.use([Autoplay, EffectCoverflow])
+
+interface SwiperProps {
+  justifycontent: string
+}
 
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
   const { movieGenresState } = useGenresStore()
+  const { trendData, setTrendData, reverseTrendData, setReverseData } =
+    useTrendDataStore()
   const movieGenresStateId = movieGenresState[0]?.id
   const [reviews, setReviews] = useState<ReviewData[]>([])
   const [trendPoster, setTrendPoster] = useState<string[]>()
@@ -34,11 +42,15 @@ function Main() {
     const trendingData = async () => {
       const data = await getTrendingData()
 
+      // console.log(data.results)
+
       const posterResult = data.results.map(
         (item: { poster_path: string }) =>
           `https://image.tmdb.org/t/p/original/${item.poster_path}`
       )
       setTrendPoster(posterResult)
+      setTrendData(data.results)
+      setReverseData(data.results)
     }
     const loadReviewData = async () => {
       try {
@@ -71,6 +83,8 @@ function Main() {
 
     window.scrollTo(0, 0)
   }, [movieGenresState])
+  // console.log(trendPoster)
+  console.log('reverse', reverseTrendData.reverse())
   console.log(trendPoster)
 
   return (
@@ -78,40 +92,43 @@ function Main() {
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
       <Header />
       <PosterWrapper>
-        <SwiperContainer
+        <Swiper
           slidesPerView={1}
           centeredSlides={true}
           spaceBetween={30}
           autoplay={{
-            delay: 2000,
+            delay: 5000,
             disableOnInteraction: false
           }}
           freeMode={true}
           modules={[EffectCoverflow]}
         >
           {trendPoster?.map((item, index) => (
-            <SwiperSlideContainer key={index}>
+            <SwiperSlideContainer key={index} justifycontent="center">
               <TrendPosterImg src={item} alt="" />
             </SwiperSlideContainer>
           ))}
-        </SwiperContainer>
-        <SwiperContainer
+        </Swiper>
+        <Swiper
           slidesPerView={1}
           centeredSlides={true}
           spaceBetween={30}
           autoplay={{
-            delay: 2000,
+            delay: 5000,
             disableOnInteraction: false
           }}
           freeMode={true}
           modules={[EffectCoverflow]}
         >
-          {trendPoster?.map((item, index) => (
-            <SwiperSlideContainer key={index}>
-              <TrendPosterImg src={item} alt="" />
+          {reverseTrendData?.map((item, index) => (
+            <SwiperSlideContainer key={index} justifycontent="start">
+              <TrendPosterImgLarge
+                src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
+                alt={item.name || item.title}
+              />
             </SwiperSlideContainer>
           ))}
-        </SwiperContainer>
+        </Swiper>
       </PosterWrapper>
     </MainWrapper>
   )
@@ -136,18 +153,22 @@ const MainPageTitle = styled.h1`
   border-width: 0;
 `
 const PosterWrapper = styled.section`
-  background-color: red;
   display: flex;
+  padding: 20px;
+`
+
+const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
+  border: 5px solid black;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: ${({ justifycontent }) => justifycontent};
 `
 
 const TrendPosterImg = styled.img`
   height: 586px;
 `
-const SwiperContainer = styled(Swiper)``
-const SwiperSlideContainer = styled(SwiperSlide)`
-  border: 5px solid black;
-  box-sizing: border-box;
-`
-const SwiperSlideContainer2 = styled(SwiperSlide)`
-  border: 5px solid red;
+
+const TrendPosterImgLarge = styled.img`
+  height: 780px;
 `

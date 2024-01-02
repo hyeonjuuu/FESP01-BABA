@@ -3,16 +3,16 @@ import styled, { css } from 'styled-components'
 interface AuthButtonProps {
   text: string
   color: string
-  backgroundColor: string
+  backgroundcolor: string
 }
 
 const AuthButton: React.FC<AuthButtonProps> = ({
   text,
   color,
-  backgroundColor
+  backgroundcolor
 }) => {
   return (
-    <AutoButtonStyle color={color} backgroundColor={backgroundColor}>
+    <AutoButtonStyle color={color} backgroundcolor={backgroundcolor}>
       {text}
     </AutoButtonStyle>
   )
@@ -31,9 +31,9 @@ const SigninHoverStyle = css`
   transition: 0.5s ease;
 `
 
-const AutoButtonStyle = styled.button<{ backgroundColor: string }>`
+const AutoButtonStyle = styled.button<{ backgroundcolor: string }>`
   color: ${props => props.color || 'white'};
-  background-color: ${props => props.backgroundColor || '#222222'};
+  background-color: ${props => props.backgroundcolor || '#222222'};
   width: 94px;
   height: 46px;
   border-radius: 8px;
@@ -43,7 +43,7 @@ const AutoButtonStyle = styled.button<{ backgroundColor: string }>`
 
   &:hover {
     ${props =>
-      props.backgroundColor === 'transperate'
+      props.backgroundcolor === 'transperate'
         ? LoginHoverStyle
         : SigninHoverStyle}
   }
