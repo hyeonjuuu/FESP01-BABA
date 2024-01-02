@@ -1,18 +1,22 @@
 import styled from 'styled-components'
-import FeedComponent from '@/components/FeedComponent'
-import CategoryComponent from '@/components/CategoryComponent'
-import RecommendContentsSection from '@/layout/RecommendContentsSection'
 import { useEffect, useState } from 'react'
 import { useGenresStore } from '@/store/useGenresStore'
 import { getGenreReviewData, getReviewData } from '@/api/getReviewData'
-import GoingUpBtn from '@/components/GoingUpBtn'
 import Header from '@/layout/Header'
+import getTrendingData from '@/api/getTrendingData'
+import SwiperCore from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/swiper-bundle.css'
+import { Autoplay, EffectCoverflow } from 'swiper/modules'
+
+SwiperCore.use([Autoplay, EffectCoverflow])
 
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
   const { movieGenresState } = useGenresStore()
   const movieGenresStateId = movieGenresState[0]?.id
   const [reviews, setReviews] = useState<ReviewData[]>([])
+  const [trendPoster, setTrendPoster] = useState<string[]>()
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,6 +31,15 @@ function Main() {
   }, [])
 
   useEffect(() => {
+    const trendingData = async () => {
+      const data = await getTrendingData()
+
+      const posterResult = data.results.map(
+        (item: { poster_path: string }) =>
+          `https://image.tmdb.org/t/p/original/${item.poster_path}`
+      )
+      setTrendPoster(posterResult)
+    }
     const loadReviewData = async () => {
       try {
         let reviewData: ReviewData[] = []
@@ -53,27 +66,53 @@ function Main() {
         return null
       }
     }
+    trendingData()
     loadReviewData()
 
     window.scrollTo(0, 0)
   }, [movieGenresState])
+  console.log(trendPoster)
 
   return (
     <MainWrapper>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
       <Header />
-      {/* <Wrapper>
-        <CategoryComponent />
-        {window.innerWidth < 1030 ? <RecommendContentsSection /> : ''}
-
-        {movieGenresStateId === undefined || reviews.length > 0 ? (
-          <FeedComponent reviews={reviews} />
-        ) : (
-          <NoDataNotice>
-            선택한 카테고리에 해당하는 리뷰가 없습니다.😢
-          </NoDataNotice>
-        )}
-      </Wrapper> */}
+      <PosterWrapper>
+        <SwiperContainer
+          slidesPerView={1}
+          centeredSlides={true}
+          spaceBetween={30}
+          autoplay={{
+            delay: 2000,
+            disableOnInteraction: false
+          }}
+          freeMode={true}
+          modules={[EffectCoverflow]}
+        >
+          {trendPoster?.map((item, index) => (
+            <SwiperSlideContainer key={index}>
+              <TrendPosterImg src={item} alt="" />
+            </SwiperSlideContainer>
+          ))}
+        </SwiperContainer>
+        <SwiperContainer
+          slidesPerView={1}
+          centeredSlides={true}
+          spaceBetween={30}
+          autoplay={{
+            delay: 2000,
+            disableOnInteraction: false
+          }}
+          freeMode={true}
+          modules={[EffectCoverflow]}
+        >
+          {trendPoster?.map((item, index) => (
+            <SwiperSlideContainer key={index}>
+              <TrendPosterImg src={item} alt="" />
+            </SwiperSlideContainer>
+          ))}
+        </SwiperContainer>
+      </PosterWrapper>
     </MainWrapper>
   )
 }
@@ -83,13 +122,6 @@ export default Main
 const MainWrapper = styled.div`
   background-color: #edece8;
   height: 100vh;
-`
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  overflow: hidden;
 `
 
 const MainPageTitle = styled.h1`
@@ -103,9 +135,19 @@ const MainPageTitle = styled.h1`
   white-space: nowrap;
   border-width: 0;
 `
-const NoDataNotice = styled.div`
+const PosterWrapper = styled.section`
+  background-color: red;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50%;
+`
+
+const TrendPosterImg = styled.img`
+  height: 586px;
+`
+const SwiperContainer = styled(Swiper)``
+const SwiperSlideContainer = styled(SwiperSlide)`
+  border: 5px solid black;
+  box-sizing: border-box;
+`
+const SwiperSlideContainer2 = styled(SwiperSlide)`
+  border: 5px solid red;
 `
