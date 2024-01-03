@@ -1,13 +1,5 @@
-import styled from 'styled-components'
-import { useNavigate } from 'react-router-dom'
+import styled, { keyframes } from 'styled-components'
 import useThemeStore from '../store/useThemeStore'
-import DarkModeToggleIcon from '@/components/DarkModeIcon'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import logo from '../assets/logo.svg'
-import Search from '../components/search/Search'
-import SearchResultBar from './../components/search/SearchResultBar'
-import AuthButton from './../components/main/AuthButton'
 
 interface HeaderDivProps {
   $darkMode: boolean
@@ -44,10 +36,23 @@ const HeaderContainer = styled.div<HeaderDivProps>`
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 0 52px;
+  justify-content: flex-end;
+`
+const fillcolor = keyframes`
+  0% {
+    background-position: 0 0%;
+  }
+  100% {
+    background-position: 0 100%;
+  }
 `
 
 const MenuButton = styled.button`
-  background-color: green;
-  width: 100px;
+  background: linear-gradient(to bottom, transparent 50%, #aaeec4 50%);
+  background-size: 100% 200%;
+  transition: all 0.5s;
+
+  &:hover {
+    animation: ${fillcolor} 0.5s forwards;
+  }
 `

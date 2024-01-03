@@ -8,7 +8,7 @@ import SwiperCore from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper-bundle.css'
 import { Autoplay, EffectCoverflow } from 'swiper/modules'
-import { useTrendDataStore } from '@/store/useTrendDataStore'
+import { TrendDataState, useTrendDataStore } from '@/store/useTrendDataStore'
 
 SwiperCore.use([Autoplay, EffectCoverflow])
 
@@ -78,41 +78,50 @@ function Main() {
     window.scrollTo(0, 0)
   }, [movieGenresState])
 
+  let doubleTrendData = trendData?.concat(trendData, trendData) // 플레이스홀더 추가
+  console.log(doubleTrendData)
+
   return (
     <MainWrapper>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
-      <Header />
       <PosterWrapper>
         <TitleContentsWrapper>
-          <SubTitle>Find Your Contents Fit.</SubTitle>
+          <HeaderBox>
+            <Header />
+            <SubTitle>Find Your Contents Fit.</SubTitle>
+          </HeaderBox>
           <TitleWrapper>
             <Title>CONFIT</Title>
             <CircleDiv></CircleDiv>
           </TitleWrapper>
         </TitleContentsWrapper>
-        <SwiperWrapper
-          slidesPerView={3.4}
-          centeredSlides={true}
-          spaceBetween={30}
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false
-          }}
-          freeMode={true}
-          modules={[EffectCoverflow]}
-          effect="fade"
-          speed={1000}
-          loop={true}
-        >
-          {trendData?.map((item, index) => (
-            <SwiperSlideContainer key={index} justifycontent="center">
-              <TrendPosterImg
-                src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
-                alt=""
-              />
-            </SwiperSlideContainer>
-          ))}
-        </SwiperWrapper>
+        {doubleTrendData.length > 0 && (
+          <SwiperWrapper
+            slidesPerView={3.4}
+            // slidesPerGroup={1}
+            centeredSlides={true}
+            spaceBetween={30}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false
+            }}
+            freeMode={true}
+            modules={[EffectCoverflow]}
+            effect="fade"
+            speed={1000}
+            loopAdditionalSlides={3}
+            loop={true}
+          >
+            {doubleTrendData?.map((item, index) => (
+              <SwiperSlideContainer key={index} justifycontent="center">
+                <TrendPosterImg
+                  src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
+                  alt={item.name || item.title}
+                />
+              </SwiperSlideContainer>
+            ))}
+          </SwiperWrapper>
+        )}
       </PosterWrapper>
     </MainWrapper>
   )
@@ -148,6 +157,11 @@ const TitleWrapper = styled.div`
   display: flex;
 `
 
+const HeaderBox = styled(TitleWrapper)`
+  flex-direction: row;
+  justify-content: space-between;
+`
+
 const Title = styled.span`
   font-size: 108px;
   font-family: 'Inter', sans-serif;
@@ -173,6 +187,7 @@ const SubTitle = styled(Title)`
   font-weight: 400;
   padding: 10px 0 0 0;
   font-weight: 200;
+  order: -1;
 `
 const PosterWrapper = styled.section`
   padding: 20px;

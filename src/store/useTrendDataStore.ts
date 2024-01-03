@@ -1,6 +1,6 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
-interface TrendDataState {
+export interface TrendDataState {
   trendData: Array<{
     adult: boolean
     backdrop_path: string
