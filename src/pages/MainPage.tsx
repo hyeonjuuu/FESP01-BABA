@@ -78,7 +78,7 @@ function Main() {
     window.scrollTo(0, 0)
   }, [movieGenresState])
 
-  let doubleTrendData = trendData?.concat(trendData, trendData) // 플레이스홀더 추가
+  let doubleTrendData = trendData?.concat(trendData, trendData)
   console.log(doubleTrendData)
 
   return (
@@ -98,7 +98,6 @@ function Main() {
         {doubleTrendData.length > 0 && (
           <SwiperWrapper
             slidesPerView={3.4}
-            // slidesPerGroup={1}
             centeredSlides={true}
             spaceBetween={30}
             autoplay={{
@@ -164,9 +163,8 @@ const HeaderBox = styled(TitleWrapper)`
 
 const Title = styled.span`
   font-size: 108px;
-  font-family: 'Inter', sans-serif;
   font-family: 'Josefin Sans', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-block;
   box-sizing: border-box;
   color: #222222;
@@ -197,17 +195,21 @@ const SwiperWrapper = styled(Swiper)`
   .swiper-slide-active {
     & > img {
       transition: filter;
-      transition-delay: 1s ease;
+      transition-delay: 1.5s ease;
       filter: grayscale(0) opacity(100);
+      transform: scale(1.06);
+      transition: 1s all ease;
     }
   }
 `
 
 const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: ${({ justifycontent }) => justifycontent};
+  overflow: hidden;
+  transition: 0.5s all ease;
+  border-radius: 10px;
 `
 
 const TrendPosterImg = styled.img`
@@ -215,9 +217,12 @@ const TrendPosterImg = styled.img`
   height: 688px;
   border-radius: 10px;
   filter: grayscale(100%) opacity(70%);
+  transition: 0.5s all ease;
   &:hover {
     transition: filter;
+    transition: 1.2s all ease;
     transition-delay: 1s ease;
     filter: grayscale(0) opacity(100);
+    transform: scale(1.06);
   }
 `
