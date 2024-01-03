@@ -8,7 +8,6 @@ import SwiperCore from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper-bundle.css'
 import { Autoplay, EffectCoverflow } from 'swiper/modules'
-import { isHtmlElement } from 'react-router-dom/dist/dom'
 import { useTrendDataStore } from '@/store/useTrendDataStore'
 
 SwiperCore.use([Autoplay, EffectCoverflow])
@@ -20,11 +19,10 @@ interface SwiperProps {
 function Main() {
   const [, setWindowWidth] = useState(window.innerWidth)
   const { movieGenresState } = useGenresStore()
-  const { trendData, setTrendData, reverseTrendData, setReverseData } =
-    useTrendDataStore()
+  const { trendData, setTrendData } = useTrendDataStore()
+
   const movieGenresStateId = movieGenresState[0]?.id
   const [reviews, setReviews] = useState<ReviewData[]>([])
-  const [trendPoster, setTrendPoster] = useState<string[]>()
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,15 +40,11 @@ function Main() {
     const trendingData = async () => {
       const data = await getTrendingData()
 
-      // console.log(data.results)
-
       const posterResult = data.results.map(
         (item: { poster_path: string }) =>
           `https://image.tmdb.org/t/p/original/${item.poster_path}`
       )
-      setTrendPoster(posterResult)
       setTrendData(data.results)
-      setReverseData(data.results)
     }
     const loadReviewData = async () => {
       try {
@@ -83,16 +77,17 @@ function Main() {
 
     window.scrollTo(0, 0)
   }, [movieGenresState])
-  // console.log(trendPoster)
-  console.log('reverse', reverseTrendData.reverse())
-  console.log(trendPoster)
 
   return (
     <MainWrapper>
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
       <Header />
       <PosterWrapper>
-        <Swiper
+        <TitleWrapper>
+          <TitleContent>ConFit</TitleContent>
+          <SubTitle>Find Your Contents Fit.</SubTitle>
+        </TitleWrapper>
+        <SwiperWrapper
           slidesPerView={1}
           centeredSlides={true}
           spaceBetween={30}
@@ -102,33 +97,43 @@ function Main() {
           }}
           freeMode={true}
           modules={[EffectCoverflow]}
+          effect="fade"
+          speed={600}
+          loop={true}
         >
-          {trendPoster?.map((item, index) => (
+          {trendData?.map((item, index) => (
             <SwiperSlideContainer key={index} justifycontent="center">
-              <TrendPosterImg src={item} alt="" />
-            </SwiperSlideContainer>
-          ))}
-        </Swiper>
-        <Swiper
-          slidesPerView={1}
-          centeredSlides={true}
-          spaceBetween={30}
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false
-          }}
-          freeMode={true}
-          modules={[EffectCoverflow]}
-        >
-          {reverseTrendData?.map((item, index) => (
-            <SwiperSlideContainer key={index} justifycontent="start">
-              <TrendPosterImgLarge
+              <TrendPosterImg
                 src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
-                alt={item.name || item.title}
+                alt=""
               />
             </SwiperSlideContainer>
           ))}
-        </Swiper>
+        </SwiperWrapper>
+        <SwiperWrapper
+          slidesPerView={1}
+          centeredSlides={true}
+          spaceBetween={30}
+          autoplay={{
+            delay: 5000,
+            disableOnInteraction: false
+          }}
+          freeMode={true}
+          modules={[EffectCoverflow]}
+          effect="fade"
+          speed={600}
+          loop={true}
+        >
+          {Array.isArray(trendData) &&
+            trendData.reverse().map((item, index) => (
+              <SwiperSlideContainer key={index} justifycontent="start">
+                <TrendPosterImgLarge
+                  src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
+                  alt={item.name || item.title}
+                />
+              </SwiperSlideContainer>
+            ))}
+        </SwiperWrapper>
       </PosterWrapper>
     </MainWrapper>
   )
@@ -152,13 +157,39 @@ const MainPageTitle = styled.h1`
   white-space: nowrap;
   border-width: 0;
 `
+
+const TitleWrapper = styled.div`
+  padding: 16px;
+  display: flex;
+`
+
+const TitleContent = styled.span`
+  font-size: 72px;
+  /* height: 85%; */
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.86px;
+  display: inline-block;
+  box-sizing: border-box;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+`
+const SubTitle = styled(TitleContent)`
+  font-size: 12px;
+  color: #999999;
+  font-weight: 400;
+  padding: 10px 0 0 0;
+`
 const PosterWrapper = styled.section`
   display: flex;
   padding: 20px;
 `
 
+const SwiperWrapper = styled(Swiper)`
+  position: relative;
+`
+
 const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
-  border: 5px solid black;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -166,9 +197,9 @@ const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
 `
 
 const TrendPosterImg = styled.img`
-  height: 586px;
+  height: 620px;
 `
 
 const TrendPosterImgLarge = styled.img`
-  height: 780px;
+  height: 820px;
 `
