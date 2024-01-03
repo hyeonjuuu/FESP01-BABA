@@ -83,12 +83,15 @@ function Main() {
       <MainPageTitle aria-label="메인페이지">메인 페이지</MainPageTitle>
       <Header />
       <PosterWrapper>
-        <TitleWrapper>
-          <TitleContent>ConFit</TitleContent>
+        <TitleContentsWrapper>
           <SubTitle>Find Your Contents Fit.</SubTitle>
-        </TitleWrapper>
+          <TitleWrapper>
+            <Title>CONFIT</Title>
+            <CircleDiv></CircleDiv>
+          </TitleWrapper>
+        </TitleContentsWrapper>
         <SwiperWrapper
-          slidesPerView={1}
+          slidesPerView={3.2}
           centeredSlides={true}
           spaceBetween={30}
           autoplay={{
@@ -98,7 +101,7 @@ function Main() {
           freeMode={true}
           modules={[EffectCoverflow]}
           effect="fade"
-          speed={600}
+          speed={1000}
           loop={true}
         >
           {trendData?.map((item, index) => (
@@ -109,30 +112,6 @@ function Main() {
               />
             </SwiperSlideContainer>
           ))}
-        </SwiperWrapper>
-        <SwiperWrapper
-          slidesPerView={1}
-          centeredSlides={true}
-          spaceBetween={30}
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false
-          }}
-          freeMode={true}
-          modules={[EffectCoverflow]}
-          effect="fade"
-          speed={600}
-          loop={true}
-        >
-          {Array.isArray(trendData) &&
-            trendData.reverse().map((item, index) => (
-              <SwiperSlideContainer key={index} justifycontent="start">
-                <TrendPosterImgLarge
-                  src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
-                  alt={item.name || item.title}
-                />
-              </SwiperSlideContainer>
-            ))}
         </SwiperWrapper>
       </PosterWrapper>
     </MainWrapper>
@@ -158,35 +137,55 @@ const MainPageTitle = styled.h1`
   border-width: 0;
 `
 
-const TitleWrapper = styled.div`
+const TitleContentsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding: 16px;
+`
+
+const TitleWrapper = styled.div`
   display: flex;
 `
 
-const TitleContent = styled.span`
-  font-size: 72px;
-  /* height: 85%; */
+const Title = styled.span`
+  font-size: 108px;
   font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.86px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 600;
   display: inline-block;
   box-sizing: border-box;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+  color: #222222;
 `
-const SubTitle = styled(TitleContent)`
-  font-size: 12px;
+const CircleDiv = styled.div`
+  display: flex;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  align-self: flex-end;
+  background-color: #aaeec4;
+  margin: 0 0 20px 4px;
+`
+
+const SubTitle = styled(Title)`
+  font-size: 56px;
   color: #999999;
   font-weight: 400;
   padding: 10px 0 0 0;
+  font-weight: 200;
 `
 const PosterWrapper = styled.section`
-  display: flex;
   padding: 20px;
 `
 
 const SwiperWrapper = styled(Swiper)`
-  position: relative;
+  .swiper-slide-active {
+    & > img {
+      transition: filter;
+      transition-delay: 1s ease;
+      filter: grayscale(0) opacity(100);
+    }
+  }
 `
 
 const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
@@ -197,9 +196,12 @@ const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
 `
 
 const TrendPosterImg = styled.img`
-  height: 620px;
-`
-
-const TrendPosterImgLarge = styled.img`
-  height: 820px;
+  width: 520px;
+  border-radius: 10px;
+  filter: grayscale(100%) opacity(70%);
+  &:hover {
+    transition: filter;
+    transition-delay: 1s ease;
+    filter: grayscale(0) opacity(100);
+  }
 `
