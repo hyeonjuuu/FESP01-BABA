@@ -28,21 +28,10 @@ const Header = () => {
   return (
     <>
       <HeaderContainer $darkMode={$darkMode}>
-        {/* <BackButton $isHome={isHome} onClick={handleGoBack}>
-          <StyledFontAwesomeIcon icon={faArrowLeft} />
-        </BackButton>
-        <DarkModeToggleIcon
-        $isDarkMode={$darkMode}
-        toggleDarkModeAni={toggleDarkMode}
-      /> */}
-        <Logo src={logo} alt="" />
-        <Search />
-        <AuthButton text="로그인" color="#222222" backgroundcolor="#AAEEC4" />
-        <AuthButton
-          text="회원가입"
-          color="none"
-          backgroundcolor="transperate"
-        />
+        <MenuButton>Home</MenuButton>
+        <MenuButton>Search</MenuButton>
+        <MenuButton>Sign in</MenuButton>
+        <MenuButton>Join</MenuButton>
       </HeaderContainer>
     </>
   )
@@ -58,16 +47,7 @@ const HeaderContainer = styled.div<HeaderDivProps>`
   padding: 0 52px;
 `
 
-const BackButton = styled.div<ArrowDivProps>`
-  visibility: ${({ $isHome }) => ($isHome ? 'hidden' : 'visible')};
-  cursor: pointer;
-`
-
-const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-  font-size: 20px;
-`
-
-const Logo = styled.img`
+const MenuButton = styled.button`
+  background-color: green;
   width: 100px;
-  height: 45px;
 `

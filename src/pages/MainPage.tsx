@@ -91,7 +91,7 @@ function Main() {
           </TitleWrapper>
         </TitleContentsWrapper>
         <SwiperWrapper
-          slidesPerView={3.2}
+          slidesPerView={3.4}
           centeredSlides={true}
           spaceBetween={30}
           autoplay={{
@@ -196,7 +196,8 @@ const SwiperSlideContainer = styled(SwiperSlide)<SwiperProps>`
 `
 
 const TrendPosterImg = styled.img`
-  width: 520px;
+  width: 480px;
+  height: 688px;
   border-radius: 10px;
   filter: grayscale(100%) opacity(70%);
   &:hover {
